@@ -11,9 +11,6 @@
 - tidy up touses
 - random effects on time-dep effects
 - help file
-- strip out other distributions except weibull, loghazard and rp
-
-- sync CH quad time design matrices being stored
 - multiple time interactions for rp -> chain rule
 - predictions
 
@@ -30,15 +27,17 @@
 	-> gf1 done, removing gf2 for now
   - bhazard() ok
       -> added gf2
-- weibull
 
+- weibull
 - loghazard
 
+- stmixed
 - morgana
 
 //============================================================================//
 // done
 
+- sync CH quad time design matrices being stored
 - new subroutine for extracting design matrix on random effects
 - fix spline names with model in index
 - block any rcs() with random effect, only allow varname or c.varname
