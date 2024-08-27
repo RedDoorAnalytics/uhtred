@@ -8,28 +8,7 @@
 //============================================================================//
 // to do
 
-- tidy up touses
-- random effects on time-dep effects
-- help file
-- multiple time interactions for rp -> chain rule
-- predictions
-
-- swap to views if possible 
-  -> currently st_data() for gf1/2 as variable order gets changed (don't know 
-     why)
-  -> test doing views each time within the evaluator
-- rp
-  -> gf0 ok
-  -> gf1 ok
-  -> gf2 ok
-  - ltruncation ok
-  - interval censoring
-	-> gf1 done, removing gf2 for now
-  - bhazard() ok
-      -> added gf2
-
 - weibull
-- loghazard
 
 - stmixed
 - morgana
