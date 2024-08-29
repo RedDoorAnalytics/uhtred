@@ -21,6 +21,9 @@ cscript uhtred
 //survival
 do ./cert/cert_rp_1level
 
+//weib 3 level
+do ./cert/cert_weib_3level_int
+
 //gf2
 
 //multilevel survival
