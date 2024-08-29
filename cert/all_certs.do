@@ -2,10 +2,11 @@
 // cert. script for uhtred
 
 //source paths
-local drive /Users/michael/My Drive/software
-cd "`drive'/uhtred"
-adopath ++ "`drive'/uhtred"
-adopath ++ "`drive'/uhtred/uhtred"
+
+local drive C:\Users\Hannah Bower\Documents\GitHub
+cd "`drive'\uhtred"
+adopath ++ "`drive'\uhtred"
+adopath ++ "`drive'\uhtred/uhtred"
 
 
 //build mlib
@@ -18,14 +19,13 @@ cscript uhtred
 //============================================================================//
 
 //survival
-
 do ./cert/cert_rp_1level
 
 //gf2
 
 //multilevel survival
 
-do ./cert/cert_rp_2level
+*do ./cert/cert_rp_2level
 
 //cr 
 
