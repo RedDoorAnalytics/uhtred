@@ -17,7 +17,7 @@ gen trt = runiform()>0.5
 gen sd1 = exp(log(0.1))
 gen u1 	= rnormal(0,sd1)
 gen age = rnormal()
-expand 10
+expand 100
 sort id 
 survsim stime died , dist(weib) lambda(0.1) gamma(1.2) ///
 	cov(trt -0.5 age 0.1 u1 1) maxt(5) 
@@ -32,12 +32,12 @@ timer on 1
 // predict r1, reffects
 // merlin (stime trt age M1[id]@1, family(weib, failure(died)))	///
 // 	, 
-merlin (stime trt age rcs(_t, df(3) log event orthog) M1[id]@1, family(loghazard, df(1) failure(died)))	///
+merlin (stime trt age  M1[id]@1, family(rp, df(1) failure(died)))	///
 	, evaltype(gf0)  //intmethod(gh)  //gradient 
 timer off 1
 
 timer on 2
-uhtred (stime trt age rcs(_t, df(3) log event orthog) M1[id]@1, family(loghazard, df(1) failure(died)))	///
+uhtred (stime trt age M1[id]@1, family(rp, df(1) failure(died)))	///
 	, evaltype(gf0)  //intmethod(gh)  //gradient 
 timer off 2
 

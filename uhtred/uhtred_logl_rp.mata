@@ -53,7 +53,7 @@ mata:
 	if (hastb) {
 		xzb   = uhtred_util_xzb(M,b,gml)
 		xtzb  = xzb :+ uhtred_util_tb(M,b,gml)
-		brcs  = b[|moptimize_util_eq_indices(M,teqn)|]'
+		brcs  = b[|uhtred_util_bindices(gml,teqn)|]'
 	}
 	else 	xtzb  = uhtred_util_xtzb(M,b,gml)
 	expxtzb	= exp(xtzb)
@@ -125,11 +125,11 @@ mata:
 	// score
 
 	if (hasxb) {
-		sindex1 = merlin_util_score_indices(M,xeqn)
+		sindex1 = uhtred_util_score_indices(M,xeqn)
 		X = asarray(gml.X,model)
 	}
 	if (hastb) {
-		sindex2 = merlin_util_score_indices(M,teqn)
+		sindex2 = uhtred_util_score_indices(M,teqn)
 		XT = asarray(gml.XT,model)
 	}
 	
@@ -275,7 +275,7 @@ mata:
 				e2++
 			}
 		}
-		H[|moptimize_util_eq_indices(M,xeqn,xeqn)|] = Hxbf
+		H[|uhtred_util_bindices(gml,xeqn,xeqn)|] = Hxbf
 
 		Hoff = J(Nxb,Nrcsb,.)
 		Hxbrcssum = quadcolsum(Hxbrcs,1)
@@ -285,8 +285,8 @@ mata:
 				Hoff[e1,e2] = Hxbrcssum[el++]
 			}					
 		}
-		H[|moptimize_util_eq_indices(M,xeqn,teqn)|] = Hoff
-		H[|moptimize_util_eq_indices(M,teqn,xeqn)|] = H[|moptimize_util_eq_indices(M,xeqn,teqn)|]'
+		H[|uhtred_util_bindices(gml,xeqn,teqn)|] = Hoff
+		H[|uhtred_util_bindices(gml,teqn,xeqn)|] = H[|uhtred_util_bindices(gml,xeqn,teqn)|]'
 	}
 
 	H2	= J(Nrcsb,Nrcsb,.)
@@ -300,7 +300,7 @@ mata:
 			e2++
 		}
 	}
-	H[|moptimize_util_eq_indices(M,teqn,teqn)|] = H2
+	H[|uhtred_util_bindices(gml,teqn,teqn)|] = H2
 	return(logl)
 }
 
