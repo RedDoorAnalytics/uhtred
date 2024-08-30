@@ -74,7 +74,7 @@ mata:
 		if (hast)	xb = xb :+ uhtred_util_tb(M,b,gml,t)
 		else 		xb = xb :+ uhtred_util_tb(M,b,gml)
 	}
-	if (gml.haszb[1]) xb = xb :+ uhtred_util_zb(M,b,gml)
+	if (gml.haszb[mod]) xb = xb :+ uhtred_util_zb(M,b,gml)
 	return(xb)
 }
 
@@ -92,7 +92,7 @@ mata:
 			xb = xb[uhtred_util_index(gml),]
 		}
 	}
-	if (gml.haszb[1]) xb = xb :+ uhtred_util_zb(M,b,gml)
+	if (gml.haszb[mod]) xb = xb :+ uhtred_util_zb(M,b,gml)
 	return(xb)
 }
 
@@ -305,12 +305,18 @@ mata:
 	return(asarray(gml.bhazard,(1,gml.survind+2)))
 }
 
-`RR' merlin_util_score_indices(`TR' M, `RS' eqn)
+`RR' uhtred_util_score_indices(`TR' M, `RS' eqn)
 {
 	sindex1 = moptimize_util_eq_indices(M,eqn)
 	if (sindex1[1,2]==sindex1[2,2]) sindex1	= sindex1[2,2]
 	else sindex1 = (sindex1[1,2]..sindex1[2,2])
 	return(sindex1)
+}
+
+`RM' uhtred_util_bindices(`gml' gml, `RS' eqn, | `RS' eqn2)
+{
+	if (args()==2) 	return(asarray(gml.bindices,(gml.model,eqn)))
+	else 		return(asarray(gml.Hindices,(gml.model,eqn,eqn2)))
 }
 
 end
