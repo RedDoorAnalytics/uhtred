@@ -45,6 +45,7 @@ void uhtred_predict_setup(`gml' gml, `SS' stat, `SS' touse)
 {
 
 	gml.myb = st_matrix(st_local("best"))	//get parameter estimates
+	gml.myb
 	uhtred_xb(gml,gml.myb)			//and fill up (also updates NI points)
 	
 	k = strtoreal(st_local("outcome"))
@@ -66,7 +67,7 @@ void uhtred_predict_setup(`gml' gml, `SS' stat, `SS' touse)
 
 	//fill in timevar if specified
 	if (st_local("timevar")!="") {
-		asarray(gml.timevars,gml.model,st_data(.,st_local("timevar"),touse))
+		asarray(gml.timevar,gml.model,st_data(.,st_local("timevar"),touse))
 	}	
 }
 
@@ -141,12 +142,12 @@ void uhtred_predict_error_check(`gml' gml, `SS' stat)
 	gml.survind = 0
 
 	if (gml.issurv[gml.model] & stand) {
-		t 	= asarray(gml.timevars,gml.model)
+		t 	= asarray(gml.timevar,gml.model)
 		Nt 	= rows(t)
 		Nobs	= gml.Nobs[gml.Nlevels,gml.model]
 		pred 	= J(Nt,1,.)
 		for (i=1;i<=Nt;i++) {
-			asarray(gml.timevars,gml.model,J(Nobs,1,t[i]))
+			asarray(gml.timevar,gml.model,J(Nobs,1,t[i]))
 			pred[i] = mean((*pf)(gml))
 		}
 		
@@ -211,7 +212,7 @@ void uhtred_predict_error_check(`gml' gml, `SS' stat)
 
 `RM' uhtred_p_eta(`gml' gml)
 {
-	if (gml.istimedep[gml.model,1]) {
+	if (gml.hastb[gml.model]) {
 		t = uhtred_util_timevar(gml)
 		return(uhtred_util_xzb(gml,t))
 	}
