@@ -36,15 +36,15 @@ timer on 1
 stpm2 trt bmi x1 x2 x3 , scale(hazard) df(3)
 timer off 1
 timer on 2
-merlin (_t 	trt bmi x1 x2 x3 		///
-		, family(rp, df(3) failure(died) ltruncated(t0)) timevar(_t)) 	///
-                , evaltype(gf2)
+// merlin (_t 	trt bmi x1 x2 x3 		///
+// 		, family(rp, df(3) failure(died) ltruncated(t0)) timevar(_t)) 	///
+//                 , evaltype(gf2)
 timer off 2
 
 timer on 3
-uhtred (_t 	trt bmi x1 x2 x3 		///
+uhtred (_t 	i.trt bmi x1 x2 x3 		///
 		, family(rp, df(3) failure(died) ltruncated(t0))) 	///
-                , evaltype(gf2)
+                , evaltype(gf2) 
 timer off 3
 timer list
 
