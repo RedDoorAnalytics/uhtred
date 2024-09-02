@@ -18,7 +18,7 @@ local fdir ./release/version_`newversion'/
 //=======================================================================================================================//
 
 //pkg files
-copy ./build/uhtred_details.txt `fdir', replace
+// copy ./build/uhtred_details.txt `fdir', replace
 	
 //=======================================================================================================================//
 
@@ -36,12 +36,6 @@ copy ./build/uhtred_details.txt `fdir', replace
 	copy ./uhtred/uhtred_reporting.sthlp `fdir', replace
 	copy ./uhtred/uhtred_postestimation.sthlp `fdir', replace
 	
-//exptorcs
-
-	copy ./uhtred/exptorcs.ado `fdir', replace
-	copy ./uhtred/exptorcs.sthlp `fdir', replace
-
-
 //mlib
 cap erase `fdir'luhtred.mlib
 copy ./luhtred.mlib `fdir', replace
