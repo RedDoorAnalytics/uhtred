@@ -213,17 +213,13 @@ void uhtred_predict_error_check(`gml' gml, `SS' stat)
 {
 	if (gml.hastb[gml.model]) {
 		t = uhtred_util_timevar(gml)
-		return(uhtred_util_xzb(gml,t))
+		return(uhtred_util_xtzb(gml,t))
 	}
-	else return(uhtred_util_xzb(gml))
+	else return(uhtred_util_xtzb(gml))
 }
 
 `RM' uhtred_p_cif(`gml' gml, | `RC' t)
 {
-	
-	if (gml.familys[gml.model]=="cox") {
-		return(uhtred_p_cox_cif(gml))
-	}
 	
 	not = args()==1
 	if (not) t = uhtred_util_timevar(gml)
@@ -231,7 +227,7 @@ void uhtred_predict_error_check(`gml' gml, `SS' stat)
 	refmod 	= gml.model
 
 	//get pointers to cause-specific h and ch functions -> gml.model indexes this
-	hf 		= uhtred_p_getpf(gml, "hazard")
+	hf 	= uhtred_p_getpf(gml, "hazard")
 	chfs 	= J(1,0,NULL)
 		
 	if (st_local("causes")=="") {
@@ -264,14 +260,14 @@ void uhtred_predict_error_check(`gml' gml, `SS' stat)
 	else {
 	
 		gml.model 	= refmod
-		Ngq 		= 30
-		gq 			= uhtred_gq(Ngq,"legendre")
+		Ngq 		= gml.chip
+		gq 		= uhtred_gq(Ngq,"legendre")
 		result 		= J(gml.N,1,0)
-		qp			= t :/ 2 :* J(gml.N,1,gq[,1]') :+ t:/2
+		qp		= t :/ 2 :* J(gml.N,1,gq[,1]') :+ t:/2
 
 		for (q=1; q<=Ngq; q++) {						//cif integral
 			gml.model 	= refmod
-			haz			= (*hf)(gml,qp[,q])
+			haz		= (*hf)(gml,qp[,q])
 			ochres 		= J(gml.N,1,0)
 
 			for (k=1; k<=Nsurvmodels; k++) {			//overall cumulative hazard integral
@@ -349,9 +345,9 @@ void uhtred_predict_error_check(`gml' gml, `SS' stat)
 	not = args()==1
 	if (not) t = uhtred_util_timevar(gml)
 
-	Ngq 	= 30
-	gq 		= uhtred_gq(Ngq,"legendre")
-	qp		= t :/ 2 :* J(gml.N,1,gq[,1]') :+ t:/2
+	Ngq 	= gml.chip
+	gq 	= uhtred_gq(Ngq,"legendre")
+	qp	= t :/ 2 :* J(gml.N,1,gq[,1]') :+ t:/2
 	
 	//integrate cif
 	result 	= J(gml.N,1,0)
