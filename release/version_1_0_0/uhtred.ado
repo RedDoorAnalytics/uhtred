@@ -1,9 +1,9 @@
-*! version 1.0.0  02sep2024
+*! version 1.0.0  ?????2024
 
 /*
 History
-v1.0.0: 02sep2024 
-- initial release
+v1.0.0:
+- 
 */
 
 program uhtred, eclass 
