@@ -48,6 +48,34 @@ void uhtred_xb(`TR' M, `gml' gml, `RR' b)
 	}
 }
 
+//Evaluate linear predictors for predict
+void uhtred_p_xb(`gml' gml, `RR' b)
+{
+	eqnind = 1
+	for (i=1;i<=gml.Nmodels;i++) {
+		if (gml.hasxb[i]) eqnind++
+		if (gml.hastb[i]) eqnind++
+		if (gml.haszb[i]) eqnind = eqnind + gml.Nrelevels
+		if (gml.Ndap[i]) {
+			for (k=1;k<=gml.Ndap[i];k++) {
+				eqnind2 = uhtred_util_bindices(gml,eqnind++)[1,2]
+				asarray(gml.distancb,(i,k),b[eqnind2])
+			}
+		}
+		if (gml.Nap[i]) {
+			for (k=1;k<=gml.Nap[i];k++) {
+				eqnind2 = uhtred_util_bindices(gml,eqnind++)[1,2]
+				asarray(gml.apxb,(i,k),b[eqnind2])
+				eqnind++
+			}
+		}
+	}
+	if (gml.Nrelevels) {
+		eqnind = uhtred_util_bindices(gml,eqnind)[1,2]
+		uhtred_fillvcv(gml,b,eqnind)
+	}
+}
+
 void uhtred_fillvcv(`gml' gml, 
 		`RR' b,
 		`RS' eqnind)
