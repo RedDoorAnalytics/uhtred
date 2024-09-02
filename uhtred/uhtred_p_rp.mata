@@ -76,7 +76,7 @@ mata:
 {	
 	not = args()==1
 	if (not) t = uhtred_util_timevar(gml)
-	return(uhtred_p_rp_h(gml,t):*uhtred_p_rp_s(gml,t))
+	return(exp(uhtred_p_rp_logh(gml,t):-uhtred_p_rp_ch(gml,t)))
 }
 
 end
