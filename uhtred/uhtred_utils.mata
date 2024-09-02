@@ -78,6 +78,30 @@ mata:
 	return(xb)
 }
 
+`RM' uhtred_util_p_xtzb(`gml' gml, | `RC' t)
+{
+	`RM' x
+	`RS' hast, mod
+	
+	hast = args()==4
+	mod  = gml.model
+	xb   = 0
+
+	if (gml.hasxb[mod]) {
+		xb = asarray(gml.X,mod) * 
+			gml.myb[|uhtred_util_bindices(gml,gml.xeqn[mod])|]'
+		if (gml.Nmodels>1) {
+			xb = xb[uhtred_util_index(gml),]
+		}
+	}
+	if (gml.hastb[mod]) {
+		if (hast)	xb = xb :+ uhtred_util_p_tb(gml,t)
+		else 		xb = xb :+ uhtred_util_p_tb(gml)
+	}
+	if (gml.haszb[mod]) xb = xb :+ uhtred_util_p_zb(gml)
+	return(xb)
+}
+
 `RM' uhtred_util_xzb(`TR' M, `RR' b, `gml' gml)
 {
 	`RM' x
@@ -96,12 +120,65 @@ mata:
 	return(xb)
 }
 
+`RM' uhtred_util_p_xzb(`gml' gml)
+{
+	`RM' x
+	`RS' mod
+	
+	mod  = gml.model
+	xb   = 0
+	
+	if (gml.hasxb[mod]) {
+		xb = asarray(gml.X,mod) * 
+			gml.myb[|uhtred_util_bindices(gml,gml.xeqn[mod])|]'
+		if (gml.Nmodels>1) {
+			xb = xb[uhtred_util_index(gml),]
+		}
+	}
+	if (gml.haszb[mod]) xb = xb :+ uhtred_util_zb(gml)
+	return(xb)
+}
+
 `RM' uhtred_util_zb(`TR' M, `RR' b, `gml' gml)
 {
 	mod = gml.model
 	zb = 0
 	for (lev=1;lev<=gml.Nrelevels;lev++) {
 		bre 	= b[|moptimize_util_eq_indices(M,gml.zeqn[mod,lev])|]
+		reindex = asarray(gml.Zbindex,(mod,lev))
+		if (gml.adapt[1]) {
+			Zbeta 	= asarray(gml.Z,(mod,lev)) :* bre	
+			indexr  = uhtred_get_adpanelindex(gml,lev)
+			indexc  = .
+			if (lev!=gml.Nrelevels) indexc = gml.qind[,lev+1]
+
+			for (r=1;r<=gml.Nres[lev];r++)  {
+				zb = zb :+ Zbeta[,r] :* 
+					asarray(gml.aghip2,
+						(lev,reindex[r]))[indexr,indexc]
+			}			
+		}
+		else {
+			if (lev==gml.Nrelevels) {
+				zb = zb :+ (asarray(gml.Z,(mod,lev)) :* bre) * 
+					asarray(gml.b,lev)[reindex,]
+			}
+			else {
+				zb = zb :+ (asarray(gml.Z,(mod,lev)) :* bre) * 
+					asarray(gml.b,lev)[reindex,
+						gml.qind[,lev+1]]
+			}
+		}
+	}
+	return(zb)
+}
+
+`RM' uhtred_util_p_zb(`gml' gml)
+{
+	mod = gml.model
+	zb = 0
+	for (lev=1;lev<=gml.Nrelevels;lev++) {
+		bre 	= gml.myb[|uhtred_util_bindices(gml,gml.zeqn[mod,lev])|]
 		reindex = asarray(gml.Zbindex,(mod,lev))
 		if (gml.adapt[1]) {
 			Zbeta 	= asarray(gml.Z,(mod,lev)) :* bre	
@@ -145,6 +222,30 @@ mata:
 	}
 	else {
 		xb = moptimize_util_xb(M,b,teqn)
+		if (gml.Nmodels>1) {
+			xb = xb[uhtred_util_index(gml),]
+		}
+	}
+	
+	return(xb)
+}
+
+`RM' uhtred_util_p_tb(`gml' gml, | `RC' t)
+{
+	`RM' xb
+	`RS' hast
+	
+	xb   = 0
+	hast = args()==4
+	teqn = gml.teqn[gml.model]
+	
+	if (hast) {
+		bt = gml.myb[|uhtred_util_bindices(gml,teqn)|]'
+		xb = _uhtred_util_tb_update(bt,gml,t)
+	}
+	else {
+		xb = asarray(gml.XT,gml.model) * 
+			gml.myb[|uhtred_util_bindices(gml,teqn)|]'
 		if (gml.Nmodels>1) {
 			xb = xb[uhtred_util_index(gml),]
 		}
@@ -233,6 +334,20 @@ mata:
 	return(chq2)
 }
 
+`RM' uhtred_util_p_tb_qs(`gml' gml,`RS' Nobs2)
+{
+	`RM' xb
+	
+	chq2 = J(Nobs2,gml.chip,0)
+	teqn = gml.teqn[gml.model]
+	bt   = gml.myb[|uhtred_util_bindices(gml,teqn)|]'
+	
+	for (q=1;q<=gml.chip;q++) {
+		chq2[,q] = asarray(gml.chq,(gml.model,q)) * bt
+	}	
+	
+	return(chq2)
+}
 /*
 	uhtred_util_depvar()
 	-> extract dependent variable(s) for current model
