@@ -29,33 +29,32 @@ mata:
 {
 	not = args()==1
 	if (not) t = uhtred_util_timevar(gml)
-	return(uhtred_util_xtzb(gml,gml.myb,t))
+	return(uhtred_util_p_xtzb(gml,t))
 }
 
 `RM' uhtred_p_rp_ch(`gml' gml,| `RC' t)
 {
 	not = args()==1
 	if (not) t = uhtred_util_timevar(gml)
-	return(exp(uhtred_util_xtzb(gml,gml.myb,t)))
+	return(exp(uhtred_util_p_xtzb(gml,t)))
 }
 
 `RM' uhtred_p_rp_s(`gml' gml,| `RC' t)
 {
 	not = args()==1
 	if (not) t = uhtred_util_timevar(gml)
-	return(exp(-exp(uhtred_util_xtzb(gml,gml.myb,t))))
+	return(exp(-exp(uhtred_util_p_xtzb(gml,t))))
 }
 
 `RM' uhtred_p_rp_logh(`gml' gml,| `RC' t)
 {
 	not = args()==1
 	if (not) t = uhtred_util_timevar(gml)
-
-	dXT		= asarray(gml.dXT,model)[index1,]
-	dxb 		= dXT * brcs
-	xtzb[index1,] :+ log(dxb) :- log(t)
-	
-	return(logh)
+	hastb 	= gml.hastb[gml.model]
+	if (hastb) teqn = gml.teqn[gml.model]
+	brcs = gml.myb[|uhtred_util_bindices(gml,teqn)|]'
+	dxb = asarray(gml.dXT,gml.model) * brcs
+	return(uhtred_util_p_xtzb(gml,t) :+ log(dxb) :- log(t))
 }
 
 `RM' uhtred_p_rp_h(`gml' gml,| `RC' t)

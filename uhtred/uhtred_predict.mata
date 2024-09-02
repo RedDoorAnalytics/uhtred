@@ -45,8 +45,7 @@ void uhtred_predict_setup(`gml' gml, `SS' stat, `SS' touse)
 {
 
 	gml.myb = st_matrix(st_local("best"))	//get parameter estimates
-	gml.myb
-	uhtred_xb(gml,gml.myb)			//and fill up (also updates NI points)
+	uhtred_p_xb(gml,gml.myb)		//and fill up (also updates NI points)
 	
 	k = strtoreal(st_local("outcome"))
 	gml.model = gml.modtoind = k		//keep here uhtred_xb() changes it

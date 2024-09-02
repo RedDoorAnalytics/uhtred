@@ -12,7 +12,7 @@ pr drop _all
 
 clear 
 set seed 725
-set obs 5000000
+set obs 50000
 gen id1 = _n
 gen trt = runiform()>0.5
 gen age = rnormal(55,5)
@@ -42,13 +42,18 @@ merlin (_t 	trt bmi x1 x2 x3 		///
                 , evaltype(gf2)
 timer off 2
 
+predict h0, hazard ci
+predict s0, survival ci
+
+
 timer on 3
-uhtred (_t 	i.trt bmi x1 x2 x3 		///
+uhtred (_t 	trt bmi x1 x2 x3 		///
 		c.trt#rcs(_t, log orthog event df(2)) ///
 		, family(rp, df(3) failure(died) /*ltruncated(t0)*/)) 	///
                 , evaltype(gf2) 
 timer off 3
 timer list
 
-// predict h1, hazard
-// predict s1, survival
+predict h1, hazard ci
+predict s1, survival ci
+
