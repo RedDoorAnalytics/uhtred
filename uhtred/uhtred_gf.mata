@@ -32,6 +32,7 @@ void uhtred_gf(	`TS' M,
 
 	gml  		= moptimize_util_userinfo(M,1)
 	gml.todo 	= todo
+	gml.myb		= b
 	gml.survind     = 0
 	
 	uhtred_xb(M,gml,b)

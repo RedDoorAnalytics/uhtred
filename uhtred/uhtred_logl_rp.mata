@@ -53,7 +53,7 @@ mata:
 	if (hastb) {
 		xzb   = uhtred_util_xzb(M,b,gml)
 		xtzb  = xzb :+ uhtred_util_tb(M,b,gml)
-		brcs  = b[|moptimize_util_eq_indices(M,teqn)|]'
+		brcs  = b[|uhtred_util_bindices(gml,teqn)|]'
 	}
 	else 	xtzb  = uhtred_util_xtzb(M,b,gml)
 	expxtzb	= exp(xtzb)
@@ -125,11 +125,11 @@ mata:
 	// score
 
 	if (hasxb) {
-		sindex1 = merlin_util_score_indices(M,xeqn)
+		sindex1 = uhtred_util_score_indices(M,xeqn)
 		X = asarray(gml.X,model)
 	}
 	if (hastb) {
-		sindex2 = merlin_util_score_indices(M,teqn)
+		sindex2 = uhtred_util_score_indices(M,teqn)
 		XT = asarray(gml.XT,model)
 	}
 	
@@ -275,7 +275,7 @@ mata:
 				e2++
 			}
 		}
-		H[|moptimize_util_eq_indices(M,xeqn,xeqn)|] = Hxbf
+		H[|uhtred_util_bindices(gml,xeqn,xeqn)|] = Hxbf
 
 		Hoff = J(Nxb,Nrcsb,.)
 		Hxbrcssum = quadcolsum(Hxbrcs,1)
@@ -285,8 +285,8 @@ mata:
 				Hoff[e1,e2] = Hxbrcssum[el++]
 			}					
 		}
-		H[|moptimize_util_eq_indices(M,xeqn,teqn)|] = Hoff
-		H[|moptimize_util_eq_indices(M,teqn,xeqn)|] = H[|moptimize_util_eq_indices(M,xeqn,teqn)|]'
+		H[|uhtred_util_bindices(gml,xeqn,teqn)|] = Hoff
+		H[|uhtred_util_bindices(gml,teqn,xeqn)|] = H[|uhtred_util_bindices(gml,xeqn,teqn)|]'
 	}
 
 	H2	= J(Nrcsb,Nrcsb,.)
@@ -300,67 +300,8 @@ mata:
 			e2++
 		}
 	}
-	H[|moptimize_util_eq_indices(M,teqn,teqn)|] = H2
+	H[|uhtred_util_bindices(gml,teqn,teqn)|] = H2
 	return(logl)
 }
-	
-// `RM' uhtred_rp_logch(`gml' gml, `RC' t, | `RC' t0)
-// {
-// 	brcs 	= asarray(gml.distancb,(gml.model,1))
-// 	knots 	= asarray(gml.distancb,(gml.model,3))
-// 	hasorth = asarray(gml.distancb,(gml.model,4))
-// 	if (hasorth) {
-// 		rmat = asarray(gml.distancb,(gml.model,5))
-// 		if (args()==2) 	return(uhtred_util_xzb(gml,t) :+ uhtred_rcs(log(t),knots,0,rmat) * brcs )
-// 		else 		return(uhtred_util_xzb(gml,t,t0) :+ uhtred_rcs(log(t),knots,0,rmat) * brcs )
-// 	}
-// 	else {
-// 		if (args()==2) 	return(uhtred_util_xzb(gml,t) :+ uhtred_rcs(log(t),knots,0) * brcs )
-// 		else		return(uhtred_util_xzb(gml,t,t0) :+ uhtred_rcs(log(t),knots,0) * brcs )
-// 	}
-// }
-//
-// `RM' uhtred_rp_ch(`gml' gml, `RC' t, | `RC' t0)
-// {
-// 	if (args()==2) 	return(exp(uhtred_rp_logch(gml,t)))
-// 	else 		return(exp(uhtred_rp_logch(gml,t,t0)))
-// }
-//
-// `RM' uhtred_rp_s(`gml' gml, `RC' t)
-// {
-// 	return(exp(-uhtred_rp_ch(gml,t)))
-// }
-//
-// `RM' uhtred_rp_logh(`gml' gml, `RC' t)
-// {
-// 	brcs 	= asarray(gml.distancb,(gml.model,1))
-// 	knots 	= asarray(gml.distancb,(gml.model,3))
-// 	hasorth = asarray(gml.distancb,(gml.model,4))
-// 	logt    = log(t)
-// 	if (hasorth) {
-// 		rmat = asarray(gml.distancb,(gml.model,5))
-// 		logh = uhtred_util_xzb(gml,t) :+ uhtred_rcs(logt,knots,0,rmat) * brcs 
-// 		logh = logh :+ log((uhtred_rcs(logt,knots,1,rmat) * brcs) :/ t :+ uhtred_util_xzb_deriv(gml,t))
-// 	}
-// 	else {
-// 		logh = uhtred_util_xzb(gml,t) :+ uhtred_rcs(logt,knots,0) * brcs 
-// 		logh = logh :+ log((uhtred_rcs(logt,knots,1) * brcs) :/ t:+ uhtred_util_xzb_deriv(gml,t) )
-// 	}
-// 	if (gml.hasbh[gml.model,1]) {
-// 		logh = log(exp(logh) :+ uhtred_util_bhazard(gml))
-// 	}
-// 	return(logh)
-// }
-//
-// `RM' uhtred_rp_h(`gml' gml, `RC' t)
-// {	
-// 	return(exp(uhtred_rp_logh(gml,t)))
-// }
-//
-//
-// `RM' uhtred_rp_cdf(`gml' gml, `RC' t)
-// {	
-// 	return(1 :- uhtred_rp_s(gml,t))
-// }
 
 end

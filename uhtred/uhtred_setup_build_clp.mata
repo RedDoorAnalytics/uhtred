@@ -22,7 +22,7 @@ mata:
 
 void uhtred_build_clp(`gml' gml)
 {
-	eqn = 1
+	eqn = coef = 1
 	gml.hasxb   = gml.hastb = gml.haszb = J(gml.Nmodels,1,0)
 	gml.xeqn    = gml.teqn = gml.hasxb
 	gml.zeqn    = J(1,gml.Nrelevels,gml.hasxb)
@@ -30,6 +30,8 @@ void uhtred_build_clp(`gml' gml)
 	gml.Nels    = asarray_create("real",1)
 	gml.elindex = asarray_create("real",2)
 	gml.eltvar  = asarray_create("real",2)
+	gml.bindices = asarray_create("real",2)
+	gml.Hindices = asarray_create("real",3)
 	gml.tvarlist = J(gml.Nmodels,1,"")
 
 	gml.X = gml.XT = asarray_create("real",1)
@@ -44,11 +46,11 @@ void uhtred_build_clp(`gml' gml)
 	}
 	
 	for (i=1;i<=gml.Nmodels;i++) {
-		uhtred_build_xz(gml,i,eqn)
+		uhtred_build_xz(gml,i,eqn,coef)
 	}
 }
 
-void uhtred_build_xz(`gml' gml, `RS' model, `RS' eqn)
+void uhtred_build_xz(`gml' gml, `RS' model, `RS' eqn, `RS' coef)
 {
 	xbsyn     = uhtred_get_cmps(model)
 	gml.Ncmps = Ncmps = cols(xbsyn)
@@ -352,13 +354,24 @@ void uhtred_build_xz(`gml' gml, `RS' model, `RS' eqn)
 		st_local(xbeqnlocal,"("+xbeqnlocal+": "+xb+")")
 		gml.hasxb[model] = 1
 		gml.xeqn[model] = eqn
-		eqn++
-	}
-
-	//store design matrix for xb for gf1 and gf2
-	if (gml.todo>0) {
+		
+		//store design matrix for xb
 		if (hascons) newxbsyn = newxbsyn,_cons
-		asarray(gml.X,model,st_data(.,newxbsyn,touse))
+		X = st_data(.,newxbsyn,touse)
+		asarray(gml.X,model,X)
+		
+		//get coefficient indices
+		coefx1 = coef
+		coefx2 = coef + cols(X) - 1
+		asarray(gml.bindices,(model,eqn),(1,coefx1\1,coefx2))
+		
+		if (gml.todo==2) {
+			asarray(gml.Hindices,(model,eqn,eqn),
+				(coefx1,coefx1\coefx2,coefx2))
+		}
+		
+		coef = coefx2 + 1
+		eqn++
 	}
 
 	// time xb:
@@ -371,12 +384,27 @@ void uhtred_build_xz(`gml' gml, `RS' model, `RS' eqn)
 		st_local(xbtimeeqnlocal,"(tb" + strmod + ": " + xb_time+")")
 		gml.hastb[model] = 1
 		gml.teqn[model] = eqn
+		
+		//store design matrix for time xb 
+		XT = st_data(.,timexbsyn,touse)
+		asarray(gml.XT,model,XT)
+		
+		//get coefficient indices
+		coeft1 = coef
+		coeft2 = coef + cols(XT) - 1
+		asarray(gml.bindices,(model,eqn),(1,coeft1\1,coeft2))
+		
+		if (gml.todo==2) {
+			asarray(gml.Hindices,(model,gml.xeqn[model],eqn),
+				(coefx1,coeft1\coefx2,coeft2))
+			asarray(gml.Hindices,(model,eqn,gml.xeqn[model]),
+				(coeft1,coefx1\coeft2,coefx2))	
+			asarray(gml.Hindices,(model,eqn,eqn),
+				(coeft1,coeft1\coeft2,coeft2))
+		}
+		
+		coef = coeft2 + 1
 		eqn++
-	}
-
-	//store design matrix for time xb for gf1 and gf2
-	if (gml.todo>0 & hastimexb) {
-		asarray(gml.XT,model,st_data(.,timexbsyn,touse))
 	}
 
 	if (getdt) {
@@ -396,10 +424,17 @@ void uhtred_build_xz(`gml' gml, `RS' model, `RS' eqn)
 	
 	if (gml.Nrelevels) {
 		for (lev=1;lev<=gml.Nrelevels;lev++) {
-			asarray(gml.Z,(model,lev),st_data(.,rexbsyn[lev],touse))
+			Z = st_data(.,rexbsyn[lev],touse)
+			asarray(gml.Z,(model,lev),Z)
 			st_local("Z"+strmod+"_"+strofreal(lev),"(zb"+strmod+"_" + 
 				strofreal(lev) + ":" + rexbsyn[lev]+",nocons)")
 			gml.zeqn[model,lev] = eqn
+			
+			//get coefficient indices
+			coef2 = coef + cols(Z) - 1
+			asarray(gml.bindices,(model,eqn),(1,coef\1,coef2))
+			
+			coef = coef2 + 1
 			eqn++
 		}
 		gml.haszb[model] = 1

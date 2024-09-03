@@ -14,14 +14,14 @@ clear
 set obs 100
 gen id1 = _n
 gen age = runiform()
-gen sd1 = exp(log(1))
+gen sd1 = exp(log(0.1))
 gen u1 = rnormal(0,sd1)
-expand 10
+expand 100
 bys id1: gen id2 = _n
 gen trt = runiform()>0.5
-gen sd2 = exp(log(1))
+gen sd2 = exp(log(0.1))
 gen u2 = rnormal(0,sd2)
-expand 5
+expand 10
 gen id3 = _n
 sort id1 id2 id3
 

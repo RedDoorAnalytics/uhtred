@@ -86,6 +86,7 @@ struct uhtred_struct {
 	`PM' Puserst
 	
 	//complex syntax
+	`RR' myb
 	`RC' hascons		//whether each complex predictor has a constant term
 	`RC' Ncmps		//number of components in each complex syntax
 	`TR' Nels		//# of elements per component per model
@@ -132,12 +133,6 @@ struct uhtred_struct {
 	
 	//delayed entry
 	`RS' ltflag
-	`TR' Li_ip_lt
-	`TR' aghip_lt
-	`TR' aghip2_lt
-	`TR' aghlogl_lt
-	`TR' stackednodes_lt
-	`TR' b_lt
 	
 	//gets updated
 	`RS' lnfi1
@@ -173,6 +168,8 @@ struct uhtred_struct {
 	`RC' teqn		//b equation index for each t equation
 	`RM' zeqn		//b equation index for each z equation
 	`SC' tvarlist		//time equation parsed varlist
+	`TR' bindices		//model,equation coefficient indices
+	`TR' Hindices		//model,equation,equation coefficient indices
 	
 	//===================================================================//
 	//development
@@ -212,7 +209,7 @@ void uhtred_setup(`SS' GML,`SS' touse)
 	uhtred_get_noconstants(gml)
         uhtred_get_timevars(gml)
 	uhtred_get_latents(gml)
-        uhtred_build_clp(gml)			//updates istimedep
+        uhtred_build_clp(gml)
 
 	//survival extras
 	uhtred_setup_survival(gml)
@@ -223,13 +220,13 @@ void uhtred_setup(`SS' GML,`SS' touse)
 
 	//pointers
 	uhtred_get_logl_p(gml)
-//
-// 	//ml stuff
+
+ 	//ml stuff
 	uhtred_setup_mleqns(gml)
 	uhtred_setup_wrappers(gml)
 	uhtred_starting_values(gml)
 	
-// 	//Done
+ 	//Done
 	swap(*pGML,gml)
 }
 

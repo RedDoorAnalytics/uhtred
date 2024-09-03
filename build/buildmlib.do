@@ -32,6 +32,9 @@ qui {
 	do "./uhtred/uhtred_logl_loghazard.mata"
 	do "./uhtred/uhtred_logl_rp.mata"
 	
+	//predictions
+	do "./uhtred/uhtred_predict.mata"
+	do "./uhtred/uhtred_p_rp.mata"
 	
 	mata: mata mlib create luhtred, dir(.)
 	mata: mata mlib add    luhtred *(), dir(.)
