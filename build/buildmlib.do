@@ -1,4 +1,4 @@
-version 18
+version 17
 
 capture erase luhtred.mlib
 mata: mata set matastrict off

@@ -16,7 +16,7 @@ local RC	real colvector
 local RR	real rowvector
 local PM	pointer matrix
 
-version 18
+version 17
 
 mata:
 

@@ -1,7 +1,7 @@
 *! version 1.0.0  ?????2024
 
 program uhtred_rcs, rclass
-	version 18
+	version 17
 	
 	
 	syntax varname, [				///

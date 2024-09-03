@@ -1,6 +1,6 @@
 
 program uhtred_p, sortpreserve
-        version 18
+        version 17
         local vv : display "version " string(_caller()) ":"
 
         tempname tname

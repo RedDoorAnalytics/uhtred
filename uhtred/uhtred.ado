@@ -7,7 +7,7 @@ v1.0.0: 02sep2024
 */
 
 program uhtred, eclass 
-        version 18
+        version 17
 
         if replay() {
                 if "`e(cmd)'" != "uhtred" {
@@ -44,7 +44,7 @@ program uhtred, eclass
 end
 
 program Estimate, eclass
-        version 18
+        version 17
         gettoken GML : 0
 
         Fit `0'		//!! should leave behind diopts
@@ -57,7 +57,7 @@ program Estimate, eclass
 end
 
 program Fit, eclass sortpreserve
-        version 18
+        version 17
         gettoken GML 0 : 0
 
         tempname touse b
