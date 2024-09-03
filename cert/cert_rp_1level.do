@@ -17,9 +17,9 @@ gen t0 = runiform() * 2
 survsim stime died , dist(weib) lambda(0.1) gamma(1.2) 	///
 		cov(trt -0.5 age 0.01 bmi -0.05 x1 0.1 x2 -0.4 x3 0.5) ///
 		tde(trt 0.01) tdefunc(log({t}))	///
-		maxt(10) //ltruncated(t0)
+		maxt(10) 
 
-stset stime, f(died) //enter(t0)
+stset stime, f(died) 
 
 //============================================================================//
 //RP PH model- simple weibull
@@ -1052,4 +1052,34 @@ assert mreldif( C_gradient , T_gradient ) < 1E-8
 _assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
 _assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
 mat drop C_gradient T_gradient
+
+
+//============================================================================//
+//error checks
+
+//new var doesn't exist
+rcof "uhtred (_t newvar trt bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog) 	, family(rp, knots(3) failure(died)))" == 111
+rcof "uhtred (_t  trt i.bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog) , family(rp, df(3) failure(died)))" == 452
+
+//tde misspecified
+rcof "uhtred (_t  trt bmi x1 x2 x3 trt#ecs(_t, df(1) log orthog) 	, family(rp, knots(3) failure(died)))" == 198
+rcof "uhtred (_t  trt bmi x1 x2 x3 trt#rcs(time, df(1) log orthog) 	, family(rp, knots(3) failure(died)))" == 111
+rcof "uhtred (_t  trt bmi x1 x2 x3 trt#rcs(_t, df(1) lrg orthog) 	, family(rp, knots(3) failure(died)))" == 3598
+rcof "uhtred (_t  trt bmi x1 x2 x3 trt#rcs(_t, df(1) log prthog) 	, family(rp, knots(3) failure(died)))" == 3598
+rcof "uhtred (_t  trt bmi x1 x2 x3 trt#rcs(_t, df(-1) log orthog) 	, family(rp, knots(3) failure(died)))" ==  1986
+rcof "uhtred (_t  trt bmi x1 x2 x3 trt#rcs(_t, df(1 5) log orthog) 	, family(rp, knots(3) failure(died)))" == 1986
+rcof "uhtred (_t trt bmi x1 x2 x3 trt#rcs(_t, df(1) knots(2 4) log orthog) 	, family(rp, knots(3) failure(died)))" == 1986
+rcof "uhtred (_t trt bmi x1 x2 x3 trt#rcs(_t,  knots(2 2) log orthog) 	, family(rp, knots(3) failure(died)))" == 3598
+
+//family options misspecifed
+rcof "uhtred (_t trt bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog) 	, family(fam, knots(3) failure(died)))" == 198
+rcof "uhtred (_t  trt bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog) 	, family(rp, knots(3) failure(newvar)))" == 111
+rcof "uhtred (_t  trt bmi x1 x2 x3 	, family(rp, knots(3)))" == 198
+*rcof "uhtred (_t trt bmi x1 x2 x3 , family(rp,    failure(died))" == 198
+
+//other incorrect syntax
+rcof "uhtred (_t trt bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog 	, family(rp, knots(3) failure(died)))" == 198
+rcof "uhtred (_t trt bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog)	 family(rp, knots(3) failure(died)))" == 198
+rcof "uhtred _t trt bmi x1 x2 x3, family(rp, df(3) failure(died)))" == 198
+rcof "uhtred _t trt bmi x1 x2 x3, family(rp, df(3 failure(died)))" == 198
 

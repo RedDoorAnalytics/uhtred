@@ -201,6 +201,64 @@ uhtred (_t 	trt bmi x1 x2 x3 			///
 		
 mkassert eclass
 
+
+
+//============================================================================//
+//non-PH model >1 df in tde
+
+				
+//testing
+stpm2 trt bmi x1 x2 x3, df(3) dftvc(2) tvc(trt) scale(h) knscale(log) orthog
+est store stpm2
+
+merlin (_t 	trt bmi x1 x2 x3 			///
+		trt#rcs(_t, df(2) log orthog event) 	///
+		, family(rp, df(3) failure(died))) 	///
+                , 
+est store merlin
+
+local j 1
+foreach v in trt bmi x1 x2 x3 trtrcs {
+	local mer_b_`v' =_b[_cmp_1_`j'_1:_cons]
+	local mer_se_`v' =_se[_cmp_1_`j'_1:_cons]
+	local j `=`j'+1'
+}
+local mer_b_trtrcs2 =_b[_cmp_1_6_2:_cons]
+local mer_se_trtrcs2 =_se[_cmp_1_6_2:_cons]
+
+
+
+uhtred (_t 	trt bmi x1 x2 x3 			///
+		c.trt#rcs(_t, df(2) log orthog event) 	///
+		, family(rp, df(3) failure(died))) 	///
+                , 
+est store uhtred
+est table stpm2 merlin uhtred
+estimates drop stpm2 merlin uhtred
+
+
+
+foreach v in trt bmi x1 x2 x3 {
+	assert abs(`mer_b_`v''- `=_b[xb1:`v']')< 1E-5
+	assert abs(`mer_se_`v''- `=_se[xb1:`v']')< 1E-5
+}
+	
+assert abs(`mer_b_trtrcs'- `=_b[tb1:c.trt#c._rcs1_6_2_1]')< 1E-5
+assert abs(`mer_se_trtrcs'- `=_se[tb1:c.trt#c._rcs1_6_2_1]')< 1E-5
+assert abs(`mer_b_trtrcs2'- `=_b[tb1:c.trt#c._rcs1_6_2_2]')< 1E-5
+assert abs(`mer_se_trtrcs2'- `=_se[tb1:c.trt#c._rcs1_6_2_2]')< 1E-5
+
+	
+	
+//mkassert
+uhtred (_t 	trt bmi x1 x2 x3 			///
+		c.trt#rcs(_t, df(2) log orthog event) 	///
+		, family(rp, df(3) failure(died))) 	///
+		,
+		
+mkassert eclass
+
+
 //============================================================================//
 //user-defined knots PH model
 stpm2 trt bmi x1 x2 x3, knots(-4 1 1.5 2) knscale(log) scale(h) 
@@ -248,7 +306,7 @@ est store stpm2
 
 
 merlin (_t 	trt bmi x1 x2 x3 			///
-		, family(rp, df(3) bknots(-4 2) failure(died))) 	///
+		, family(rp, knots(-4 1 1.5 2)failure(died))) 	///
 ,
 est store merlin
 local j 1
@@ -284,6 +342,7 @@ mkassert eclass
 //============================================================================//
 //user-defined knots TDE
 
+/*
 //testing
 stpm2 trt bmi x1 x2 x3, df(3) knotstvc(trt 1.5) bknotstvc(trt -4 2.3) tvc(trt) scale(h) knscale(log) orthog
 est store stpm2
@@ -295,36 +354,52 @@ merlin (_t 	trt bmi x1 x2 x3 			///
 est store merlin
 
 
-
-
-/*
-//er: coding operators not allowed
 uhtred (_t 	trt bmi x1 x2 x3 			///
-		trt#rcs(_t, knots(-4 1.5 2.3) log orthog) 	///
-		, family(rp, df(3) failure(died))) 	///
+		trt#rcs(_t, knots(-4 1.5 2.3) log orthog ) 	///
+		, family(rp, knots(-4 1 1.5 2) failure(died))) 	///
 		,
+est store uhtred
+est table merlin uhtred
 
 */
-	
-	
-	
-/*
-//>1 df in tde
 
-//er: knot locations not unique
-merlin (_t 	trt bmi x1 x2 x3 			///
-		trt#rcs(_t, df(2) log orthog) 	///
-		, family(rp, df(3) failure(died))) 	///
-                , 
-				
-uhtred (_t 	trt bmi x1 x2 x3 			///
-		trt#rcs(_t, df(2) log orthog) 	///
-		, family(rp, df(3) failure(died))) 	///
-                , 
-				
-*/	
-				
 
+
+
+
+//============================================================================//
+//throw error messages
+
+
+//new var doesn't exist
+rcof "uhtred (_t newvar trt bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog) 	, family(rp, knots(3) failure(died)))" == 111
+rcof "uhtred (_t  trt i.bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog) , family(rp, df(3) failure(died)))" == 452
+
+
+
+//tde misspecified
+rcof "uhtred (_t  trt bmi x1 x2 x3 trt#ecs(_t, df(1) log orthog) 	, family(rp, knots(3) failure(died)))" == 198
+rcof "uhtred (_t  trt bmi x1 x2 x3 trt#rcs(time, df(1) log orthog) 	, family(rp, knots(3) failure(died)))" == 111
+rcof "uhtred (_t  trt bmi x1 x2 x3 trt#rcs(_t, df(1) lrg orthog) 	, family(rp, knots(3) failure(died)))" == 3598
+rcof "uhtred (_t  trt bmi x1 x2 x3 trt#rcs(_t, df(1) log prthog) 	, family(rp, knots(3) failure(died)))" == 3598
+rcof "uhtred (_t  trt bmi x1 x2 x3 trt#rcs(_t, df(-1) log orthog) 	, family(rp, knots(3) failure(died)))" ==  1986
+rcof "uhtred (_t  trt bmi x1 x2 x3 trt#rcs(_t, df(1 5) log orthog) 	, family(rp, knots(3) failure(died)))" == 1986
+rcof "uhtred (_t trt bmi x1 x2 x3 trt#rcs(_t, df(1) knots(2 4) log orthog) 	, family(rp, knots(3) failure(died)))" == 1986
+rcof "uhtred (_t trt bmi x1 x2 x3 trt#rcs(_t,  knots(2 2) log orthog) 	, family(rp, knots(3) failure(died)))" == 3598
+
+//family options misspecifed
+rcof "uhtred (_t trt bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog) 	, family(fam, knots(3) failure(died)))" == 198
+rcof "uhtred (_t  trt bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog) 	, family(rp, knots(3) failure(newvar)))" == 111
+rcof "uhtred (_t  trt bmi x1 x2 x3 	, family(rp, knots(3)))" == 198
+*rcof "uhtred (_t trt bmi x1 x2 x3 , family(rp,    failure(died))" == 198
+
+//other incorrect syntax
+rcof "uhtred (_t trt bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog 	, family(rp, knots(3) failure(died)))" == 198
+rcof "uhtred (_t trt bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog)	 family(rp, knots(3) failure(died)))" == 198
+rcof "uhtred _t trt bmi x1 x2 x3, family(rp, df(3) failure(died)))" == 198
+rcof "uhtred _t trt bmi x1 x2 x3, family(rp, df(3 failure(died)))" == 198
+
+				
 //============================================================================//
 // end of file
 //============================================================================//
