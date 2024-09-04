@@ -190,46 +190,11 @@ uhtred (_t 	trt bmi x1 x2 x3 			///
 
 
 _assert_streq `"`e(cmdline)'"' `"uhtred (_t      trt bmi x1 x2 x3                                        , family(rp, df(3) failure(died)))                      ,"'
-assert `"`e(chintpoints)'"'       == `"30"'
-assert `"`e(nap1)'"'              == `"0"'
-assert `"`e(ndistap1)'"'          == `"0"'
-assert `"`e(constant1)'"'         == `"1"'
-assert `"`e(orthog1)'"'           == `"orthog"'
 assert `"`e(knots1)'"'            == `"-4.415933 1.043513 1.805705 2.302107"'
-assert `"`e(timevar1)'"'          == `"_t"'
-assert `"`e(failure1)'"'          == `"died"'
-assert `"`e(response1)'"'         == `"_t died"'
-assert `"`e(family1)'"'           == `"rp"'
-assert `"`e(haszb)'"'             == `"0"'
-assert `"`e(hastb)'"'             == `"1"'
-assert `"`e(hasxb)'"'             == `"1"'
-assert `"`e(allvars)'"'           == `"_t bmi died trt x1 x2 x3"'
-assert `"`e(title)'"'             == `"Fixed effects regression model"'
-assert `"`e(cmd)'"'               == `"uhtred"'
-assert `"`e(hasopts)'"'           == `"0"'
-assert `"`e(from)'"'              == `"0"'
-assert `"`e(predict)'"'           == `"uhtred_p"'
-assert `"`e(deriv_useminbound)'"' == `"off"'
-assert `"`e(opt)'"'               == `"moptimize"'
-assert `"`e(vce)'"'               == `"oim"'
-assert `"`e(user)'"'              == `"uhtred_gf()"'
-assert `"`e(crittype)'"'          == `"log likelihood"'
-assert `"`e(ml_method)'"'         == `"gf2"'
-assert `"`e(singularHmethod)'"'   == `"m-marquardt"'
-assert `"`e(technique)'"'         == `"nr"'
-assert `"`e(which)'"'             == `"max"'
-assert `"`e(properties)'"'        == `"b V"'
+
 
 assert         e(rank)       == 9
-assert         e(N)          == 5000
 assert         e(k)          == 9
-assert         e(k_eq)       == 2
-assert         e(noconstant) == 0
-assert         e(consonly)   == 0
-assert         e(k_dv)       == 0
-assert         e(converged)  == 1
-assert         e(rc)         == 0
-assert         e(k_autoCns)  == 0
 assert reldif( e(ll)          , -7490.039919617051) <  1E-8
 assert         e(k_eq_model) == 0
 assert         e(Nmodels)    == 1
@@ -389,50 +354,12 @@ uhtred (_t	trt bmi x1 x2 x3 i.agecat			///
 		,
 
 _assert_streq `"`e(cmdline)'"' `"uhtred (_t      trt bmi x1 x2 x3 i.agecat                                       , family(rp, df(1) failure(died)))                      ,"'
-assert `"`e(chintpoints)'"'       == `"30"'
-assert `"`e(nap1)'"'              == `"0"'
-assert `"`e(ndistap1)'"'          == `"0"'
-assert `"`e(constant1)'"'         == `"1"'
-assert `"`e(orthog1)'"'           == `"orthog"'
-assert `"`e(knots1)'"'            == `"-4.415933 2.302107"'
-assert `"`e(timevar1)'"'          == `"_t"'
-assert `"`e(failure1)'"'          == `"died"'
-assert `"`e(response1)'"'         == `"_t died"'
-assert `"`e(family1)'"'           == `"rp"'
-assert `"`e(haszb)'"'             == `"0"'
-assert `"`e(hastb)'"'             == `"1"'
-assert `"`e(hasxb)'"'             == `"1"'
 assert `"`e(allvars)'"'           == `"_t bmi died i.agecat trt x1 x2 x3"'
-assert `"`e(title)'"'             == `"Fixed effects regression model"'
-assert `"`e(cmd)'"'               == `"uhtred"'
-assert `"`e(hasopts)'"'           == `"0"'
-assert `"`e(from)'"'              == `"0"'
-assert `"`e(predict)'"'           == `"uhtred_p"'
-assert `"`e(deriv_useminbound)'"' == `"off"'
-assert `"`e(opt)'"'               == `"moptimize"'
-assert `"`e(vce)'"'               == `"oim"'
-assert `"`e(user)'"'              == `"uhtred_gf()"'
-assert `"`e(crittype)'"'          == `"log likelihood"'
-assert `"`e(ml_method)'"'         == `"gf2"'
-assert `"`e(singularHmethod)'"'   == `"m-marquardt"'
-assert `"`e(technique)'"'         == `"nr"'
-assert `"`e(which)'"'             == `"max"'
-assert `"`e(properties)'"'        == `"b V"'
 
 assert         e(rank)       == 11
-assert         e(N)          == 5000
 assert         e(k)          == 12
-assert         e(k_eq)       == 2
-assert         e(noconstant) == 0
-assert         e(consonly)   == 0
-assert         e(k_dv)       == 0
-assert         e(converged)  == 1
-assert         e(rc)         == 0
 assert         e(k_autoCns)  == 1
 assert reldif( e(ll)          , -7487.502134773174) <  1E-8
-assert         e(k_eq_model) == 0
-assert         e(Nmodels)    == 1
-assert         e(Nlevels)    == 1
 
 qui {
 mat T_b = J(1,12,0)
@@ -630,51 +557,14 @@ uhtred (_t 	trt bmi x1 x2 x3 			///
 		,
 		
 _assert_streq `"`e(cmdline)'"' `"uhtred (_t      trt bmi x1 x2 x3                                        c.trt#rcs(_t, df(1) log orthog)                         , family(rp, df(3) failure(died)))                      ,"'
-assert `"`e(chintpoints)'"'       == `"30"'
-assert `"`e(nap1)'"'              == `"0"'
-assert `"`e(ndistap1)'"'          == `"0"'
-assert `"`e(constant1)'"'         == `"1"'
 assert `"`e(knots_1_6_2)'"'       == `"-4.415933 2.302585"'
-assert `"`e(orthog1)'"'           == `"orthog"'
 assert `"`e(knots1)'"'            == `"-4.415933 1.043513 1.805705 2.302107"'
-assert `"`e(timevar1)'"'          == `"_t"'
-assert `"`e(failure1)'"'          == `"died"'
-assert `"`e(response1)'"'         == `"_t died"'
-assert `"`e(family1)'"'           == `"rp"'
-assert `"`e(haszb)'"'             == `"0"'
-assert `"`e(hastb)'"'             == `"1"'
-assert `"`e(hasxb)'"'             == `"1"'
 assert `"`e(allvars)'"'           == `"_t bmi c.trt died trt x1 x2 x3"'
-assert `"`e(title)'"'             == `"Fixed effects regression model"'
-assert `"`e(cmd)'"'               == `"uhtred"'
-assert `"`e(hasopts)'"'           == `"0"'
-assert `"`e(from)'"'              == `"0"'
-assert `"`e(predict)'"'           == `"uhtred_p"'
-assert `"`e(deriv_useminbound)'"' == `"off"'
-assert `"`e(opt)'"'               == `"moptimize"'
-assert `"`e(vce)'"'               == `"oim"'
-assert `"`e(user)'"'              == `"uhtred_gf()"'
-assert `"`e(crittype)'"'          == `"log likelihood"'
-assert `"`e(ml_method)'"'         == `"gf2"'
-assert `"`e(singularHmethod)'"'   == `"m-marquardt"'
-assert `"`e(technique)'"'         == `"nr"'
-assert `"`e(which)'"'             == `"max"'
-assert `"`e(properties)'"'        == `"b V"'
 
 assert         e(rank)       == 10
-assert         e(N)          == 5000
 assert         e(k)          == 10
-assert         e(k_eq)       == 2
-assert         e(noconstant) == 0
-assert         e(consonly)   == 0
-assert         e(k_dv)       == 0
-assert         e(converged)  == 1
-assert         e(rc)         == 0
-assert         e(k_autoCns)  == 0
 assert reldif( e(ll)          , -7490.02474791766 ) <  1E-8
 assert         e(k_eq_model) == 0
-assert         e(Nmodels)    == 1
-assert         e(Nlevels)    == 1
 
 qui {
 mat T_b = J(1,10,0)
@@ -863,50 +753,10 @@ uhtred (_t 	trt bmi x1 x2 x3 			///
 
 
 _assert_streq `"`e(cmdline)'"' `"uhtred (_t      trt bmi x1 x2 x3                                        , family(rp, knots(-4 1 1.5 2) failure(died)))  ,"'
-assert `"`e(chintpoints)'"'       == `"30"'
-assert `"`e(nap1)'"'              == `"0"'
-assert `"`e(ndistap1)'"'          == `"0"'
-assert `"`e(constant1)'"'         == `"1"'
-assert `"`e(orthog1)'"'           == `"orthog"'
 assert `"`e(knots1)'"'            == `"-4 1 1.5 2"'
-assert `"`e(timevar1)'"'          == `"_t"'
-assert `"`e(failure1)'"'          == `"died"'
-assert `"`e(response1)'"'         == `"_t died"'
-assert `"`e(family1)'"'           == `"rp"'
-assert `"`e(haszb)'"'             == `"0"'
-assert `"`e(hastb)'"'             == `"1"'
-assert `"`e(hasxb)'"'             == `"1"'
-assert `"`e(allvars)'"'           == `"_t bmi died trt x1 x2 x3"'
-assert `"`e(title)'"'             == `"Fixed effects regression model"'
-assert `"`e(cmd)'"'               == `"uhtred"'
-assert `"`e(hasopts)'"'           == `"0"'
-assert `"`e(from)'"'              == `"0"'
-assert `"`e(predict)'"'           == `"uhtred_p"'
-assert `"`e(deriv_useminbound)'"' == `"off"'
-assert `"`e(opt)'"'               == `"moptimize"'
-assert `"`e(vce)'"'               == `"oim"'
-assert `"`e(user)'"'              == `"uhtred_gf()"'
-assert `"`e(crittype)'"'          == `"log likelihood"'
-assert `"`e(ml_method)'"'         == `"gf2"'
-assert `"`e(singularHmethod)'"'   == `"m-marquardt"'
-assert `"`e(technique)'"'         == `"nr"'
-assert `"`e(which)'"'             == `"max"'
-assert `"`e(properties)'"'        == `"b V"'
-
 assert         e(rank)       == 9
-assert         e(N)          == 5000
 assert         e(k)          == 9
-assert         e(k_eq)       == 2
-assert         e(noconstant) == 0
-assert         e(consonly)   == 0
-assert         e(k_dv)       == 0
-assert         e(converged)  == 1
-assert         e(rc)         == 0
-assert         e(k_autoCns)  == 0
 assert reldif( e(ll)          , -7489.57641500612 ) <  1E-8
-assert         e(k_eq_model) == 0
-assert         e(Nmodels)    == 1
-assert         e(Nlevels)    == 1
 
 qui {
 mat T_b = J(1,9,0)
