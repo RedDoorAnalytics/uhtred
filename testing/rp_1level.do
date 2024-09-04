@@ -342,7 +342,7 @@ mkassert eclass
 //============================================================================//
 //user-defined knots TDE
 
-/*
+
 //testing
 stpm2 trt bmi x1 x2 x3, df(3) knotstvc(trt 1.5) bknotstvc(trt -4 2.3) tvc(trt) scale(h) knscale(log) orthog
 est store stpm2
@@ -352,16 +352,40 @@ merlin (_t 	trt bmi x1 x2 x3 			///
 		, family(rp, knots(-4 1 1.5 2) failure(died))) 	///
 		,
 est store merlin
+local j 1
+foreach v in trt bmi x1 x2 x3 rcs1 {
+	local mer_b_`v' =_b[_cmp_1_`j'_1:_cons]
+	local mer_se_`v' =_se[_cmp_1_`j'_1:_cons]
+	local j `=`j'+1'
+}
+local mer_b_rcs2 =_b[_cmp_1_6_2:_cons]
+local mer_se_rcs2 =_se[_cmp_1_6_2:_cons]
 
 
 uhtred (_t 	trt bmi x1 x2 x3 			///
-		trt#rcs(_t, knots(-4 1.5 2.3) log orthog ) 	///
+		c.trt#rcs(_t, knots(-4 1.5 2.3) log orthog ) 	///
 		, family(rp, knots(-4 1 1.5 2) failure(died))) 	///
 		,
 est store uhtred
 est table merlin uhtred
 
-*/
+foreach v in trt bmi x1 x2 x3 {
+	assert abs(`mer_b_`v''- `=_b[xb1:`v']')< 1E-5
+	assert abs(`mer_se_`v''- `=_se[xb1:`v']')< 1E-5
+}
+
+forvalues v=1/2 {
+	assert abs(`mer_b_rcs`v''- `=_b[tb1:c.trt#_rcs1_6_2_`v']')< 1E-5
+	assert abs(`mer_se_rcs`v''- `=_se[tb1:c.trt#_rcs1_6_2_`v']')< 1E-5
+}
+
+uhtred (_t 	trt bmi x1 x2 x3 			///
+		c.trt#rcs(_t, knots(-4 1.5 2.3) log orthog ) 	///
+		, family(rp, knots(-4 1 1.5 2) failure(died))) 	///
+		,
+
+mkassert eclass
+
 
 
 
