@@ -93,7 +93,7 @@ mata:
 			gml.survind = 4
 			index4 = uhtred_get_surv_index(gml)
 			XT0    = asarray(gml.XT0,model)[index4,]
-			expxtzb0 = exp(xzb[index4] + 
+			expxtzb0 = exp(xzb[index4,] :+ 
 				XT0 * brcs)
 			if (hasbh[2]) {
 				logl[index4,] = logl[index4,] :+ 
