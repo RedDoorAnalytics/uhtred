@@ -1,7 +1,7 @@
 *! version 1.0.0 
 
 program uhtred_parse, rclass
-        version 18
+        version 17
         // syntax:
         //      <mname> [, touse()] : <modellist> [if] [in] [, options]
 

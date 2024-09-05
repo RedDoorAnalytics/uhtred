@@ -1,0 +1,249 @@
+-----------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/michael/My Drive/software/uhtred/sim3level-comparison.log
+  log type:  text
+ opened on:   5 Sep 2024, 23:07:59
+
+. set seed 7254
+
+. clear 
+
+. 
+. //simulate hospitals
+. set obs 50
+Number of observations (_N) was 0, now 50.
+
+. gen hosp = _n
+
+. gen age = runiform()
+
+. gen sd1 = exp(log(0.1))
+
+. gen u1 = rnormal(0,sd1)
+
+. //simulate surgeons in each hospital
+. expand 30
+(1,450 observations created)
+
+. bys hosp: gen surg = _n
+
+. gen trt = runiform()>0.5
+
+. gen sd2 = exp(log(0.1))
+
+. gen u2 = rnormal(0,sd2)
+
+. //simulate patients within each surgeon & hospital
+. expand 100
+(148,500 observations created)
+
+. gen id = _n
+
+. sort hosp surg id
+
+. 
+. //simulate survival times from a weibull model with random effects at 
+. //the hospital and surgeon level
+. // log hazard ratios are specified on trt and age
+. survsim stime1 dead1 , dist(weib) lambda(0.1) gamma(1.2)        ///
+>         cov(trt -0.5 age 0.02 u1 1 u2 1)                        ///
+>         maxt(10)
+
+.         
+. stset stime1, f(dead1)
+
+Survival-time data settings
+
+         Failure event: dead1!=0 & dead1<.
+Observed time interval: (0, stime1]
+     Exit on or before: failure
+
+--------------------------------------------------------------------------
+    150,000  total observations
+          0  exclusions
+--------------------------------------------------------------------------
+    150,000  observations remaining, representing
+    106,531  failures in single-record/single-failure data
+ 901,627.51  total analysis time at risk and under observation
+                                                At risk from t =         0
+                                     Earliest observed entry t =         0
+                                          Last observed exit t =        10
+
+. 
+. //fit the true model with mestreg
+. timer clear             
+
+. timer on 1
+
+. mestreg trt age || hosp: || surg: , dist(weib) nohr
+
+        Failure _d: dead1
+  Analysis time _t: stime1
+
+Fitting fixed-effects model:
+
+Iteration 0:   log likelihood = -6350187.3  
+Iteration 1:   log likelihood = -355265.16  (not concave)
+Iteration 2:   log likelihood = -334495.01  
+Iteration 3:   log likelihood = -329644.77  
+Iteration 4:   log likelihood = -329200.64  
+Iteration 5:   log likelihood = -329199.23  
+Iteration 6:   log likelihood = -329199.23  
+
+Refining starting values:
+
+Grid node 0:   log likelihood = -330739.44
+
+Fitting full model:
+
+Iteration 0:   log likelihood = -330739.44  (not concave)
+Iteration 1:   log likelihood = -330135.88  (not concave)
+Iteration 2:   log likelihood = -329526.57  (not concave)
+Iteration 3:   log likelihood = -329463.78  (not concave)
+Iteration 4:   log likelihood = -328898.34  (not concave)
+Iteration 5:   log likelihood = -328673.76  
+Iteration 6:   log likelihood = -328671.09  
+Iteration 7:   log likelihood = -328653.41  
+Iteration 8:   log likelihood = -328653.34  
+Iteration 9:   log likelihood = -328653.34  
+
+Mixed-effects Weibull PH regression             Number of obs     =    150,000
+
+        Grouping information
+        -------------------------------------------------------------
+                        |     No. of       Observations per group
+         Group variable |     groups    Minimum    Average    Maximum
+        ----------------+--------------------------------------------
+                   hosp |         50      3,000    3,000.0      3,000
+                   surg |      1,500        100      100.0        100
+        -------------------------------------------------------------
+
+Integration method: mvaghermite                 Integration pts.  =          7
+
+                                                Wald chi2(2)      =    3784.61
+Log likelihood = -328653.34                     Prob > chi2       =     0.0000
+------------------------------------------------------------------------------
+          _t | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         trt |  -.5073292   .0082476   -61.51   0.000    -.5234943   -.4911642
+         age |   .0482279   .0497775     0.97   0.333    -.0493342    .1457901
+       _cons |  -2.309427   .0315809   -73.13   0.000    -2.371325    -2.24753
+-------------+----------------------------------------------------------------
+       /ln_p |   .1778654    .002694                      .1725854    .1831455
+-------------+----------------------------------------------------------------
+hosp         |
+   var(_cons)|   .0092379   .0020137                      .0060259    .0141619
+-------------+----------------------------------------------------------------
+hosp>surg    |
+   var(_cons)|   .0100951   .0009031                      .0084715    .0120298
+------------------------------------------------------------------------------
+LR test vs. Weibull model: chi2(2) = 1091.79              Prob > chi2 = 0.0000
+
+Note: LR test is conservative and provided only for reference.
+
+. timer off 1
+
+. 
+. //compare to merlin with royston-parmar and df=1 (equivalent to a weibull)
+. timer on 2
+
+. merlin  (stime1 trt age M2[hosp>surg]@1 M1[hosp]@1 , ///
+>         family(rp, df(1) failure(dead1))) 
+variables created: _rcs1_1 to _rcs1_1
+
+Fitting fixed effects model:
+
+Fitting full model:
+
+Iteration 0:   log likelihood = -329245.45  (not concave)
+Iteration 1:   log likelihood =  -329230.3  (not concave)
+Iteration 2:   log likelihood = -328914.78  (not concave)
+Iteration 3:   log likelihood = -328725.71  
+Iteration 4:   log likelihood = -328654.36  
+Iteration 5:   log likelihood = -328653.35  
+Iteration 6:   log likelihood = -328653.35  
+
+Mixed effects regression model                         Number of obs = 150,000
+Log likelihood = -328653.35
+------------------------------------------------------------------------------
+             | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+stime1:      |            
+         trt |  -.5073258   .0082471   -61.52   0.000    -.5234899   -.4911616
+         age |   .0482288    .049779     0.97   0.333    -.0493363    .1457939
+M2[hosp>su~] |          1          .        .       .            .           .
+    M1[hosp] |          1          .        .       .            .           .
+       _cons |  -.5207028    .030984   -16.81   0.000    -.5814303   -.4599754
+-------------+----------------------------------------------------------------
+hosp:        |            
+      sd(M1) |   .0961173   .0104759                      .0776298    .1190076
+-------------+----------------------------------------------------------------
+surg:        |            
+      sd(M2) |   .1004461    .004491                      .0920185    .1096456
+------------------------------------------------------------------------------
+    Warning: Baseline spline coefficients not shown - use ml display
+
+. // equivalent to:       
+. // stmixed trt age || id1: || id2: , dist(rp) df(1)
+. timer off 2
+
+. 
+. //compare to uhtred (merlin2)
+. timer on 3
+
+. uhtred  (stime1 trt age M2[hosp>surg]@1 M1[hosp]@1 , ///
+>         family(rp, df(1) failure(dead1))) 
+
+Fitting fixed effects model:
+
+Fitting full model:
+
+Iteration 0:   log likelihood = -329245.45  (not concave)
+Iteration 1:   log likelihood =  -329230.3  (not concave)
+Iteration 2:   log likelihood = -328914.75  (not concave)
+Iteration 3:   log likelihood = -328725.67  
+Iteration 4:   log likelihood = -328654.36  
+Iteration 5:   log likelihood = -328653.35  
+Iteration 6:   log likelihood = -328653.35  
+
+Mixed effects regression model                         Number of obs = 150,000
+Log likelihood = -328653.35
+------------------------------------------------------------------------------
+             | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+xb1          |
+         trt |  -.5073258   .0082471   -61.52   0.000    -.5234899   -.4911616
+         age |   .0482287    .049779     0.97   0.333    -.0493364    .1457939
+       _cons |  -.5207028    .030984   -16.81   0.000    -.5814303   -.4599753
+-------------+----------------------------------------------------------------
+tb1          |
+     _rcs1_1 |   1.142046   .0030766   371.20   0.000     1.136016    1.148076
+-------------+----------------------------------------------------------------
+zb1_1        |
+      _re_M1 |          1  (constrained)
+-------------+----------------------------------------------------------------
+zb1_2        |
+      _re_M2 |          1  (constrained)
+-------------+----------------------------------------------------------------
+hosp:        |            
+      sd(M1) |   .0961173   .0104759                      .0776298    .1190076
+-------------+----------------------------------------------------------------
+surg:        |            
+      sd(M2) |   .1004461    .004491                      .0920185    .1096455
+------------------------------------------------------------------------------
+
+. timer off 3
+
+. 
+. //compare timings
+. timer list
+   1:     40.41 /        1 =      40.4050
+   2:    235.05 /        1 =     235.0500
+   3:     82.50 /        1 =      82.5010
+
+. log close
+      name:  <unnamed>
+       log:  /Users/michael/My Drive/software/uhtred/sim3level-comparison.log
+  log type:  text
+ closed on:   5 Sep 2024, 23:13:57
+-----------------------------------------------------------------------------------------

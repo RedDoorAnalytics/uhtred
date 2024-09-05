@@ -89,7 +89,7 @@ program Fit, eclass sortpreserve
 		
         if "`mlfrom'"!="" {
                 matrix `b' = r(b)
-                local mlinit init(`b',copy)
+                local mlinit init(`b')
         }
 	if `"`initextra'"'!="" {
 		local initextra init(`initextra')

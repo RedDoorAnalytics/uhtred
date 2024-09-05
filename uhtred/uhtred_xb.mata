@@ -71,7 +71,7 @@ void uhtred_p_xb(`gml' gml, `RR' b)
 		}
 	}
 	if (gml.Nrelevels) {
-		eqnind = uhtred_util_bindices(gml,eqnind)[1,2]
+// 		eqnind = uhtred_util_bindices(gml,eqnind)[1,2]
 		uhtred_fillvcv(gml,b,eqnind)
 	}
 }

@@ -11,7 +11,7 @@ mata mata clear
 
 set seed 98798
 clear
-set obs 1000
+set obs 100
 gen id 	= _n
 gen trt = runiform()>0.5
 gen sd1 = exp(log(0.1))
@@ -42,3 +42,4 @@ uhtred (stime trt age M1[id]@1, family(rp, df(1) failure(died)))	///
 timer off 2
 
 timer list
+// predict s1, surv
