@@ -22,7 +22,18 @@ program uhtred_rcs, rclass
 				DERIV(real 0)		///
 				TIMEST			///
 			]
-			
+	
+	if "`df'"=="" & "`knots'"=="" {
+		di as error "option {bf:df()} or option " ///
+			"{bf:knots()} required"
+		exit 198
+	}
+	if "`df'"!="" & "`knots'"!="" {
+		di as error "only one of options {bf:df()} and " ///
+			"{bf:knots()} may be specified"
+		exit 198
+	}
+	
 	mata: _uhtred_rcs()
 	
 	return local yvar `varlist'
