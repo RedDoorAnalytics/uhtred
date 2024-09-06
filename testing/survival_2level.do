@@ -43,6 +43,10 @@ timer on 2
 uhtred (stime trt age M1[id]@1, family(rp, df(1) failure(died)))
 timer off 2
 
+timer on 3
+stuhtred trt age || id: , dist(rp) df(1)
+timer off 3
+
 timer list
 predict s1, surv fitted
 predict h1, haz fitted

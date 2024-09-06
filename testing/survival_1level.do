@@ -22,7 +22,7 @@ gen x3 = rnormal()
 gen bmi = rnormal(30,3)
 
 gen t0 = 0
-replace t0 = runiform() * 2 //if runiform()<0.9
+replace t0 = runiform() * 2 if runiform()<0.9
 
 survsim stime died , dist(weib) lambda(0.1) gamma(1.2) 	///
 		cov(trt -0.5 age 0.01 bmi -0.05 x1 0.1 x2 -0.4 x3 0.5) ///
@@ -48,7 +48,7 @@ predict s0, survival timevar(_t)
 mat b = -0.5,-0.7,0.6,0
 
 timer on 3
-uhtred (_t 	trt /*bmi x1 x2 x3 */		///
+uhtred (_t trt	/*bmi x1 x2 x3 */		///
 		, family(rp, df(2) failure(died) ltruncated(t0))) 	///
                 , evaltype(gf0)  //from(b)
 timer off 3
