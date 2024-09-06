@@ -16,7 +16,7 @@ gen id1 = _n
 gen age = runiform()
 gen sd1 = exp(log(0.1))
 gen u1 = rnormal(0,sd1)
-expand 100
+expand 10
 bys id1: gen id2 = _n
 gen trt = runiform()>0.5
 gen sd2 = exp(log(0.1))
@@ -42,7 +42,8 @@ timer on 2
 uhtred 	(stime1 trt age M2[id1>id2]@1 M1[id1]@1 , family(rp, df(1) failure(dead1))) ///
 			, evaltype(gf0) //intmethod(gh) //intpoints(15) 
 timer off 2
+
+timer on 3			
+stuhtred trt age || id1: || id2:, dist(rp) df(1)
+timer off 3
 timer list
-// uhtred 	(stime1 age M2[id1>id2]@1 M1[id1]@1 , family(cox, failure(dead1))) ///
-// 			, intmethod(gh) intpoints(7) devcode5(294820)
-			
