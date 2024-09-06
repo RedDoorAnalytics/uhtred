@@ -28,7 +28,7 @@ mata:
 `RM' _logl_rp(`TR' M, `RR' b, `gml' gml, | `RM' G, `RM' H)
 {	
 	// Setup //
-	
+
 	//model info
 	model 	= gml.model
 	hasxb 	= gml.hasxb[model]
@@ -50,12 +50,22 @@ mata:
 	logl 	= (Nrelevs ? J(Nobs,gml.ndim[Nrelevs],0) : J(Nobs,1,0))
 
 	//linear predictors
-	if (hastb) {
-		xzb   = uhtred_util_xzb(M,b,gml)
-		xtzb  = xzb :+ uhtred_util_tb(M,b,gml)
-		brcs  = b[|uhtred_util_bindices(gml,teqn)|]'
+	if (!gml.predict) {
+		if (hastb) {
+			xzb   = uhtred_util_xzb(M,b,gml)
+			xtzb  = xzb :+ uhtred_util_tb(M,b,gml)
+			brcs  = b[|uhtred_util_bindices(gml,teqn)|]'
+		}
+		else 	xtzb  = uhtred_util_xtzb(M,b,gml)
 	}
-	else 	xtzb  = uhtred_util_xtzb(M,b,gml)
+	else {
+		if (hastb) {
+			xzb   = uhtred_util_p_xzb(gml)
+			xtzb  = xzb :+ uhtred_util_p_tb(gml)
+			brcs  = b[|uhtred_util_bindices(gml,teqn)|]'
+		}
+		else 	xtzb  = uhtred_util_p_xtzb(gml)
+	}
 	expxtzb	= exp(xtzb)
 
 	// log likelihood //

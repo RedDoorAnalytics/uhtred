@@ -209,14 +209,14 @@ void uhtred_setup(`SS' GML,`SS' touse)
 	uhtred_get_noconstants(gml)
         uhtred_get_timevars(gml)
 	uhtred_get_latents(gml)
-        uhtred_build_clp(gml)
+        uhtred_build_clp(gml,coef=.)
 
 	//survival extras
 	uhtred_setup_survival(gml)
 	uhtred_build_clpq(gml)
 
 	//latents
-	uhtred_setup_vcv(gml)
+	uhtred_setup_vcv(gml,coef)
 
 	//pointers
 	uhtred_get_logl_p(gml)
@@ -380,7 +380,7 @@ void uhtred_parse_covstructures(`gml' gml)
 	st_matrix(st_local("vcvmat"),gml.covariances)
 }
 
-void uhtred_parse_vcv_eqns(`gml' gml)
+void uhtred_parse_vcv_eqns(`gml' gml, `RS' coef)
 {
 	vcveqns = J(1,0,"")
 	gml.E.Nreparams = J(gml.Nlevels,1,0)

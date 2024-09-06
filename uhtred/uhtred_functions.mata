@@ -170,7 +170,6 @@ Multivariate normal probability density function
 	
 }
 
-
 /*
 Expand a matrix into all permutations
 */

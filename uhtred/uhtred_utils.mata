@@ -83,7 +83,7 @@ mata:
 	`RM' x
 	`RS' hast, mod
 	
-	hast = args()==4
+	hast = args()==2
 	mod  = gml.model
 	xb   = 0
 
@@ -98,7 +98,10 @@ mata:
 		if (hast)	xb = xb :+ uhtred_util_p_tb(gml,t)
 		else 		xb = xb :+ uhtred_util_p_tb(gml)
 	}
-	if (gml.haszb[mod]) xb = xb :+ uhtred_util_p_zb(gml)
+	
+	if (gml.haszb[mod] & gml.fixedonly!=1) {
+		xb = xb :+ uhtred_util_p_zb(gml)
+	}
 	return(xb)
 }
 
@@ -135,7 +138,9 @@ mata:
 			xb = xb[uhtred_util_index(gml),]
 		}
 	}
-	if (gml.haszb[mod]) xb = xb :+ uhtred_util_zb(gml)
+	if (gml.haszb[mod] & gml.fixedonly!=1) {
+		xb = xb :+ uhtred_util_p_zb(gml)
+	}
 	return(xb)
 }
 
@@ -183,13 +188,21 @@ mata:
 		if (gml.adapt[1]) {
 			Zbeta 	= asarray(gml.Z,(mod,lev)) :* bre	
 			indexr  = uhtred_get_adpanelindex(gml,lev)
-			indexc  = .
-			if (lev!=gml.Nrelevels) indexc = gml.qind[,lev+1]
+			if (gml.fixedonly!=2) {
+				indexc  = .
+				if (lev!=gml.Nrelevels) indexc = gml.qind[,lev+1]
 
-			for (r=1;r<=gml.Nres[lev];r++)  {
-				zb = zb :+ Zbeta[,r] :* 
-					asarray(gml.aghip2,
-						(lev,reindex[r]))[indexr,indexc]
+				for (r=1;r<=gml.Nres[lev];r++)  {
+					zb = zb :+ Zbeta[,r] :* 
+						asarray(gml.aghip2,
+							(lev,reindex[r]))[indexr,indexc]
+				}
+			}
+			else {
+				for (r=1;r<=gml.Nres[lev];r++)  {
+					zb = zb :+ Zbeta[,r] :* 
+						asarray(gml.blups,lev)[indexr,reindex[r]]
+				}
 			}			
 		}
 		else {
@@ -236,7 +249,7 @@ mata:
 	`RS' hast
 	
 	xb   = 0
-	hast = args()==4
+	hast = args()==2
 	teqn = gml.teqn[gml.model]
 	
 	if (hast) {
@@ -280,9 +293,11 @@ mata:
 	Nobs	= uhtred_util_nobs(gml)
 	newtvarlist = gml.tvarlist[mod]
 
+	anytdep = 0
 	//now rebuild
 	for (i=1;i<=Ncmps;i++) {
 		istdep 	= sum(asarray(gml.eltvar,(mod,i))[,1])
+		anytdep = anytdep + istdep
 		if (istdep) {
 			eltypes = asarray(gml.elindex,(mod,i))
 			
@@ -314,9 +329,12 @@ mata:
 		}
 	}	
 
-	T = st_data(.,newtvarlist,gml.modeltouses[gml.modtoind])
-	stata("cap drop "+invtokens(names))
-	return(T)
+	if (anytdep) {
+		T = st_data(.,newtvarlist,gml.modeltouses[gml.modtoind])
+		stata("cap drop "+invtokens(names))
+		return(T)
+	}
+	else return(asarray(gml.XT,mod))
 }
 
 `RM' uhtred_util_tb_qs(`TR' M, `RR' b, `gml' gml,`RS' Nobs2)

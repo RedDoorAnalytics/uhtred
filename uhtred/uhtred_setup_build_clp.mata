@@ -20,7 +20,7 @@ version 17
 
 mata:
 
-void uhtred_build_clp(`gml' gml)
+void uhtred_build_clp(`gml' gml, `RS' coef)
 {
 	eqn = coef = 1
 	gml.hasxb   = gml.hastb = gml.haszb = J(gml.Nmodels,1,0)
@@ -48,6 +48,7 @@ void uhtred_build_clp(`gml' gml)
 	for (i=1;i<=gml.Nmodels;i++) {
 		uhtred_build_xz(gml,i,eqn,coef)
 	}
+	
 }
 
 void uhtred_build_xz(`gml' gml, `RS' model, `RS' eqn, `RS' coef)

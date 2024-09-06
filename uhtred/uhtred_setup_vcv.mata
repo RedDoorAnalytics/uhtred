@@ -20,12 +20,12 @@ version 17
 
 mata:
 
-void uhtred_setup_vcv(`gml' gml)
+void uhtred_setup_vcv(`gml' gml, `RS' coef)
 {
 	if (gml.Nrelevels) {
 		uhtred_init_vcvs(gml)
 		uhtred_parse_covstructures(gml)
-		uhtred_parse_vcv_eqns(gml)
+		uhtred_parse_vcv_eqns(gml,coef)
 		uhtred_init_integration(gml)
 		prolog = "derivprolog(uhtred_prolog())"
 		st_local("mlprolog",prolog)

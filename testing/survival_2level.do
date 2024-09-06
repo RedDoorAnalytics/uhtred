@@ -25,21 +25,29 @@ stset stime, f(died)
 
 timer clear
 timer on 1
-// mestreg trt age || id:, dist(weib) //evaltype(gf0) intmethod(gh)
-// predict s1, surv marginal
+mestreg trt age || id:, dist(weib) //evaltype(gf0) intmethod(gh)
+predict s2, surv marginal
 // predict s5, surv cond(ebmeans)
 // predict d1, density marginal
 // predict r1, reffects
 // merlin (stime trt age M1[id]@1, family(weib, failure(died)))	///
 // 	, 
-merlin (stime trt age  M1[id]@1, family(rp, df(1) failure(died)))	///
-	, evaltype(gf0)  //intmethod(gh)  //gradient 
+merlin (stime trt age  M1[id]@1, family(rp, df(1) failure(died)))
 timer off 1
+predict s01, surv fitted
+predict h01, haz fitted
 
+predict s012, surv marg
+predict h012, haz marg
 timer on 2
-uhtred (stime trt age M1[id]@1, family(rp, df(1) failure(died)))	///
-	, evaltype(gf0)  //intmethod(gh)  //gradient 
+uhtred (stime trt age M1[id]@1, family(rp, df(1) failure(died)))
 timer off 2
 
 timer list
-// predict s1, surv
+predict s1, surv fitted
+predict h1, haz fitted
+
+predict s12, surv marg
+predict h12, haz marg
+
+// scatter s0 s1

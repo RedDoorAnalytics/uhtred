@@ -162,30 +162,6 @@ void uhtred_predict_error_check(`gml' gml, `SS' stat)
 	return(pred)
 }
 
-//fixed portion only
-`RC' uhtred_predict_fixedonly(	`gml' gml,	///
-				`PS' pf)	//	
-{
-	gml.fixedonly = 1
-	return((*pf)(gml))
-}
-
-//include EB means
-`RC' uhtred_predict_fitted(	`gml' gml,	///
-				`PS' pf)	//	
-{
-	gml.fixedonly = 2
-	return((*pf)(gml))
-}
-
-//single subject specific
-`RC' uhtred_predict_ebspec(	`gml' gml,	///
-                                `PS' pf)	//
-{
-	gml.fixedonly = 3
-	return((*pf)(gml))
-}
-
 //integrate over random effects
 `RC' uhtred_predict_marginal(	`RS' index,	///	-level-
                                 `gml' gml,	///
@@ -422,15 +398,15 @@ void uhtred_predict_getblups(`gml' gml, | `RS' getses)
 
 	//adaptive updates to calculate blups
 	gml.fixedonly = 0
-	oldlnl 	= quadsum(uhtred_logl_panels(1,gml),1)
+	oldlnl 	= quadsum(uhtred_logl_panels(1,M=.,gml.myb,gml),1)
 
 	(*gml.Pupdateip)(gml)
-	newlnl = quadsum(uhtred_logl_panels(1,gml),1)
+	newlnl = quadsum(uhtred_logl_panels(1,M=.,gml.myb,gml),1)
 
 	while (reldif(oldlnl,newlnl)>gml.atol) {
 		swap(oldlnl,newlnl)
 		(*gml.Pupdateip)(gml)
-		newlnl = quadsum(uhtred_logl_panels(1,gml),1)
+		newlnl = quadsum(uhtred_logl_panels(1,M=.,gml.myb,gml),1)
 	}	
 	
 	//now store them -> unnecessary extra step, but o/w would have to change updateip function
