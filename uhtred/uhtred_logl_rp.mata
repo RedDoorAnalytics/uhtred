@@ -53,6 +53,7 @@ mata:
 	if (!gml.predict) {
 		if (hastb) {
 			xzb   = uhtred_util_xzb(M,b,gml)
+			if (rows(xzb)==1) xzb = J(Nobs,1,xzb)
 			xtzb  = xzb :+ uhtred_util_tb(M,b,gml)
 			brcs  = b[|uhtred_util_bindices(gml,teqn)|]'
 		}

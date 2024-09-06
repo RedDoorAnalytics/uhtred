@@ -54,7 +54,11 @@ void uhtred_build_clp(`gml' gml, `RS' coef)
 void uhtred_build_xz(`gml' gml, `RS' model, `RS' eqn, `RS' coef)
 {
 	xbsyn     = uhtred_get_cmps(model)
-	gml.Ncmps = Ncmps = cols(xbsyn)
+	if (xbsyn=="") {
+		gml.Ncmps = Ncmps = 0
+	}
+	else gml.Ncmps = Ncmps = cols(xbsyn)
+
 	hascons   = gml.hascons[model]
 	haslt 	  = gml.hasltrunc[model]
 	hasic 	  = gml.haslint[model]
@@ -102,7 +106,7 @@ void uhtred_build_xz(`gml' gml, `RS' model, `RS' eqn, `RS' coef)
 	}
 	
 	for (i=1;i<=Ncmps;i++) {
-		
+
 		//check for at
 		//-> extract constraint value if there
 		//-> strip off at
@@ -365,7 +369,7 @@ void uhtred_build_xz(`gml' gml, `RS' model, `RS' eqn, `RS' coef)
 		coefx1 = coef
 		coefx2 = coef + cols(X) - 1
 		asarray(gml.bindices,(model,eqn),(1,coefx1\1,coefx2))
-		
+
 		if (gml.todo==2) {
 			asarray(gml.Hindices,(model,eqn,eqn),
 				(coefx1,coefx1\coefx2,coefx2))

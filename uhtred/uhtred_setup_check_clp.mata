@@ -44,20 +44,23 @@ void uhtred_cmp_errorchecks(`gml' gml,`SS' dv)
 	h2	= strpos(dv,"##")
 	hasrcs 	= strpos(dv,"rcs(")
 
-	while (pos) {
-		pos1 = strpos(dv,"##")
-		pos2 = strpos(dv,"#")
-		pos  = max((pos1,pos2))
-		if (pos) {
-			step = 1
-			if (pos1==pos) step = 2
-			dv2 = substr(dv,1,pos-1)
-			dv  = substr(dv,pos+step,.) 
+	if (dv!="") {
+		while (pos) {
+			
+			pos1 = strpos(dv,"##")
+			pos2 = strpos(dv,"#")
+			pos  = max((pos1,pos2))
+			if (pos) {
+				step = 1
+				if (pos1==pos) step = 2
+				dv2 = substr(dv,1,pos-1)
+				dv  = substr(dv,pos+step,.) 
+			}
+			else dv2 = dv
+			uhtred_dvcheck(gml,dv2,varind,reind)
 		}
-		else dv2 = dv
-		uhtred_dvcheck(gml,dv2,varind,reind)
 	}
-
+	
 	if (reind) {
 		if (fvi) {
 			errprintf("i. notation cannot be combined with a random effect\n")
