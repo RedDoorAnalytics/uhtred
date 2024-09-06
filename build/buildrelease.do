@@ -7,8 +7,8 @@ local includemata       = 0
 
 //=======================================================================================================================//
 
-//build new release -> current version up is 1.1.0
-local newversion 1_1_0
+//build new release -> current version up is 1.2.0
+local newversion 1_2_0
 if `includemata' {
         local newversion `newversion'_mata
 }
@@ -28,7 +28,7 @@ local fdir ./release/version_`newversion'/
 	copy ./uhtred/uhtred_parse.ado `fdir', replace
 	copy ./uhtred/uhtred_p.ado `fdir', replace
 	copy ./uhtred/uhtred_rcs.ado `fdir', replace
-	copy ./uhtred/stuhtred.ado `fdir', replace	
+	copy ./uhtred/stuhtred.ado `fdir', replace
 
 	//help files
 	copy ./uhtred/uhtred.sthlp `fdir', replace
