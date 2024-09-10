@@ -345,6 +345,32 @@ _assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
 _assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
 mat drop C_gradient T_gradient
 
+//orthog matrix certs
+qui {
+	mat A = J(4,4,0)
+	mat A[1,1] = .79717296
+	mat A[1,2] = -12.329397
+	mat A[1,3] = -5.0923271
+	mat A[1,4] = 0
+
+	mat A[2,1] = 0
+	mat A[2,2] = 2.6519554
+	mat A[2,3] = 1.1812266
+	mat A[2,4] = 0
+
+	mat A[3,1] = 0
+	mat A[3,2] = 0
+	mat A[3,3] = .09176479 
+	mat A[3,4] =  0
+
+	mat A[4,1] =  1.8714958
+	mat A[4,2] = -47.20906
+	mat A[4,3] =  -19.07834
+	mat A[4,4] =  1
+}
+assert mreldif( e(rcsrmat_1) , A ) < 1E-0
+matrix drop A
+
 
 //============================================================================//
 //RP PH model factor
@@ -744,6 +770,42 @@ _assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
 _assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
 mat drop C_gradient T_gradient
 
+// orthog matrix certs
+qui {
+	mat A = J(4,4,0)
+	mat A[1,1] = .79717296
+	mat A[1,2] = -12.329397
+	mat A[1,3] = -5.0923271
+	mat A[1,4] = 0
+
+	mat A[2,1] = 0
+	mat A[2,2] = 2.6519554
+	mat A[2,3] = 1.1812266
+	mat A[2,4] = 0
+
+	mat A[3,1] = 0
+	mat A[3,2] = 0
+	mat A[3,3] = .09176479 
+	mat A[3,4] = 0
+
+	mat A[4,1] = 1.8714958
+	mat A[4,2] = -47.20906
+	mat A[4,3] = -19.07834
+	mat A[4,4] = 1
+}
+assert mreldif( e(rcsrmat_1) , A ) < 1E-0
+
+qui {
+	mat B = J(2,2,0)
+	mat B[1,1] = .79717296
+	mat B[1,2] = 0
+
+	mat B[2,1] = 1.8714958 
+	mat B[2,2] = 1
+}
+assert mreldif( e(rmat_1_6_2) , B ) < 1E-0
+matrix drop A B
+
 //============================================================================//
 //user-defined knots (PH RP)
 
@@ -1125,37 +1187,542 @@ assert mreldif( C_gradient , T_gradient ) < 1E-8
 _assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
 _assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:c.trt#c._rcs1_6_2_2 tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
 mat drop C_gradient T_gradient
-		
-		
-
+	
 
 //============================================================================//
-//error checks
-
-//new var doesn't exist
-rcof "uhtred (_t newvar trt bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog) 	, family(rp, knots(3) failure(died)))" == 111
-rcof "uhtred (_t  trt i.bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog) , family(rp, df(3) failure(died)))" == 452
-
-//tde misspecified
-rcof "uhtred (_t  trt bmi x1 x2 x3 trt#ecs(_t, df(1) log orthog) 	, family(rp, knots(3) failure(died)))" == 198
-rcof "uhtred (_t  trt bmi x1 x2 x3 trt#rcs(time, df(1) log orthog) 	, family(rp, knots(3) failure(died)))" == 111
-rcof "uhtred (_t  trt bmi x1 x2 x3 trt#rcs(_t, df(1) lrg orthog) 	, family(rp, knots(3) failure(died)))" == 3598
-rcof "uhtred (_t  trt bmi x1 x2 x3 trt#rcs(_t, df(1) log prthog) 	, family(rp, knots(3) failure(died)))" == 3598
-rcof "uhtred (_t  trt bmi x1 x2 x3 trt#rcs(_t, df(-1) log orthog) 	, family(rp, knots(3) failure(died)))" ==  1986
-rcof "uhtred (_t  trt bmi x1 x2 x3 trt#rcs(_t, df(1 5) log orthog) 	, family(rp, knots(3) failure(died)))" == 1986
-rcof "uhtred (_t trt bmi x1 x2 x3 trt#rcs(_t, df(1) knots(2 4) log orthog) 	, family(rp, knots(3) failure(died)))" == 1986
-rcof "uhtred (_t trt bmi x1 x2 x3 trt#rcs(_t,  knots(2 2) log orthog) 	, family(rp, knots(3) failure(died)))" == 3598
-
-//family options misspecifed
-rcof "uhtred (_t trt bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog) 	, family(fam, knots(3) failure(died)))" == 198
-rcof "uhtred (_t  trt bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog) 	, family(rp, knots(3) failure(newvar)))" == 111
-rcof "uhtred (_t  trt bmi x1 x2 x3 	, family(rp, knots(3)))" == 198
-*rcof "uhtred (_t trt bmi x1 x2 x3 , family(rp,    failure(died))" == 198
-
-//other incorrect syntax
-rcof "uhtred (_t trt bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog 	, family(rp, knots(3) failure(died)))" == 198
-rcof "uhtred (_t trt bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog)	 family(rp, knots(3) failure(died)))" == 198
-rcof "uhtred _t trt bmi x1 x2 x3, family(rp, df(3) failure(died)))" == 198
-rcof "uhtred _t trt bmi x1 x2 x3, family(rp, df(3 failure(died)))" == 198
+//interaction terms (cat-cat)
 
 
+uhtred (_t 	i.trt bmi x1 x2 x3 			///
+		i.trt#i.agecat 	///
+		, family(rp, df(3) failure(died))) 	///
+		,
+
+	
+	
+_assert_streq `"`e(cmdline)'"' `"uhtred (_t      i.trt bmi x1 x2 x3                                      i.trt#i.agecat                  , family(rp, df(3) failure(died)))                      ,"'
+assert `"`e(knots1)'"'            == `"-4.415933 1.043513 1.805705 2.302107"'
+assert `"`e(allvars)'"'           == `"_t bmi died i.agecat i.trt x1 x2 x3"'
+
+assert         e(rank)       == 17
+assert         e(k)          == 20
+assert         e(k_autoCns)  == 3
+assert reldif( e(ll)          , -7484.280653214614) <  1E-8
+
+qui {
+mat T_b = J(1,20,0)
+mat T_b[1,2] = -.4955624565481795
+mat T_b[1,3] = -.0519094393420908
+mat T_b[1,4] =  .0952397264056885
+mat T_b[1,5] = -.3972057785870112
+mat T_b[1,6] =  .5509934579919492
+mat T_b[1,8] =  .1036301369862637
+mat T_b[1,9] =  .0361339910966587
+mat T_b[1,10] =  .2559420227666404
+mat T_b[1,11] =  .0342141779995224
+mat T_b[1,13] = -.0159656031045098
+mat T_b[1,14] =   .127168372462361
+mat T_b[1,15] =  .0868385408528467
+mat T_b[1,16] =  .2218931734066998
+mat T_b[1,17] =  .4563660389462215
+mat T_b[1,18] =  .9260126925447038
+mat T_b[1,19] =  .0114323375492908
+mat T_b[1,20] =  .0013970036081285
+}
+matrix C_b = e(b)
+assert mreldif( C_b , T_b ) < 1E-8
+_assert_streq `"`: rowfullnames C_b'"' `"y1"' `"1.trt#3.agecat xb1:1.trt#4.agecat xb1:_cons tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+mat drop C_b T_b
+
+qui {
+mat T_V = J(20,20,0)
+mat T_V[2,2] =  .0132664965570239
+mat T_V[2,3] = -8.70028790787e-06
+mat T_V[2,4] =  .0000575637952778
+mat T_V[2,5] =  .0001320876150636
+mat T_V[2,6] = -.0000208204439755
+mat T_V[2,8] =    .00559751461161
+mat T_V[2,9] =  .0055888923553711
+mat T_V[2,10] =  .0056015171254796
+mat T_V[2,11] =  .0055984204151251
+mat T_V[2,13] =  -.007665568202695
+mat T_V[2,14] = -.0076571788465862
+mat T_V[2,15] = -.0076700849746138
+mat T_V[2,16] = -.0076610539676593
+mat T_V[2,17] =  -.005292147179959
+mat T_V[2,18] = -.0000272384542877
+mat T_V[2,19] =  .0000150153319147
+mat T_V[2,20] =  3.58423578738e-06
+mat T_V[3,2] = -8.70028790787e-06
+mat T_V[3,3] =  .0000544619480765
+mat T_V[3,4] =  3.63449682794e-06
+mat T_V[3,5] =  7.59038038420e-07
+mat T_V[3,6] = -4.21365260456e-06
+mat T_V[3,8] = -1.68976377404e-06
+mat T_V[3,9] =  6.51772020747e-06
+mat T_V[3,10] =  1.00142411517e-06
+mat T_V[3,11] = -6.94829896871e-06
+mat T_V[3,13] = -3.57752270173e-06
+mat T_V[3,14] =  5.09894793058e-06
+mat T_V[3,15] =  6.04611459055e-06
+mat T_V[3,16] =  5.13231918915e-06
+mat T_V[3,17] = -.0016106567559948
+mat T_V[3,18] = -3.17678155542e-06
+mat T_V[3,19] =  1.04108934862e-06
+mat T_V[3,20] =  2.90987492728e-07
+mat T_V[4,2] =  .0000575637952778
+mat T_V[4,3] =  3.63449682794e-06
+mat T_V[4,4] =  .0005107361671977
+mat T_V[4,5] =  9.69958750022e-06
+mat T_V[4,6] =  8.51827287450e-06
+mat T_V[4,8] =  .0000464348347628
+mat T_V[4,9] = -.0000308300950872
+mat T_V[4,10] =  .0000805257288933
+mat T_V[4,11] =  1.12803743074e-06
+mat T_V[4,13] = -.0000595040565079
+mat T_V[4,14] =  -.000045983105207
+mat T_V[4,15] = -.0000603348691209
+mat T_V[4,16] =   .000102530161415
+mat T_V[4,17] = -.0001658745192837
+mat T_V[4,18] =  5.37414464707e-06
+mat T_V[4,19] = -2.11641535991e-06
+mat T_V[4,20] = -4.06815964105e-07
+mat T_V[5,2] =  .0001320876150636
+mat T_V[5,3] =  7.59038038420e-07
+mat T_V[5,4] =  9.69958750022e-06
+mat T_V[5,5] =  .0005008779772771
+mat T_V[5,6] = -.0000273656083244
+mat T_V[5,8] =  .0000244780530562
+mat T_V[5,9] =  .0000281768112546
+mat T_V[5,10] =  .0000304046424392
+mat T_V[5,11] =  .0000496276425201
+mat T_V[5,13] = -.0001052052785065
+mat T_V[5,14] = -.0000649459721476
+mat T_V[5,15] = -.0001188024743203
+mat T_V[5,16] = -.0001392763829931
+mat T_V[5,17] =  .0001005455696245
+mat T_V[5,18] =  -.000024858804711
+mat T_V[5,19] =  .0000104956324992
+mat T_V[5,20] =  2.82512067958e-06
+mat T_V[6,2] = -.0000208204439755
+mat T_V[6,3] = -4.21365260456e-06
+mat T_V[6,4] =  8.51827287450e-06
+mat T_V[6,5] = -.0000273656083244
+mat T_V[6,6] =   .000536736849266
+mat T_V[6,8] = -.0000374854351268
+mat T_V[6,9] = -.0000136918662992
+mat T_V[6,10] = -.0000544655785171
+mat T_V[6,11] =  .0000728733898482
+mat T_V[6,13] = -.0000320103698605
+mat T_V[6,14] = -.0000205783898808
+mat T_V[6,15] = -.0001152829198456
+mat T_V[6,16] = -.0000185802620638
+mat T_V[6,17] =  -.000063178519028
+mat T_V[6,18] =  .0000365714386412
+mat T_V[6,19] = -.0000154605581902
+mat T_V[6,20] = -4.40948698608e-06
+mat T_V[8,2] =    .00559751461161
+mat T_V[8,3] = -1.68976377404e-06
+mat T_V[8,4] =  .0000464348347628
+mat T_V[8,5] =  .0000244780530562
+mat T_V[8,6] = -.0000374854351268
+mat T_V[8,8] =  .0080054042210701
+mat T_V[8,9] =  .0055861578599354
+mat T_V[8,10] =  .0056006950749195
+mat T_V[8,11] =   .005584196584755
+mat T_V[8,13] = -7.79633555224e-06
+mat T_V[8,14] = -5.06520410486e-06
+mat T_V[8,15] = -2.17247876009e-06
+mat T_V[8,16] =  5.86341425570e-06
+mat T_V[8,17] = -.0055260089974951
+mat T_V[8,18] =  6.25008446032e-06
+mat T_V[8,19] = -3.28254676057e-06
+mat T_V[8,20] = -3.94808961591e-06
+mat T_V[9,2] =  .0055888923553711
+mat T_V[9,3] =  6.51772020747e-06
+mat T_V[9,4] = -.0000308300950872
+mat T_V[9,5] =  .0000281768112546
+mat T_V[9,6] = -.0000136918662992
+mat T_V[9,8] =  .0055861578599354
+mat T_V[9,9] =  .0081687266021416
+mat T_V[9,10] =  .0055854020591789
+mat T_V[9,11] =  .0055870468376966
+mat T_V[9,13] = -2.10709361288e-06
+mat T_V[9,14] =  5.97297985848e-07
+mat T_V[9,15] =  4.91614961085e-07
+mat T_V[9,16] = -.0000126470610954
+mat T_V[9,17] = -.0057668672438958
+mat T_V[9,18] =  3.96970632655e-06
+mat T_V[9,19] = -8.01366849650e-07
+mat T_V[9,20] = -5.25165505252e-07
+mat T_V[10,2] =  .0056015171254796
+mat T_V[10,3] =  1.00142411517e-06
+mat T_V[10,4] =  .0000805257288933
+mat T_V[10,5] =  .0000304046424392
+mat T_V[10,6] = -.0000544655785171
+mat T_V[10,8] =  .0056006950749195
+mat T_V[10,9] =  .0055854020591789
+mat T_V[10,10] =  .0109856903801149
+mat T_V[10,11] =  .0055822968318608
+mat T_V[10,13] = -.0000120339129758
+mat T_V[10,14] = -7.37031703212e-06
+mat T_V[10,15] = -3.01088663082e-06
+mat T_V[10,16] =   .000012625544567
+mat T_V[10,17] = -.0056061763647451
+mat T_V[10,18] =  .0000168588675451
+mat T_V[10,19] = -8.24190071684e-06
+mat T_V[10,20] = -1.46207733149e-06
+mat T_V[11,2] =  .0055984204151251
+mat T_V[11,3] = -6.94829896871e-06
+mat T_V[11,4] =  1.12803743074e-06
+mat T_V[11,5] =  .0000496276425201
+mat T_V[11,6] =  .0000728733898482
+mat T_V[11,8] =   .005584196584755
+mat T_V[11,9] =  .0055870468376966
+mat T_V[11,10] =  .0055822968318608
+mat T_V[11,11] =  .0490812694724911
+mat T_V[11,13] = -.0000153099010334
+mat T_V[11,14] = -.0000102635172582
+mat T_V[11,15] = -.0000294628033107
+mat T_V[11,16] = -.0000182137399512
+mat T_V[11,17] = -.0053954486722657
+mat T_V[11,18] =  6.82239681691e-06
+mat T_V[11,19] = -2.05161782323e-06
+mat T_V[11,20] =  4.69780095353e-07
+mat T_V[13,2] =  -.007665568202695
+mat T_V[13,3] = -3.57752270173e-06
+mat T_V[13,4] = -.0000595040565079
+mat T_V[13,5] = -.0001052052785065
+mat T_V[13,6] = -.0000320103698605
+mat T_V[13,8] = -7.79633555224e-06
+mat T_V[13,9] = -2.10709361288e-06
+mat T_V[13,10] = -.0000120339129758
+mat T_V[13,11] = -.0000153099010334
+mat T_V[13,13] =   .011586536277364
+mat T_V[13,14] =  .0076534156541704
+mat T_V[13,15] =  .0076729589737293
+mat T_V[13,16] =   .007652592878984
+mat T_V[13,17] =  .0001009258400951
+mat T_V[13,18] = -3.79936303688e-06
+mat T_V[13,19] = -2.05726585587e-06
+mat T_V[13,20] = -4.99230336532e-07
+mat T_V[14,2] = -.0076571788465862
+mat T_V[14,3] =  5.09894793058e-06
+mat T_V[14,4] =  -.000045983105207
+mat T_V[14,5] = -.0000649459721476
+mat T_V[14,6] = -.0000205783898808
+mat T_V[14,8] = -5.06520410486e-06
+mat T_V[14,9] =  5.97297985848e-07
+mat T_V[14,10] = -7.37031703212e-06
+mat T_V[14,11] = -.0000102635172582
+mat T_V[14,13] =  .0076534156541704
+mat T_V[14,14] =  .0110493594137024
+mat T_V[14,15] =  .0076604006541893
+mat T_V[14,16] =  .0076449564789225
+mat T_V[14,17] = -.0001556203214936
+mat T_V[14,18] =  7.33519819576e-06
+mat T_V[14,19] = -6.00723805685e-06
+mat T_V[14,20] = -1.50979494339e-06
+mat T_V[15,2] = -.0076700849746138
+mat T_V[15,3] =  6.04611459055e-06
+mat T_V[15,4] = -.0000603348691209
+mat T_V[15,5] = -.0001188024743203
+mat T_V[15,6] = -.0001152829198456
+mat T_V[15,8] = -2.17247876009e-06
+mat T_V[15,9] =  4.91614961085e-07
+mat T_V[15,10] = -3.01088663082e-06
+mat T_V[15,11] = -.0000294628033107
+mat T_V[15,13] =  .0076729589737293
+mat T_V[15,14] =  .0076604006541893
+mat T_V[15,15] =  .0155707610984131
+mat T_V[15,16] =  .0076624646574677
+mat T_V[15,17] = -.0001612213024969
+mat T_V[15,18] = -9.43297331873e-07
+mat T_V[15,19] = -5.17918052917e-06
+mat T_V[15,20] = -2.15587767905e-06
+mat T_V[16,2] = -.0076610539676593
+mat T_V[16,3] =  5.13231918915e-06
+mat T_V[16,4] =   .000102530161415
+mat T_V[16,5] = -.0001392763829931
+mat T_V[16,6] = -.0000185802620638
+mat T_V[16,8] =  5.86341425570e-06
+mat T_V[16,9] = -.0000126470610954
+mat T_V[16,10] =   .000012625544567
+mat T_V[16,11] = -.0000182137399512
+mat T_V[16,13] =   .007652592878984
+mat T_V[16,14] =  .0076449564789225
+mat T_V[16,15] =  .0076624646574677
+mat T_V[16,16] =  .0511761104439785
+mat T_V[16,17] = -.0001895017369057
+mat T_V[16,18] =  7.93269887963e-06
+mat T_V[16,19] = -.0000115086627105
+mat T_V[16,20] = -7.47417576190e-06
+mat T_V[17,2] =  -.005292147179959
+mat T_V[17,3] = -.0016106567559948
+mat T_V[17,4] = -.0001658745192837
+mat T_V[17,5] =  .0001005455696245
+mat T_V[17,6] =  -.000063178519028
+mat T_V[17,8] = -.0055260089974951
+mat T_V[17,9] = -.0057668672438958
+mat T_V[17,10] = -.0056061763647451
+mat T_V[17,11] = -.0053954486722657
+mat T_V[17,13] =  .0001009258400951
+mat T_V[17,14] = -.0001556203214936
+mat T_V[17,15] = -.0001612213024969
+mat T_V[17,16] = -.0001895017369057
+mat T_V[17,17] =  .0533499095165696
+mat T_V[17,18] = -.0000409012628249
+mat T_V[17,19] = -.0000518890684804
+mat T_V[17,20] = -.0000123366653633
+mat T_V[18,2] = -.0000272384542877
+mat T_V[18,3] = -3.17678155542e-06
+mat T_V[18,4] =  5.37414464707e-06
+mat T_V[18,5] =  -.000024858804711
+mat T_V[18,6] =  .0000365714386412
+mat T_V[18,8] =  6.25008446032e-06
+mat T_V[18,9] =  3.96970632655e-06
+mat T_V[18,10] =  .0000168588675451
+mat T_V[18,11] =  6.82239681691e-06
+mat T_V[18,13] = -3.79936303688e-06
+mat T_V[18,14] =  7.33519819576e-06
+mat T_V[18,15] = -9.43297331873e-07
+mat T_V[18,16] =  7.93269887963e-06
+mat T_V[18,17] = -.0000409012628249
+mat T_V[18,18] =  .0004457767298496
+mat T_V[18,19] =  .0001612740612703
+mat T_V[18,20] = -1.54902808847e-06
+mat T_V[19,2] =  .0000150153319147
+mat T_V[19,3] =  1.04108934862e-06
+mat T_V[19,4] = -2.11641535991e-06
+mat T_V[19,5] =  .0000104956324992
+mat T_V[19,6] = -.0000154605581902
+mat T_V[19,8] = -3.28254676057e-06
+mat T_V[19,9] = -8.01366849650e-07
+mat T_V[19,10] = -8.24190071684e-06
+mat T_V[19,11] = -2.05161782323e-06
+mat T_V[19,13] = -2.05726585587e-06
+mat T_V[19,14] = -6.00723805685e-06
+mat T_V[19,15] = -5.17918052917e-06
+mat T_V[19,16] = -.0000115086627105
+mat T_V[19,17] = -.0000518890684804
+mat T_V[19,18] =  .0001612740612703
+mat T_V[19,19] =  .0002934872344412
+mat T_V[19,20] = -.0000392037258268
+mat T_V[20,2] =  3.58423578738e-06
+mat T_V[20,3] =  2.90987492728e-07
+mat T_V[20,4] = -4.06815964105e-07
+mat T_V[20,5] =  2.82512067958e-06
+mat T_V[20,6] = -4.40948698608e-06
+mat T_V[20,8] = -3.94808961591e-06
+mat T_V[20,9] = -5.25165505252e-07
+mat T_V[20,10] = -1.46207733149e-06
+mat T_V[20,11] =  4.69780095353e-07
+mat T_V[20,13] = -4.99230336532e-07
+mat T_V[20,14] = -1.50979494339e-06
+mat T_V[20,15] = -2.15587767905e-06
+mat T_V[20,16] = -7.47417576190e-06
+mat T_V[20,17] = -.0000123366653633
+mat T_V[20,18] = -1.54902808847e-06
+mat T_V[20,19] = -.0000392037258268
+mat T_V[20,20] =  .0000508019401853
+}
+
+matrix C_V = e(V)
+assert mreldif( C_V , T_V ) < 1E-8
+mat drop C_V T_V
+
+
+
+
+qui {
+mat T_rcsrmat_1 = J(4,4,0)
+mat T_rcsrmat_1[1,1] =  .7971729577304844
+mat T_rcsrmat_1[1,2] = -12.32939739719427
+mat T_rcsrmat_1[1,3] = -5.092327053364209
+mat T_rcsrmat_1[2,2] =  2.651955395098022
+mat T_rcsrmat_1[2,3] =  1.181226618289126
+mat T_rcsrmat_1[3,3] =  .0917647908310291
+mat T_rcsrmat_1[4,1] =    1.8714958263367
+mat T_rcsrmat_1[4,2] = -47.20905966714736
+mat T_rcsrmat_1[4,3] = -19.07834032616201
+mat T_rcsrmat_1[4,4] =                  1
+}
+matrix C_rcsrmat_1 = e(rcsrmat_1)
+assert mreldif( C_rcsrmat_1 , T_rcsrmat_1 ) < 1E-8
+_assert_streq `"`: rowfullnames C_rcsrmat_1'"' `"r1 r2 r3 r4"'
+_assert_streq `"`: colfullnames C_rcsrmat_1'"' `"c1 c2 c3 c4"'
+mat drop C_rcsrmat_1 T_rcsrmat_1
+
+qui {
+mat T_gradient = J(1,20,0)
+mat T_gradient[1,2] = -1.87926684631e-10
+mat T_gradient[1,3] = -1.85894608595e-08
+mat T_gradient[1,4] = -1.15048327241e-10
+mat T_gradient[1,5] =  4.32330945458e-10
+mat T_gradient[1,6] = -5.05007062481e-10
+mat T_gradient[1,8] = -1.05402929440e-10
+mat T_gradient[1,9] = -1.35558439474e-10
+mat T_gradient[1,10] = -1.73401820680e-10
+mat T_gradient[1,11] = -3.01500491240e-12
+mat T_gradient[1,13] = -7.69229645259e-11
+mat T_gradient[1,14] = -5.38810662754e-11
+mat T_gradient[1,15] = -1.31341673648e-11
+mat T_gradient[1,16] = -1.24467103291e-12
+mat T_gradient[1,17] = -6.27439673134e-10
+mat T_gradient[1,18] = -5.65715998352e-11
+mat T_gradient[1,19] = -1.04389203878e-10
+mat T_gradient[1,20] = -2.25444321197e-10
+}
+matrix C_gradient = e(gradient)
+assert mreldif( C_gradient , T_gradient ) < 1E-8
+_assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
+
+mat drop C_gradient T_gradient
+
+
+	
+	
+//============================================================================//
+//interaction terms (cts-cts)
+
+	
+uhtred (_t 	trt bmi c.x1#c.x2 x3 			///
+		, family(rp, df(3) failure(died))) 	///
+		,
+
+
+	
+	
+	_assert_streq `"`e(cmdline)'"' `"uhtred (_t      trt bmi c.x1#c.x2 x3                                    , family(rp, df(3) failure(died)))                      ,"'
+assert `"`e(allvars)'"'           == `"_t bmi c.x1 c.x2 died trt x3"'
+
+assert         e(rank)       == 8
+assert         e(k)          == 8
+assert         e(k_autoCns)  == 0
+assert reldif( e(ll)          , -7657.53285222241 ) <  1E-8
+
+qui {
+mat T_b = J(1,8,0)
+mat T_b[1,1] =  -.497381431020021
+mat T_b[1,2] = -.0520726200954597
+mat T_b[1,3] =  .0160067693758756
+mat T_b[1,4] =  .5306427893683363
+mat T_b[1,5] =  .5871949531559049
+mat T_b[1,6] =  .9058626887543205
+mat T_b[1,7] =  .0198751573088819
+mat T_b[1,8] =  .0034412850455487
+}
+matrix C_b = e(b)
+assert mreldif( C_b , T_b ) < 1E-8
+_assert_streq `"`: rowfullnames C_b'"' `"y1"'
+_assert_streq `"`: colfullnames C_b'"' `"xb1:trt xb1:bmi xb1:c.x1#c.x2 xb1:x3 xb1:_cons tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+mat drop C_b T_b
+
+qui {
+mat T_V = J(8,8,0)
+mat T_V[1,1] =  .0020520955486024
+mat T_V[1,2] = -7.26117295702e-06
+mat T_V[1,3] =  -.000018025258517
+mat T_V[1,4] = -.0000272124903831
+mat T_V[1,5] = -.0006076695952698
+mat T_V[1,6] = -.0000265801335309
+mat T_V[1,7] =  .0000119776287227
+mat T_V[1,8] =  3.60838035360e-06
+mat T_V[2,1] = -7.26117295702e-06
+mat T_V[2,2] =  .0000537541693695
+mat T_V[2,3] = -2.88412132407e-06
+mat T_V[2,4] = -2.55402213553e-06
+mat T_V[2,5] = -.0015891805682047
+mat T_V[2,6] = -2.84110224931e-06
+mat T_V[2,7] =  1.01958826801e-06
+mat T_V[2,8] =  2.28275553079e-07
+mat T_V[3,1] =  -.000018025258517
+mat T_V[3,2] = -2.88412132407e-06
+mat T_V[3,3] =  .0005269880676754
+mat T_V[3,4] =  3.57104338666e-06
+mat T_V[3,5] =  .0000966373251905
+mat T_V[3,6] =  1.72360820820e-06
+mat T_V[3,7] = -6.05607572533e-07
+mat T_V[3,8] = -2.14010622670e-07
+mat T_V[4,1] = -.0000272124903831
+mat T_V[4,2] = -2.55402213553e-06
+mat T_V[4,3] =  3.57104338666e-06
+mat T_V[4,4] =  .0005331958099793
+mat T_V[4,5] = -.0001286471412747
+mat T_V[4,6] =  .0000301715651585
+mat T_V[4,7] = -.0000129553242699
+mat T_V[4,8] = -3.57481939451e-06
+mat T_V[5,1] = -.0006076695952698
+mat T_V[5,2] = -.0015891805682047
+mat T_V[5,3] =  .0000966373251905
+mat T_V[5,4] = -.0001286471412747
+mat T_V[5,5] =  .0479323308820317
+mat T_V[5,6] = -.0000431808699341
+mat T_V[5,7] =  -.000055028907808
+mat T_V[5,8] = -.0000123183603391
+mat T_V[6,1] = -.0000265801335309
+mat T_V[6,2] = -2.84110224931e-06
+mat T_V[6,3] =  1.72360820820e-06
+mat T_V[6,4] =  .0000301715651585
+mat T_V[6,5] = -.0000431808699341
+mat T_V[6,6] =  .0004403005618751
+mat T_V[6,7] =  .0001649509740694
+mat T_V[6,8] = -7.38749309417e-07
+mat T_V[7,1] =  .0000119776287227
+mat T_V[7,2] =  1.01958826801e-06
+mat T_V[7,3] = -6.05607572533e-07
+mat T_V[7,4] = -.0000129553242699
+mat T_V[7,5] =  -.000055028907808
+mat T_V[7,6] =  .0001649509740694
+mat T_V[7,7] =  .0002916687376642
+mat T_V[7,8] = -.0000399090812188
+mat T_V[8,1] =  3.60838035360e-06
+mat T_V[8,2] =  2.28275553079e-07
+mat T_V[8,3] = -2.14010622670e-07
+mat T_V[8,4] = -3.57481939451e-06
+mat T_V[8,5] = -.0000123183603391
+mat T_V[8,6] = -7.38749309417e-07
+mat T_V[8,7] = -.0000399090812188
+mat T_V[8,8] =  .0000483456891077
+}
+matrix C_V = e(V)
+assert mreldif( C_V , T_V ) < 1E-8
+_assert_streq `"`: rowfullnames C_V'"' `"xb1:trt xb1:bmi xb1:c.x1#c.x2 xb1:x3 xb1:_cons tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+_assert_streq `"`: colfullnames C_V'"' `"xb1:trt xb1:bmi xb1:c.x1#c.x2 xb1:x3 xb1:_cons tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+mat drop C_V T_V
+
+qui {
+mat T_rcsrmat_1 = J(4,4,0)
+mat T_rcsrmat_1[1,1] =  .7971729577304844
+mat T_rcsrmat_1[1,2] = -12.32939739719427
+mat T_rcsrmat_1[1,3] = -5.092327053364209
+mat T_rcsrmat_1[2,2] =  2.651955395098022
+mat T_rcsrmat_1[2,3] =  1.181226618289126
+mat T_rcsrmat_1[3,3] =  .0917647908310291
+mat T_rcsrmat_1[4,1] =    1.8714958263367
+mat T_rcsrmat_1[4,2] = -47.20905966714736
+mat T_rcsrmat_1[4,3] = -19.07834032616201
+mat T_rcsrmat_1[4,4] =                  1
+}
+matrix C_rcsrmat_1 = e(rcsrmat_1)
+assert mreldif( C_rcsrmat_1 , T_rcsrmat_1 ) < 1E-8
+_assert_streq `"`: rowfullnames C_rcsrmat_1'"' `"r1 r2 r3 r4"'
+_assert_streq `"`: colfullnames C_rcsrmat_1'"' `"c1 c2 c3 c4"'
+mat drop C_rcsrmat_1 T_rcsrmat_1
+
+qui {
+mat T_gradient = J(1,8,0)
+mat T_gradient[1,1] = -5.63762508898e-11
+mat T_gradient[1,2] = -6.97323021548e-09
+mat T_gradient[1,3] = -1.70677163899e-11
+mat T_gradient[1,4] = -2.98254608511e-10
+mat T_gradient[1,5] = -2.41347899999e-10
+mat T_gradient[1,6] =  3.27610508166e-12
+mat T_gradient[1,7] = -7.56003697144e-11
+mat T_gradient[1,8] = -1.68406216056e-10
+}
+matrix C_gradient = e(gradient)
+assert mreldif( C_gradient , T_gradient ) < 1E-8
+_assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
+_assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:c.x1#c.x2 xb1:x3 xb1:_cons tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+mat drop C_gradient T_gradient
