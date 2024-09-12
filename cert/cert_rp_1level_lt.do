@@ -51,9 +51,13 @@ matrix drop A
 
 
 
+
+
+
 assert `"`r(PT_rseps)'"'            == `"`""' `""' `""' `""' `""' `""' `"sep"' `""' `""' `""'"'
 assert `"`r(PT_rnotes)'"'           == `"`""' `""' `""' `""' `""' `""' `""' `""' `""' `""'"'
 _assert_streq `"`r(PT_raligns)'"' `"`"left"' `"right"' `"right"' `"right"' `"right"' `"right"' `"left"' `"right"' `"right"' `"right"'"'
+
 _assert_streq `"`r(PT_rtitles)'"' `"`"xb1"' `"trt"' `"bmi"' `"age"' `"x1"' `"_cons"' `"tb1"' `"_rcs1_1"' `"_rcs1_2"' `"_rcs1_3"'"'
 assert `"`r(PT_cformats)'"'         == `"`"%9.0g"' `"%9.0g"' `"%8.2f"' `"%5.3f"' `"%9.0g"' `"%9.0g"'"'
 assert `"`r(PT_cspans1)'"'          == `"`"1"' `"1"' `"1"' `"1"' `"2"' `"0"'"'
@@ -212,10 +216,9 @@ mat drop C_table T_table
 
 
 //nonPH model
-uhtred (stime trt bmi age x1 ///
-		c.trt#rcs(stime, df(2) log orthog event) ///
-		, family(rp, df(2) failure(died) ltruncated(t0)))
-		
+uhtred (stime trt bmi age x1  ///
+	c.trt#rcs(stime, df(2) log orthog event) ///
+	, family(rp, df(2) failure(died) ltruncated(t0)))		
 		
 qui {
 	mat A = J(3,3,0)
@@ -252,14 +255,14 @@ assert mreldif( e(rmat_1_5_2) , B ) < 1E-5
 matrix drop B	
 	
 
-assert `"`r(PT_rseps)'"'            == `"`""' `""' `""' `""' `""' `""' `"sep"' `""' `""' `""' `""' `""' `""'"'
-assert `"`r(PT_rnotes)'"'           == `"`""' `""' `""' `""' `""' `""' `""' `""' `""' `""' `""' `""' `""'"'
-_assert_streq `"`r(PT_raligns)'"' `"`"left"' `"right"' `"right"' `"right"' `"right"' `"right"' `"left"' `"right"' `"right"' `"right"' `"right"' `"right"' `"right"'"'
-_assert_streq `"`r(PT_rtitles)'"' `"`"xb1"' `"trt"' `"bmi"' `"age"' `"x1"' `"_cons"' `"tb1"' `"c.trt#c._rcs1_5_2_1"' `""' `"c.trt#c._rcs1_5_2_2"' `""' `"_rcs1_1"' `"_rcs1_2"'"'
 
+_assert_streq `"`r(PT_rseps)'"' `"`""' `""' `""' `""' `""' `""' `"sep"' `""' `""' `""' `""' `""' `""' `""' `""' `""' `""'"'
+_assert_streq `"`r(PT_rnotes)'"' `"`""' `""' `""' `""' `""' `""' `""' `""' `""' `""' `""' `""' `""' `""' `""' `""' `""'"'
+_assert_streq `"`r(PT_raligns)'"' `"`"left"' `"right"' `"right"' `"right"' `"right"' `"right"' `"left"' `"right"' `"right"' `"right"' `"right"' `"right"' `"right"' `"right"' `"right"' `"right"' `"right"'"'
+_assert_streq `"`r(PT_rtitles)'"' `"`"xb1"' `"trt"' `"bmi"' `"age"' `"x1"' `"_cons"' `"tb1"' `"c.trt#"' `"c."' `"_rcs1_5_2_1"' `""' `"c.trt#"' `"c."' `"_rcs1_5_2_2"' `""' `"_rcs1_1"' `"_rcs1_2"'"'
 
 qui {
-mat T_PT = J(13,6,0)
+mat T_PT = J(17,6,0)
 mat T_PT[1,1] =                 .b
 mat T_PT[1,2] =                 .b
 mat T_PT[1,3] =                 .b
@@ -302,46 +305,70 @@ mat T_PT[7,3] =                 .b
 mat T_PT[7,4] =                 .b
 mat T_PT[7,5] =                 .b
 mat T_PT[7,6] =                 .b
-mat T_PT[8,1] = -.3090360177999907
-mat T_PT[8,2] =  .2246716003172449
-mat T_PT[8,3] = -1.375501030675974
-mat T_PT[8,4] =  .1689761664019615
-mat T_PT[8,5] = -.7493842627707684
-mat T_PT[8,6] =  .1313122271707869
+mat T_PT[8,1] =                 .b
+mat T_PT[8,2] =                 .b
+mat T_PT[8,3] =                 .b
+mat T_PT[8,4] =                 .b
+mat T_PT[8,5] =                 .b
+mat T_PT[8,6] =                 .b
 mat T_PT[9,1] =                 .b
 mat T_PT[9,2] =                 .b
 mat T_PT[9,3] =                 .b
 mat T_PT[9,4] =                 .b
 mat T_PT[9,5] =                 .b
 mat T_PT[9,6] =                 .b
-mat T_PT[10,1] = -.0583891939377452
-mat T_PT[10,2] =  .0856723962345034
-mat T_PT[10,3] = -.6815403385930953
-mat T_PT[10,4] =  .4955296513562518
-mat T_PT[10,5] = -.2263040050266168
-mat T_PT[10,6] =  .1095256171511263
+mat T_PT[10,1] = -.3090360177999907
+mat T_PT[10,2] =  .2246716003172449
+mat T_PT[10,3] = -1.375501030675974
+mat T_PT[10,4] =  .1689761664019615
+mat T_PT[10,5] = -.7493842627707684
+mat T_PT[10,6] =  .1313122271707869
 mat T_PT[11,1] =                 .b
 mat T_PT[11,2] =                 .b
 mat T_PT[11,3] =                 .b
 mat T_PT[11,4] =                 .b
 mat T_PT[11,5] =                 .b
 mat T_PT[11,6] =                 .b
-mat T_PT[12,1] =  .6167617037517593
-mat T_PT[12,2] =  .1506737419521023
-mat T_PT[12,3] =  4.093358907538262
-mat T_PT[12,4] =  .0000425168831717
-mat T_PT[12,5] =  .3214465961097571
-mat T_PT[12,6] =  .9120768113937616
-mat T_PT[13,1] = -.0244152477892564
-mat T_PT[13,2] =  .0777824948357272
-mat T_PT[13,3] = -.3138912918751218
-mat T_PT[13,4] =  .7536036044578849
-mat T_PT[13,5] = -.1768661362949545
-mat T_PT[13,6] =  .1280356407164417
+mat T_PT[12,1] =                 .b
+mat T_PT[12,2] =                 .b
+mat T_PT[12,3] =                 .b
+mat T_PT[12,4] =                 .b
+mat T_PT[12,5] =                 .b
+mat T_PT[12,6] =                 .b
+mat T_PT[13,1] =                 .b
+mat T_PT[13,2] =                 .b
+mat T_PT[13,3] =                 .b
+mat T_PT[13,4] =                 .b
+mat T_PT[13,5] =                 .b
+mat T_PT[13,6] =                 .b
+mat T_PT[14,1] = -.0583891939377452
+mat T_PT[14,2] =  .0856723962345034
+mat T_PT[14,3] = -.6815403385930953
+mat T_PT[14,4] =  .4955296513562518
+mat T_PT[14,5] = -.2263040050266168
+mat T_PT[14,6] =  .1095256171511263
+mat T_PT[15,1] =                 .b
+mat T_PT[15,2] =                 .b
+mat T_PT[15,3] =                 .b
+mat T_PT[15,4] =                 .b
+mat T_PT[15,5] =                 .b
+mat T_PT[15,6] =                 .b
+mat T_PT[16,1] =  .6167617037517593
+mat T_PT[16,2] =  .1506737419521023
+mat T_PT[16,3] =  4.093358907538262
+mat T_PT[16,4] =  .0000425168831717
+mat T_PT[16,5] =  .3214465961097571
+mat T_PT[16,6] =  .9120768113937616
+mat T_PT[17,1] = -.0244152477892564
+mat T_PT[17,2] =  .0777824948357272
+mat T_PT[17,3] = -.3138912918751218
+mat T_PT[17,4] =  .7536036044578849
+mat T_PT[17,5] = -.1768661362949545
+mat T_PT[17,6] =  .1280356407164417
 }
 matrix C_PT = r(PT)
 assert mreldif( C_PT , T_PT ) < 1E-8
-_assert_streq `"`: rowfullnames C_PT'"' `"r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13"'
+_assert_streq `"`: rowfullnames C_PT'"' `"r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 r15 r16 r17"'
 _assert_streq `"`: colfullnames C_PT'"' `"c1 c2 c3 c4 c5 c6"'
 mat drop C_PT T_PT
 
@@ -425,5 +452,4 @@ assert mreldif( C_table , T_table ) < 1E-8
 _assert_streq `"`: rowfullnames C_table'"' `"b se z pvalue ll ul df crit eform"'
 _assert_streq `"`: colfullnames C_table'"' `"xb1:trt xb1:bmi xb1:age xb1:x1 xb1:_cons tb1:c.trt#c._rcs1_5_2_1 tb1:c.trt#c._rcs1_5_2_2 tb1:_rcs1_1 tb1:_rcs1_2"'
 mat drop C_table T_table
-
 		

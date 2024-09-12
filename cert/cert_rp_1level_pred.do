@@ -74,3 +74,58 @@ foreach i in hazard survival chazard logchazard density {
 foreach i in hazard survival chazard logchazard density {
 	cap drop `i'*
 }
+
+
+//left truncated data predictions
+set seed 72549
+
+clear
+set obs 500
+gen id1	= _n
+gen trt = runiform()>0.5
+gen age = rnormal(55,5)
+gen x1 = rnormal()
+gen bmi = rnormal(30,3)
+
+
+survsim stime died, dist(weib) lambda(0.1) gamma(1.2) ///
+	cov(trt -0.5 age 0.01 bmi -0.05 x1 0.1) maxt(10)
+
+gen t0 = 0
+replace t0 = runiform() * 2 //if _n>200
+
+drop if stime<t0
+
+stset stime, enter(t0) f(died)
+
+uhtred (stime trt bmi age x1, family(rp, df(3) failure(died) ltruncated(t0)))
+
+foreach v in hazard survival chazard logchazard density {
+	predict `v'n, `v' ci
+	predict `v'n_at, `v' at(trt 1 bmi 20) ci
+	predict `v'n_z, `v' zeros ci
+	*predict `v'_tv, `v' timevar(timevar) ci	
+}
+
+merge 1:1 id1 using ./cert/cert-data/rp_1level_lt_pred, keep(match) nogen
+
+
+foreach i in hazard survival chazard logchazard density {
+	assert abs(`i'- `i'n)< 1E-5
+	assert abs(`i'_lci- `i'n_lci)< 1E-5
+	assert abs(`i'_uci- `i'n_uci)< 1E-5
+
+	foreach j in at z /*tv*/ {
+		assert abs(`i'_`j'- `i'n_`j')< 1E-5
+		assert abs(`i'_`j'_lci- `i'n_`j'_lci)< 1E-5
+		assert abs(`i'_`j'_uci- `i'n_`j'_uci)< 1E-5
+
+	}
+}
+
+
+foreach i in hazard survival chazard logchazard density {
+	cap drop `i'*
+}
+
+
