@@ -19,7 +19,10 @@ cscript uhtred
 
 //survival
 do ./cert/cert_rp_1level
+do../cert/cert_rp_1level_lt
+
 do ./cert/cert_er_rp_1level
+
 
 *do ./cert/cert_rp_1level_mts
 *do ./cert/cert_er_rp_1level_mts

@@ -51,3 +51,7 @@ rcof "uhtred _t trt bmi x1 x2 x3, family(rp, df(3) failure(died)))" == 198
 rcof "uhtred _t trt bmi x1 x2 x3, family(rp, df(3 failure(died)))" == 198
 
 
+//left truncated syntax errors
+rcof "uhtred (_t trt bmi age x1, family(rp, df(2) failure(died) ltruncated(t02)))" == 111
+rcof "uhtred (_t trt bmi age x1, family(rp, df(2) failure(died) letruncated(t0)))" ==3598
+rcof "uhtred (_t trt bmi age x1, family(rp, df(2) failure(died)) ltruncated(t0))" == 198
