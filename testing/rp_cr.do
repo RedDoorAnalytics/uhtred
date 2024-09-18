@@ -12,6 +12,125 @@ tests:
  
 =============================================================================*/
 
+
+//sursim competing risks
+clear 
+set seed 4541
+set obs 5000
+gen trt=runiform()>0.5
+gen age = rnormal(50,5)
+survsim time state event, hazard1(distribution(weib) lambda(0.1) gamma(0.8) ) ///
+	hazard2(distribution(exp) lambda(0.2)  covariates(trt -0.5)) maxtime(10)	
+
+gen id=_n	
+expand 2	
+bysort id: gen cause=_n		
+order id
+
+
+gen state=state1-1
+gen event=(cause==state)  
+
+gen cancer=(cause==1)
+gen other=(cause==2)
+
+
+keep id trt age time0 time1 cancer other cause state event
+
+
+
+stset time1, failure(event) 
+
+//quick test against separate models
+stpm2 age if cause==1, df(1) scale(h) 
+merlin (time1 age if cause==1, family(rp, df(1) failure(event)))
+uhtred (time1 age if cause==1, family(rp, df(1) failure(event)))
+
+
+stpm2 age if cause==2, df(1) scale(h) 
+merlin (time1 age  if cause==2, family(rp, df(1) failure(event)))
+uhtred (time1 age  if cause==2, family(rp, df(1) failure(event)))
+
+
+
+//stpm2
+stpm2 age if cause==1, df(1) scale(h) 
+est store stpm2_c1
+
+local stpm2_b_age =_b[xb:age]
+local stpm2_se_age =_se[xb:age]
+
+
+stpm2 trt if cause==2, df(1) scale(h) 
+est store stpm2_c2
+
+local stpm2_b_trt =_b[xb:trt]
+local stpm2_se_trt =_se[xb:trt]
+
+
+
+//ph models - merlin
+merlin 	(time1  age	///
+		if cause==1								///
+		, family(rp, failure(event) df(1)))		///
+		(time1 	trt	///
+		if cause==2								///
+		, family(rp, failure(event) df(1)))		///
+		,
+est store merlin
+local j 1
+foreach v in age trt {
+	local mer_b_`v' =_b[_cmp_`j'_1_1:_cons]
+	local mer_se_`v' =_se[_cmp_`j'_1_1:_cons]
+	local j `=`j'+1'
+}
+
+
+uhtred 	(time1  age	///
+		if cause==1								///
+		, family(rp, failure(event) df(1)))		///
+		(time1 	trt	///
+		if cause==2								///
+		, family(rp, failure(event) df(1)))		///
+		,
+
+est store uhtred
+
+est table stpm2_c1 stpm2_c2 merlin uhtred
+est drop stpm2_c1 stpm2_c2 merlin uhtred
+
+//check estimates of b and se
+local k 1
+foreach v in age trt  {
+	assert abs(`stpm2_b_`v''- `=_b[xb`k':`v']')< 1E-5
+	assert abs(`stpm2_se_`v''- `=_se[xb`k':`v']')< 1E-5
+
+	assert abs(`mer_b_`v''- `=_b[xb`k':`v']')< 1E-5
+	assert abs(`mer_se_`v''- `=_se[xb`k':`v']')< 1E-5
+	local k `= `k'+1'
+}
+			
+
+//make assert
+uhtred 	(time1  age	///
+		if cause==1								///
+		, family(rp, failure(event) df(1)))		///
+		(time1 	trt	///
+		if cause==2								///
+		, family(rp, failure(event) df(1)))		///
+		,
+
+mkassert eclass
+
+
+
+
+
+
+
+
+//==============================================================================
+//checks using colon cancer dataset
 //data setup
 use ./data/colon, clear
  
