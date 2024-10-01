@@ -48,7 +48,7 @@ local mestreg_b_cons = _b[/:var(_cons[id1])]
 //merlin 
 merlin (stime trt age M1[id1]@1, ///
 	family(rp, df(1) failure(dead))), 	///
-	cov(unstr) 
+	cov(unstr) noorthog
 	
 est store merlin	
 local j 1
@@ -63,7 +63,7 @@ local mer_b_cons = `=exp(_b[lns1_1:_cons])'
 //uhtred
 uhtred (stime trt age M1[id1]@1, ///
 	family(rp, df(1) failure(dead))), 	///
-	cov(unstr) 
+	cov(unstr) noorthog
 	
 est store uhtred
 
@@ -101,15 +101,15 @@ mkassert eclass
 //for uhtred or merlin?
 foreach cov in /*independent exchangeable*/  identity unstr {
 
-	mestreg trt i.agecat || id1:, distribution(weibull) cov(`cov') nohr
+	mestreg trt age || id1:, distribution(weibull) cov(`cov') nohr
 
 	uhtred (stime trt age M1[id1]@1, ///
 		family(rp, df(1) failure(dead))), 	///
-		cov(`cov') 
+		cov(`cov') noorthog
 	
 	merlin (stime trt age M1[id1]@1, ///
 		family(rp, df(1) failure(dead))), 	///
-		cov(`cov') 
+		cov(`cov') noorthog
 		
 }
 
@@ -127,7 +127,7 @@ foreach cov in diag iden un /*ex*/ {
 	//merlin 
 	merlin (stime trt age M1[id1]@1, ///
 		family(rp, df(1) failure(dead))), 	///
-		cov(`cov') 
+		cov(`cov') noorthog
 	local j 1
 	foreach v in trt age {
 		local mer_b_`v' =_b[_cmp_1_`j'_1:_cons]
@@ -139,7 +139,7 @@ foreach cov in diag iden un /*ex*/ {
 	//uhtred
 	uhtred (stime trt age M1[id1]@1, ///
 		family(rp, df(1) failure(dead))), 	///
-		cov(`cov') 
+		cov(`cov') noorthog
 		
 	//check estimates 
 	foreach v in trt age {
@@ -185,19 +185,19 @@ mkassert eclass
 
 //intmethods
 foreach int in mvaghermite ghermite {
-	mestreg trt i.agecat || id1:, distribution(weibull) ///
+	mestreg trt age || id1:, distribution(weibull) ///
 		cov(unstr) nohr ///
-		intmethod(`int')
+		intmethod(`int') 
 	
 	uhtred (stime trt age M1[id1]@1, ///
 		family(rp, df(1) failure(dead))), 	///
 		cov(unstr) ///
-		intmethod(`int')
+		intmethod(`int') noorthog
 	
 	merlin (stime trt age M1[id1]@1, ///
 		family(rp, df(1) failure(dead))), 	///
 		cov(unstr) ///
-		intmethod(`int')
+		intmethod(`int') noorthog
 		
 }
 
@@ -212,7 +212,7 @@ local mestreg_b_cons = _b[/:var(_cons[id1])]
 //merlin 
 merlin (stime trt age M1[id1]@1, ///
 	family(rp, df(1) failure(dead))), 	///
-	intmethod(ghermite)
+	intmethod(ghermite) noorthog
 local j 1
 foreach v in trt age {
 	local mer_b_`v' =_b[_cmp_1_`j'_1:_cons]
@@ -224,7 +224,7 @@ local mer_b_cons = `=exp(_b[lns1_1:_cons])'
 //uhtred
 uhtred (stime trt age M1[id1]@1, ///
 	family(rp, df(1) failure(dead))), 	///
-	intmethod(ghermite)
+	intmethod(ghermite) noorthog
 	
 //check estimates 
 foreach v in trt age {
@@ -266,7 +266,7 @@ local mestreg_b_cons = _b[/:var(_cons[id1])]
 
 uhtred (stime trt i.agecat M1[id1]@1, ///
 	family(rp, df(1) failure(dead))), 	///
-	cov(unstr) 
+	cov(unstr) noorthog
 est store uhtred
 
 est table mestreg uhtred
@@ -302,7 +302,7 @@ local mestreg_b_cons = _b[/:var(_cons[id1])]
 
 uhtred (stime c.trt##c.age M1[id1]@1, ///
 	family(rp, df(1) failure(dead))), 	///
-	cov(unstr)
+	cov(unstr) noorthog
 
 foreach v in trt age {
 	assert abs(`mestreg_b_`v''- `=_b[xb1:`v']')< 1E-5
@@ -332,7 +332,7 @@ local mestreg_b_cons = _b[/:var(_cons[id1])]
 
 uhtred (stime c.trt##i.agecat M1[id1]@1, ///
 	family(rp, df(1) failure(dead))), 	///
-	cov(unstr) 
+	cov(unstr) noorthog
 assert abs(`mestreg_b_trt'- `=_b[xb1:trt]')< 1E-5
 assert abs(`mestreg_se_trt'- `=_se[xb1:trt]')< 1E-5
 forvalues i=2/4 {
@@ -362,7 +362,7 @@ local mestreg_b_cons = _b[/:var(_cons[id1])]
 
 uhtred (stime trt rcs(age, df(2) noorthog) M1[id1]@1, ///
 	family(rp, df(1) failure(dead))), 	///
-	cov(unstr) 
+	cov(unstr)  noorthog
 	
 assert abs(`mestreg_b_trt'- `=_b[xb1:trt]')< 1E-5
 assert abs(`mestreg_se_trt'- `=_se[xb1:trt]')< 1E-5	
@@ -380,7 +380,7 @@ assert abs(`mestreg_b_cons'- `=exp(_b[lns1_1:_cons])')< 1E-1
 //check higher df- now checks are against merlin	
 merlin (stime trt age M1[id1]@1, ///
 	family(rp, df(3) failure(dead))), 	///
-	cov(unstr) 	
+	cov(unstr) 	 noorthog
 matrix A=e(rcsmat_1)
 local j 1
 foreach v in trt age {
@@ -393,7 +393,7 @@ local mer_b_cons = `=exp(_b[lns1_1:_cons])'
 
 uhtred (stime trt age M1[id1]@1, ///
 	family(rp, df(3) failure(dead))), 	///
-	cov(unstr) 
+	cov(unstr)  noorthog
 matrix B=e(rcsmat_1)
 assert mreldif( A , B ) < 1E-0
 matrix drop A B	
@@ -407,7 +407,7 @@ assert abs(`mer_b_cons'- `=exp(_b[lns1_1:_cons])')< 1E-5
 //user-defined knots	
 merlin (stime trt age M1[id1]@1, ///
 	family(rp, knots(-6.056272 .2149434 1.022322 1.608266) failure(dead))), 	///
-	cov(unstr) 
+	cov(unstr)  noorthog
 matrix A=e(rcsmat_1)
 local j 1
 foreach v in trt age {
@@ -420,7 +420,7 @@ local mer_b_cons = `=exp(_b[lns1_1:_cons])'
 	
 uhtred (stime trt age M1[id1]@1, ///
 	family(rp, knots(-6.056272 .2149434 1.022322 1.608266) failure(dead))), 	///
-	cov(unstr) 
+	cov(unstr) noorthog
 matrix B=e(rcsmat_1)
 assert mreldif( A , B ) < 1E-0
 matrix drop A B
@@ -434,6 +434,13 @@ assert abs(`mer_b_cons'- `=exp(_b[lns1_1:_cons])')< 1E-5
 
 //============================================================================
 //error messages- syntax breaks
+//2 level random intercept
+rcof "uhtred (stime trt age M1[id1]@1, family(rp, df(1) failure(dead))), cov(bla) " == 198
+rcof "uhtred (stime trt age M1[id1]@1, family(rp, df(1) failure(dead))), intmethod(bla) " == 198
+rcof "uhtred (stime trt age M[id1]@1, family(rp, df(1) failure(dead))) " == 1986
+rcof "uhtred (stime trt age M1[id1]@trt, family(rp, df(1) failure(dead))) " == 1986
+rcof "uhtred (stime trt age M1[bla]@1, family(rp, df(1) failure(dead))) " == 3598
+
 
 	
 //============================================================================//
