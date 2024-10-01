@@ -349,6 +349,36 @@ foreach v in `list1' {
 //TO TEST cis with timevar and in nonPH
 */
 
+//============================================================================//
+//check to see that all other predictions actually run 
+//not much thought here, just syntax checks for now
+uhtred (_t trt bmi x1 x2 x3, family(rp, df(3) failure(died)))
+
+/*
+//none of the following seem to work
+foreach v in mu eta totalsurv cif rmst timelost totaltimelost {
+	predict `v', `v'	
+}
+*/
+
+//check the difference and ratio predictions for hazard and survival (which work by themselves)
+cap drop hdiff*
+cap drop myhdiff
+predict hdiff0, h at(trt 0) 
+predict hdiff1, h  at(trt 1)
+
+predict hdiff, hdiff at1(trt 0) at2(trt 1)
+gen myhdiff=hdiff1-hdiff0
+assert abs(abs(hdiff)-abs(myhdiff)) < 1E-5
+
+cap drop sdiff* 
+cap drop mysdiff
+predict sdiff0, surv at(trt 0) 
+predict sdiff1, surv  at(trt 1)
+
+predict sdiff, sdiff at1(trt 0) at2(trt 1)
+gen mysdiff=sdiff1-sdiff0
+assert abs(abs(sdiff)-abs(mysdiff)) < 1E-5
 
 //============================================================================//
 //make cscript stuff (dataset with predicted values)
