@@ -33,7 +33,6 @@ uhtred 	(time1  age	///
 		, family(rp, failure(event) df(1)))		///
 		,
 
->  if cause==2                                                                             , family(rp, failure(event) df(1)))                             ,"'
 assert `"`e(chintpoints)'"'       == `"30"'
 assert `"`e(nap2)'"'              == `"0"'
 assert `"`e(ndistap2)'"'          == `"0"'
