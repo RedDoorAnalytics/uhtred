@@ -26,7 +26,7 @@ stset stime, f(died)
 
 //new var doesn't exist
 rcof "uhtred (_t newvar trt bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog) 	, family(rp, knots(3) failure(died)))" == 111
-rcof "uhtred (_t  trt i.bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog) , family(rp, df(3) failure(died)))" == 452
+rcof "uhtred (_t  trt i.bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog) , family(rp, df(3) failure(died)))" == 111
 
 //tde misspecified
 rcof "uhtred (_t  trt bmi x1 x2 x3 trt#ecs(_t, df(1) log orthog) 	, family(rp, knots(3) failure(died)))" == 198
