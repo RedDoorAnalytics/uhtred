@@ -17,41 +17,37 @@ cscript uhtred
 
 //============================================================================//
 
-//survival- 1 level - predictions
+//survival- 1 level 
 do ./cert/cert_rp_1level
 do ./cert/cert_rp_1level_lt 
 
 do ./cert/cert_er_rp_1level
 
-*do ./cert/cert_rp_1level_mts
-*do ./cert/cert_er_rp_1level_mts
-
-*do ./cert/cert_rp_cr
 
 //survival- 1 level - predictions
 do ./cert/cert_rp_1level_pred
 do ./cert/cert_er_rp_1level_pred
 
 
-//survival - 2 level 
-do ./cert/cert_rp_2level_int_slope
-do ./cert/cert_er_rp_2level
+//survival - 1 level multiple timescales
+*do ./cert/cert_rp_1level_mts
+*do ./cert/cert_er_rp_1level_mts
 
 
-//MC old code
-*do ./cert/cert_rp_2level_int_slope
+//survival - 1 level competing risks 
+*do ./cert/cert_rp_cr
 
 
+//survival - 2 level weibull
+do ./cert/cert_weibull_2level
+
+do ./cert/cert_er_weibull_2level
 
 
-//weib 3 level
-do ./cert/cert_weib_3level_int
+//survival - 3 level weibull
+do ./cert/cert_weibull_3level
 
-//gf2
 
-//multilevel survival
-
-*do ./cert/cert_rp_2level
 
 
 
