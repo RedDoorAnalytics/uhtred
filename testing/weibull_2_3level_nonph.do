@@ -139,7 +139,7 @@ replace id2 = _n
 uhtred (stime1 trt age c.trt#rcs(stime1, df(1) log)  ///
 		M1[id1]@1 M2[id1>id2]@1 ,  ///
 	family(rp, df(1) failure(dead))) 			///
-	,
+	, evaltype(gf0)
 
 assert abs(`=_b[xb1:trt]' - `=`coeftrt'' )< 1E-1
 assert abs(`=_b[xb1:age]' - `=`coefage'' )< 1E-1

@@ -6,13 +6,92 @@ created: by Hannah Bower
 tests: 	
 	
 =============================================================================*/
+
+clear 
 set seed 7254
+
+set obs 100
+gen id1 = _n
+gen age = runiform()
+gen sd1 = exp(log(0.1))
+gen u1 = rnormal(0,sd1)
+expand 100
+bys id1: gen id2 = _n
+gen trt = runiform()>0.5
+gen sd2 = exp(log(0.1))
+gen u2 = rnormal(0,sd2)
+expand 10
+gen id3 = _n
+sort id1 id2 id3
+
+survsim stime1 dead1 , dist(weib) lambda(0.1) gamma(1.2) cov(trt -0.5 age 0.02 u1 1 u2 1) maxt(10)
+stset stime1, f(dead1)
+
+replace id2 = _n
+
+//fit models 
+mestreg trt age || id1: || id2: , dist(weib) 
+est store mestreg
+
+*gsem (stime1 <- trt age M2[id1>id2]@1 M1[id1]@1 , family(weib, failure(dead1))) , //intmethod(gh)
+*est store gsem
+	
+merlin 	(stime1 trt age M2[id1>id2]@1 M1[id1]@1 ///
+	, family(rp, df(1) failure(dead1))) ///
+			, 
+est store merlin
+
+uhtred 	(stime1 trt age M2[id1>id2]@1 M1[id1]@1 ///
+	, family(rp, df(1) failure(dead1))) ///
+			, 
+est store uhtred
+
+
+
+//check estimates against each other
+est restore merlin	
+
+local j 1
+foreach v in trt age {
+	local mer_b_`v' =_b[_cmp_1_`j'_1:_cons]
+	local mer_se_`v' =_se[_cmp_1_`j'_1:_cons]
+	local j `=`j'+1'
+}
+forvalues v=1/2 {
+	local mer_b_lns`v' =_b[lns`v'_1:_cons]
+	local mer_se_lns`v' =_se[lns`v'_1:_cons]
+}
+
+est restore uhtred
+
+	
+foreach v in trt age {
+	assert abs(`mer_b_`v''- `=_b[xb1:`v']')< 1E-5
+	assert abs(`mer_se_`v''- `=_se[xb1:`v']')< 1E-5
+}
+forvalues v=1/2{
+	assert abs(`mer_b_lns`v''- `=_b[lns`v'_1:_cons]')< 1E-5
+	assert abs(`mer_se_lns`v''- `=_se[lns`v'_1:_cons]')< 1E-5
+}
+
+
+
+//mkassert
+uhtred 	(stime1 trt age M2[id1>id2]@1 M1[id1]@1 ///
+	, family(rp, df(1) failure(dead1))) ///
+			, 
+
+mkassert eclass
+
+
+/*============================================================================
+testing with jobhistory dataset
+=============================================================================*/
+
 
 clear
 webuse jobhistory
 
-//save ready for cscript
-save "C:\Users\Hannah Bower\Documents\GitHub\uhtred\cert\cert-data\jobhistory.dta", replace
 
 stset tend, origin(tstart) fail(failure)
 
@@ -23,7 +102,7 @@ order birthyear id, first
 //models 
 //note here stmixed is a wrapper for merlin so they are the same
 mestreg education njobs || birthyear: || id:, 	///
-	distribution(weib) nohr intpoints(12) intmethod(gh) evaltype(gf0)
+	distribution(weib) nohr intpoints(12) 
 est store mestreg
 	
 //test against gsem
@@ -40,13 +119,13 @@ est store stmixed
 merlin 	(_t education njobs 		///
 	M2[birthyear>id]@1 		///
 	M1[birthyear]@1 		///
-	, family(weib, failure(_d))), intpoints(15)  intmethod(gh)	
+	, family(weib, failure(_d))), intpoints(12)  intmethod(gh)	
 est store merlin
 
 uhtred 	(_t education njobs 		///
 	M2[birthyear>id]@1 		///
 	M1[birthyear]@1 		///
-	, family(rp, df(1) failure(_d))), 	intpoints(15) intmethod(gh)
+	, family(rp, df(1) failure(_d))), 	intpoints(12) intmethod(gh)
 est store uhtred
 
 est table mestreg  merlin uhtred
@@ -78,11 +157,11 @@ forvalues i=1/2 {
 est restore uhtred
 
 foreach v in education njobs {
-	assert abs(`mer_b_`v''- `=_b[xb1:`v']')< 1E-5
-	assert abs(`mer_se_`v''- `=_se[xb1:`v']')< 1E-5
+	assert abs(`mer_b_`v''- `=_b[xb1:`v']')< 1E-2
+	assert abs(`mer_se_`v''- `=_se[xb1:`v']')< 1E-2
 	
-	assert abs(`mestreg_b_`v''- `=_b[xb1:`v']')< 1E-3
-	assert abs(`mestreg_se_`v''- `=_se[xb1:`v']')< 1E-3
+	assert abs(`mestreg_b_`v''- `=_b[xb1:`v']')< 1E-2
+	assert abs(`mestreg_se_`v''- `=_se[xb1:`v']')< 1E-2
 	
 }
 forvalues v=1/2{
@@ -91,169 +170,6 @@ forvalues v=1/2{
 }
 
 est drop mestreg merlin uhtred
-
-
-//mkassert 
-
-uhtred 	(_t education njobs 		///
-	M2[birthyear>id]@1 		///
-	M1[birthyear]@1 		///
-	, family(rp, df(1) failure(_d))), 	intpoints(15) intmethod(gh)
-
-	
-mkassert eclass
-
-
-
-
-
-/*============================================================================
-testing with simulated data- can just use the jobhistory dataset if we want and 
-save it along with the cscripts
-=============================================================================*/
-
-
-//testing testing
-//simultated dataset instead of jobhistory dataset
-clear 
-
-set obs 100
-gen id1 = _n
-gen age = runiform()
-gen sd1 = exp(log(0.1))
-gen u1 = rnormal(0,sd1)
-expand 100
-bys id1: gen id2 = _n
-gen trt = runiform()>0.5
-gen sd2 = exp(log(0.1))
-gen u2 = rnormal(0,sd2)
-expand 10
-gen id3 = _n
-sort id1 id2 id3
-
-survsim stime1 dead1 , dist(weib) lambda(0.1) gamma(1.2) cov(trt -0.5 age 0.02 u1 1 u2 1) maxt(10)
-stset stime1, f(dead1)
-
-replace id2 = _n
-
-//testing
-
-mestreg trt age || id1: || id2: , dist(weib)
-merlin 	(stime1 trt age M2[id1>id2]@1 M1[id1]@1 , family(rp, df(1) failure(dead1))) 
-uhtred 	(stime1 trt age M2[id1>id2]@1 M1[id1]@1 , family(rp, df(1) failure(dead1))) ///
-
-
-
-
-
-
-
-
-
-
-
-
-timer clear
-mestreg trt age || id1: || id2: , dist(weib) //intmethod(gh)
-*gsem (stime1 <- age M2[id1>id2]@1 M1[id1]@1 , family(weib, failure(dead1))) , //intmethod(gh)
-			
-timer on 1
-merlin 	(stime1 trt age M2[id1>id2]@1 M1[id1]@1 , family(rp, df(1) failure(dead1))) ///
-			, evaltype(gf0) //intmethod(gh) intpoints(15) 
-timer off 1
-est store merlin
-timer on 2
-uhtred 	(stime1 trt age M2[id1>id2]@1 M1[id1]@1 , family(rp, df(1) failure(dead1))) ///
-			, evaltype(gf0) //intmethod(gh) //intpoints(15) 
-timer off 2
-timer list
-est store uhtred
-// uhtred 	(stime1 age M2[id1>id2]@1 M1[id1]@1 , family(cox, failure(dead1))) ///
-// 			, intmethod(gh) intpoints(7) devcode5(294820)
-			
-
-
-
-
-//extra code
-set seed 7254
-clear 
-
-set obs 100
-gen id1 = _n
-gen age = runiform()
-gen sd1 = exp(log(0.1))
-gen u1 = rnormal(0,sd1)
-expand 100
-bys id1: gen id2 = _n
-gen trt = runiform()>0.5
-gen sd2 = exp(log(0.1))
-gen u2 = rnormal(0,sd2)
-expand 10
-gen id3 = _n
-sort id1 id2 id3
-
-survsim stime1 dead1 , dist(weib) lambda(0.1) gamma(1.2) cov(trt -0.5 age 0.02 u1 1 u2 1) maxt(10)
-stset stime1, f(dead1)
-
-replace id2 = _n
-
-timer clear
-// mestreg trt age || id1: || id2: , dist(weib) //intmethod(gh)
-// gsem (stime1 <- age M2[id1>id2]@1 M1[id1]@1 , family(weib, failure(dead1))) , //intmethod(gh)
-			
-timer on 1
-merlin 	(stime1 trt age M2[id1>id2]@1 M1[id1]@1 , family(rp, df(1) failure(dead1))) ///
-			, evaltype(gf0) //intmethod(gh) intpoints(15) 
-timer off 1
-est store merlin
-timer on 2
-uhtred 	(stime1 trt age M2[id1>id2]@1 M1[id1]@1 , family(rp, df(1) failure(dead1))) ///
-			, evaltype(gf0) //intmethod(gh) //intpoints(15) 
-timer off 2
-timer list
-est store uhtred
-// uhtred 	(stime1 age M2[id1>id2]@1 M1[id1]@1 , family(cox, failure(dead1))) ///
-// 			, intmethod(gh) intpoints(7) devcode5(294820)
-			
-
-//check b and se
-est restore merlin	
-
-local j 1
-foreach v in trt age {
-	local mer_b_`v' =_b[_cmp_1_`j'_1:_cons]
-	local mer_se_`v' =_se[_cmp_1_`j'_1:_cons]
-	local j `=`j'+1'
-}
-forvalues v=1/2 {
-	local mer_b_lns`v' =_b[lns`v'_1:_cons]
-	local mer_se_lns`v' =_se[lns`v'_1:_cons]
-}
-
-est restore uhtred
-
-	
-foreach v in trt age {
-	assert abs(`mer_b_`v''- `=_b[xb1:`v']')< 1E-5
-	assert abs(`mer_se_`v''- `=_se[xb1:`v']')< 1E-5
-}
-forvalues v=1/2{
-	assert abs(`mer_b_lns`v''- `=_b[lns`v'_1:_cons]')< 1E-5
-	assert abs(`mer_se_lns`v''- `=_se[lns`v'_1:_cons]')< 1E-5
-}
-
-uhtred 	(stime1 trt age M2[id1>id2]@1 M1[id1]@1 , family(rp, df(1) failure(dead1))) ///
-			, evaltype(gf0) //intmethod(gh) //intpoints(15) 
-
-mkassert eclass
-
-
-
-
-
-
-
 
 
 

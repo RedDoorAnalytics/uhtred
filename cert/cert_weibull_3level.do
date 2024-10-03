@@ -23,6 +23,7 @@ uhtred 	(stime1 trt age M2[id1>id2]@1 M1[id1]@1 , family(rp, df(1) failure(dead1
 			, evaltype(gf0) //intmethod(gh) //intpoints(15) 
 
 
+
 _assert_streq `"`e(cmdline)'"' `"uhtred (stime1 trt age M2[id1>id2]@1 M1[id1]@1 , family(rp, df(1) failure(dead1)))                         , evaltype(gf0)"'
 assert `"`e(chintpoints)'"'       == `"30"'
 assert `"`e(intmethod2)'"'        == `"mvaghermite"'
