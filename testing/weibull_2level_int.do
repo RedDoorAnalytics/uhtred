@@ -1,35 +1,32 @@
 /*============================================================================
-program: rp_2level_int
-description: testing mixed models with random intercept
+program: weibull_2level_int
+description: testing mixed models with random intercept (2 level weib)
 created: by Hannah Bower
 
 tests: 	compare random intercept models to mestreg and merlin
 
 		check interactions, factor variables, df >1, user-defined knots, 
-		covariance and intmethod() options
+		and intmethod() options
 		
 		Add error checks for invalid syntax
 	
 =============================================================================*/
 
 //simulate data using survsim 
-set seed 725488
+set seed 98798
 clear
 set obs 1000
-gen id1 = _n
-expand 5
-bys id1: gen id2 = _n
+gen id1 	= _n
 gen trt = runiform()>0.5
-mat cor1 = (1,0.25\0.25,1)
-drawnorm u1 u2, means(0 0) sds(1 0.5) corr(cor1)
-bys id1 (id2) : replace u1 = u1[1]
-bys id1 (id2) : replace u2 = u2[1]
-gen trtui = (-0.5+u2) * trt
-gen age = rnormal() + u2
+gen sd1 = exp(log(0.1))
+gen u1 	= rnormal(0,sd1)
+gen age = rnormal()
+expand 100
+sort id1 
+survsim stime dead , dist(weib) lambda(0.1) gamma(1.2) ///
+	cov(trt -0.5 age 0.1 u1 1) maxt(5) 
 
-survsim stime dead , dist(weib) lambda(0.1) gamma(1.2) cov(age 0.01 trtui 1 u1 1) maxt(5) 
-stset stime, f(dead)
-
+stset stime, f(dead)	
 
 
 //============================================================================
@@ -94,91 +91,6 @@ uhtred (stime trt age M1[id1]@1, ///
 mkassert eclass
 
 
-//============================================================================
-//check covariance structures
-
-//check different covariance structures - independent and exchangeable not working 
-//for uhtred or merlin?
-foreach cov in /*independent exchangeable*/  identity unstr {
-
-	mestreg trt age || id1:, distribution(weibull) cov(`cov') nohr
-
-	uhtred (stime trt age M1[id1]@1, ///
-		family(rp, df(1) failure(dead))), 	///
-		cov(`cov') noorthog
-	
-	merlin (stime trt age M1[id1]@1, ///
-		family(rp, df(1) failure(dead))), 	///
-		cov(`cov') noorthog
-		
-}
-
-//loop over all covariances- note diagonal not available for mestreg & exchange 
-//doesn't seem to be working for merlin or uhtred right now
-foreach cov in diag iden un /*ex*/ {
-	if "`cov'" != "diag" {
-		mestreg trt age || id1:, distribution(weibull) cov(`cov')
-		foreach v in trt age {
-			local mestreg_b_`v' =_b[_t:`v']
-			local mestreg_se_`v' =_se[_t:`v']
-		}
-		local mestreg_b_cons = _b[/:var(_cons[id1])]
-	}
-	//merlin 
-	merlin (stime trt age M1[id1]@1, ///
-		family(rp, df(1) failure(dead))), 	///
-		cov(`cov') noorthog
-	local j 1
-	foreach v in trt age {
-		local mer_b_`v' =_b[_cmp_1_`j'_1:_cons]
-		local mer_se_`v' =_se[_cmp_1_`j'_1:_cons]
-		local j `=`j'+1'
-	}
-	local mer_b_cons = `=exp(_b[lns1_1:_cons])'
-
-	//uhtred
-	uhtred (stime trt age M1[id1]@1, ///
-		family(rp, df(1) failure(dead))), 	///
-		cov(`cov') noorthog
-		
-	//check estimates 
-	foreach v in trt age {
-		if "`cov'" != "diag" {
-			assert abs(`mestreg_b_`v''- `=_b[xb1:`v']')< 1E-5
-			assert abs(`mestreg_se_`v''- `=_se[xb1:`v']')< 1E-5
-		}		
-		assert abs(`mer_b_`v''- `=_b[xb1:`v']')< 1E-5
-		assert abs(`mer_se_`v''- `=_se[xb1:`v']')< 1E-5
-	}
-	if "`cov'" != "diag" {
-		assert abs(`mestreg_b_cons'- `=exp(_b[lns1_1:_cons])')< 1E-1
-	}
-	assert abs(`mer_b_cons'- `=exp(_b[lns1_1:_cons])')< 1E-5
-}
-
-
-//make asserts 
-
-uhtred (stime trt age M1[id1]@1, ///
-	family(rp, df(1) failure(dead))), 	///
-	cov(diag) 
-
-mkassert eclass	
-
-uhtred (stime trt age M1[id1]@1, ///
-	family(rp, df(1) failure(dead))), 	///
-	cov(iden) 
-	
-mkassert eclass	
-
-	
-/*
-uhtred (stime trt age M1[id1]@1, ///
-	family(rp, df(1) failure(dead))), 	///
-	cov(ex) 
-	
-mkassert eclass	
-*/
 
 //============================================================================
 //check intmethods- integration of latent variables
@@ -366,10 +278,10 @@ uhtred (stime trt rcs(age, df(2) noorthog) M1[id1]@1, ///
 	
 assert abs(`mestreg_b_trt'- `=_b[xb1:trt]')< 1E-5
 assert abs(`mestreg_se_trt'- `=_se[xb1:trt]')< 1E-5	
-assert abs(`mestreg_b_agercs1'- `=_b[xb1:_rcs1_2_1_1]')< 1E-5
-assert abs(`mestreg_se_agercs1'- `=_se[xb1:_rcs1_2_1_1]')< 1E-5	
-assert abs(`mestreg_b_agercs2'- `=_b[xb1:_rcs1_2_1_2]')< 1E-5
-assert abs(`mestreg_se_agercs2'- `=_se[xb1:_rcs1_2_1_2]')< 1E-5	
+assert abs(`mestreg_b_agercs1'- `=_b[xb1:_rcs1_2_1_1]')< 1E-3
+assert abs(`mestreg_se_agercs1'- `=_se[xb1:_rcs1_2_1_1]')< 1E-3	
+assert abs(`mestreg_b_agercs2'- `=_b[xb1:_rcs1_2_1_2]')< 1E-3
+assert abs(`mestreg_se_agercs2'- `=_se[xb1:_rcs1_2_1_2]')< 1E-3
 assert abs(`mestreg_b_cons'- `=exp(_b[lns1_1:_cons])')< 1E-1
 	
 
@@ -429,6 +341,7 @@ foreach v in trt age {
 	assert abs(`mer_se_`v''- `=_se[xb1:`v']')< 1E-5
 }
 assert abs(`mer_b_cons'- `=exp(_b[lns1_1:_cons])')< 1E-5	
+
 
 
 

@@ -1,6 +1,6 @@
 /*============================================================================
 program: rp_2level_pred
-description: testing predictions from 2 level models 
+description: testing predictions from 2 level models - weibull (RP d=1)
 created: by Hannah Bower
 
 tests: 	
@@ -69,8 +69,6 @@ foreach v in surv haz dens /*eta*/ reffect reses {
 }
 
 
-
-
 //note eta is different, why? 
 //now check with uhtred - assuming same/similar syntax to merlin 
 uhtred (stime trt agecat1 agecat2 agecat3 M1[id1]@1, ///
@@ -94,6 +92,9 @@ foreach v in surv haz dens eta reffect reses {
 
 }
 
+
+//============================================================================
+//need to add models with random effects as well as slopes
 
 
 
