@@ -33,7 +33,7 @@ stset stime, f(dead)
 //random intercepts only
 
 //mestreg model
-mestreg trt age || id1:, distribution(weibull) cov(unstr)
+mestreg trt age || id1:, distribution(weibull) 
 
 est store mestreg
 foreach v in trt age {
@@ -44,8 +44,8 @@ local mestreg_b_cons = _b[/:var(_cons[id1])]
 
 //merlin 
 merlin (stime trt age M1[id1]@1, ///
-	family(rp, df(1) failure(dead))), 	///
-	cov(unstr) noorthog
+	family(rp, df(1) failure(dead))) 	///
+	,
 	
 est store merlin	
 local j 1
@@ -59,8 +59,8 @@ local mer_b_cons = `=exp(_b[lns1_1:_cons])'
 
 //uhtred
 uhtred (stime trt age M1[id1]@1, ///
-	family(rp, df(1) failure(dead))), 	///
-	cov(unstr) noorthog
+	family(rp, df(1) failure(dead))) 	///
+	,
 	
 est store uhtred
 
@@ -85,8 +85,9 @@ assert abs(`mer_b_cons'- `=exp(_b[lns1_1:_cons])')< 1E-5
 	
 //make assert for cscript	
 uhtred (stime trt age M1[id1]@1, ///
-	family(rp, df(1) failure(dead))), 	///
-	cov(unstr) 
+	family(rp, df(1) failure(dead))) 	///
+	,
+	
 
 mkassert eclass
 
@@ -124,7 +125,7 @@ local mestreg_b_cons = _b[/:var(_cons[id1])]
 //merlin 
 merlin (stime trt age M1[id1]@1, ///
 	family(rp, df(1) failure(dead))), 	///
-	intmethod(ghermite) noorthog
+	intmethod(ghermite) 
 local j 1
 foreach v in trt age {
 	local mer_b_`v' =_b[_cmp_1_`j'_1:_cons]
@@ -151,8 +152,9 @@ assert abs(`mer_b_cons'- `=exp(_b[lns1_1:_cons])')< 1E-5
 
 //mkassert
 uhtred (stime trt age M1[id1]@1, ///
-	family(rp, df(1) failure(dead))), 	///
-	intmethod(ghermite)
+	family(rp, df(1) failure(dead))) 	///
+	, intmethod(ghermite)
+
 
 mkassert eclass
 

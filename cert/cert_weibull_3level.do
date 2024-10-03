@@ -1,30 +1,32 @@
-
-set seed 7254
 clear 
+set seed 7254
+
 set obs 100
 gen id1 = _n
 gen age = runiform()
-gen sd1 = exp(log(1))
+gen sd1 = exp(log(0.1))
 gen u1 = rnormal(0,sd1)
-expand 10
+expand 100
 bys id1: gen id2 = _n
 gen trt = runiform()>0.5
-gen sd2 = exp(log(1))
+gen sd2 = exp(log(0.1))
 gen u2 = rnormal(0,sd2)
-expand 5
+expand 10
 gen id3 = _n
 sort id1 id2 id3
 
 survsim stime1 dead1 , dist(weib) lambda(0.1) gamma(1.2) cov(trt -0.5 age 0.02 u1 1 u2 1) maxt(10)
 stset stime1, f(dead1)
+
 replace id2 = _n
 
-uhtred 	(stime1 trt age M2[id1>id2]@1 M1[id1]@1 , family(rp, df(1) failure(dead1))) ///
-			, evaltype(gf0) //intmethod(gh) //intpoints(15) 
+uhtred 	(stime1 trt age M2[id1>id2]@1 M1[id1]@1 ///
+	, family(rp, df(1) failure(dead1))) ///
+			, 
 
 
 
-_assert_streq `"`e(cmdline)'"' `"uhtred (stime1 trt age M2[id1>id2]@1 M1[id1]@1 , family(rp, df(1) failure(dead1)))                         , evaltype(gf0)"'
+_assert_streq `"`e(cmdline)'"' `"uhtred (stime1 trt age M2[id1>id2]@1 M1[id1]@1         , family(rp, df(1) failure(dead1)))                         ,"'
 assert `"`e(chintpoints)'"'       == `"30"'
 assert `"`e(intmethod2)'"'        == `"mvaghermite"'
 assert `"`e(intpoints2)'"'        == `"7"'
@@ -48,7 +50,7 @@ assert `"`e(nap1)'"'              == `"0"'
 assert `"`e(ndistap1)'"'          == `"0"'
 assert `"`e(constant1)'"'         == `"1"'
 assert `"`e(orthog1)'"'           == `"orthog"'
-assert `"`e(knots1)'"'            == `"-6.34343 2.29853"'
+assert `"`e(knots1)'"'            == `"-6.64526 2.302561"'
 assert `"`e(timevar1)'"'          == `"stime1"'
 assert `"`e(failure1)'"'          == `"dead1"'
 assert `"`e(response1)'"'         == `"stime1 dead1"'
@@ -60,7 +62,7 @@ assert `"`e(hasxb)'"'             == `"1"'
 assert `"`e(allvars)'"'           == `"age dead1 id1 id2 stime1 trt"'
 assert `"`e(title)'"'             == `"Mixed effects regression model"'
 assert `"`e(cmd)'"'               == `"uhtred"'
-assert `"`e(hasopts)'"'           == `"1"'
+assert `"`e(hasopts)'"'           == `"0"'
 assert `"`e(from)'"'              == `"1"'
 assert `"`e(predict)'"'           == `"uhtred_p"'
 assert `"`e(deriv_useminbound)'"' == `"off"'
@@ -75,7 +77,7 @@ assert `"`e(which)'"'             == `"max"'
 assert `"`e(properties)'"'        == `"b V"'
 
 assert         e(rank)       == 6
-assert         e(N)          == 5000
+assert         e(N)          == 100000
 assert         e(k)          == 8
 assert         e(k_eq)       == 6
 assert         e(noconstant) == 0
@@ -84,21 +86,21 @@ assert         e(k_dv)       == 0
 assert         e(converged)  == 1
 assert         e(rc)         == 0
 assert         e(k_autoCns)  == 0
-assert reldif( e(ll)          , -9585.643594362182) <  1E-8
+assert reldif( e(ll)          , -219867.4829783649) <  1E-8
 assert         e(k_eq_model) == 0
 assert         e(Nmodels)    == 1
 assert         e(Nlevels)    == 3
 
 qui {
 mat T_b = J(1,8,0)
-mat T_b[1,1] = -.5491320542814528
-mat T_b[1,2] = -.2336421414039778
-mat T_b[1,3] = -.5269678611249945
-mat T_b[1,4] =  1.531185159748634
+mat T_b[1,1] = -.5025782698792253
+mat T_b[1,2] =  .0231598212948998
+mat T_b[1,3] = -.4947432452337845
+mat T_b[1,4] =   1.14860319107674
 mat T_b[1,5] =                  1
 mat T_b[1,6] =                  1
-mat T_b[1,7] =  .0541256906912157
-mat T_b[1,8] = -.0095884008530593
+mat T_b[1,7] = -2.300749422222957
+mat T_b[1,8] = -1.756934058281157
 }
 matrix C_b = e(b)
 assert mreldif( C_b , T_b ) < 1E-8
@@ -108,42 +110,42 @@ mat drop C_b T_b
 
 qui {
 mat T_V = J(8,8,0)
-mat T_V[1,1] =  .0031701264152182
-mat T_V[1,2] =  .0002984245396177
-mat T_V[1,3] =  -.001094187152354
-mat T_V[1,4] = -.0016090275086677
-mat T_V[1,7] = -.0011910195751481
-mat T_V[1,8] = -.0026640127443669
-mat T_V[2,1] =  .0002984245396177
-mat T_V[2,2] =   .144717978845459
-mat T_V[2,3] = -.0741557994086873
-mat T_V[2,4] = -.0006839046467606
-mat T_V[2,7] = -.0003181964435937
-mat T_V[2,8] = -.0011311114894928
-mat T_V[3,1] =  -.001094187152354
-mat T_V[3,2] = -.0741557994086873
-mat T_V[3,3] =  .0503760324643051
-mat T_V[3,4] = -.0002373611422725
-mat T_V[3,7] = -.0003520385658214
-mat T_V[3,8] = -.0003270774586831
-mat T_V[4,1] = -.0016090275086677
-mat T_V[4,2] = -.0006839046467606
-mat T_V[4,3] = -.0002373611422725
-mat T_V[4,4] =  .0039735950789341
-mat T_V[4,7] =  .0027072019765935
-mat T_V[4,8] =   .006224768083078
-mat T_V[7,1] = -.0011910195751481
-mat T_V[7,2] = -.0003181964435937
-mat T_V[7,3] = -.0003520385658214
-mat T_V[7,4] =  .0027072019765935
-mat T_V[7,7] =  .0076234323539407
-mat T_V[7,8] =  .0044688105615897
-mat T_V[8,1] = -.0026640127443669
-mat T_V[8,2] = -.0011311114894928
-mat T_V[8,3] = -.0003270774586831
-mat T_V[8,4] =   .006224768083078
-mat T_V[8,7] =  .0044688105615897
-mat T_V[8,8] =   .011013187820039
+mat T_V[1,1] =  .0000768590456688
+mat T_V[1,2] = -5.64569464016e-08
+mat T_V[1,3] = -.0000218517963494
+mat T_V[1,4] = -.0000263432992817
+mat T_V[1,7] = -.0000421157120797
+mat T_V[1,8] =  -.001281522512179
+mat T_V[2,1] = -5.64569464016e-08
+mat T_V[2,2] =  .0014159878843411
+mat T_V[2,3] = -.0007266265359429
+mat T_V[2,4] =  3.75708379570e-07
+mat T_V[2,7] =  1.77139826637e-06
+mat T_V[2,8] =  .0000151700397751
+mat T_V[3,1] = -.0000218517963494
+mat T_V[3,2] = -.0007266265359429
+mat T_V[3,3] =  .0005030284565406
+mat T_V[3,4] =  -.000011295949492
+mat T_V[3,7] = -.0000138813098987
+mat T_V[3,8] = -.0002535592683424
+mat T_V[4,1] = -.0000263432992817
+mat T_V[4,2] =  3.75708379570e-07
+mat T_V[4,3] =  -.000011295949492
+mat T_V[4,4] =   .000047152954011
+mat T_V[4,7] =  .0000539265572805
+mat T_V[4,8] =  .0017545216557454
+mat T_V[7,1] = -.0000421157120797
+mat T_V[7,2] =  1.77139826637e-06
+mat T_V[7,3] = -.0000138813098987
+mat T_V[7,4] =  .0000539265572805
+mat T_V[7,7] =   .006631424160519
+mat T_V[7,8] =  .0025874211043052
+mat T_V[8,1] =  -.001281522512179
+mat T_V[8,2] =  .0000151700397751
+mat T_V[8,3] = -.0002535592683424
+mat T_V[8,4] =  .0017545216557454
+mat T_V[8,7] =  .0025874211043052
+mat T_V[8,8] =  .0932614352010597
 }
 matrix C_V = e(V)
 assert mreldif( C_V , T_V ) < 1E-8
@@ -153,8 +155,8 @@ mat drop C_V T_V
 
 qui {
 mat T_rcsrmat_1 = J(2,2,0)
-mat T_rcsrmat_1[1,1] =  1.309925998200917
-mat T_rcsrmat_1[2,1] =  1.113771202883215
+mat T_rcsrmat_1[1,1] =  .9552445360205324
+mat T_rcsrmat_1[2,1] =  1.489067572024473
 mat T_rcsrmat_1[2,2] =                  1
 }
 matrix C_rcsrmat_1 = e(rcsrmat_1)
@@ -165,12 +167,12 @@ mat drop C_rcsrmat_1 T_rcsrmat_1
 
 qui {
 mat T_gradient = J(1,8,0)
-mat T_gradient[1,1] = -1.62074233638e-07
-mat T_gradient[1,2] =  1.53596960230e-08
-mat T_gradient[1,3] =  3.77986646102e-08
-mat T_gradient[1,4] =  4.25507025540e-06
-mat T_gradient[1,7] =  2.81754926565e-07
-mat T_gradient[1,8] =  7.73956053510e-07
+mat T_gradient[1,1] =  .0000877645011674
+mat T_gradient[1,2] = -.0005136161027755
+mat T_gradient[1,3] =  .0008011548224963
+mat T_gradient[1,4] =  .0149135507323603
+mat T_gradient[1,7] =  .0004072959220272
+mat T_gradient[1,8] = -.0102175185052282
 }
 matrix C_gradient = e(gradient)
 assert mreldif( C_gradient , T_gradient ) < 1E-8
@@ -180,16 +182,15 @@ mat drop C_gradient T_gradient
 
 qui {
 mat T_ml_scale = J(1,6,0)
-mat T_ml_scale[1,1] =  2.251210976186122
-mat T_ml_scale[1,2] =  16.70076034796118
-mat T_ml_scale[1,3] =  5.554319597255222
-mat T_ml_scale[1,4] =  .3617906385379899
-mat T_ml_scale[1,5] =  37.17990566517763
-mat T_ml_scale[1,6] =  74.87616561807033
+mat T_ml_scale[1,1] =  1.671609214943784
+mat T_ml_scale[1,2] =  55.99501764957273
+mat T_ml_scale[1,3] =  2.212508651519647
+mat T_ml_scale[1,4] =  .2150962955511746
+mat T_ml_scale[1,5] =   3.22059222237794
+mat T_ml_scale[1,6] =  8.590003482991591
 }
 matrix C_ml_scale = e(ml_scale)
 assert mreldif( C_ml_scale , T_ml_scale ) < 1E-8
 _assert_streq `"`: rowfullnames C_ml_scale'"' `"r1"'
 _assert_streq `"`: colfullnames C_ml_scale'"' `"c1 c2 c3 c4 c5 c6"'
 mat drop C_ml_scale T_ml_scale
-	
