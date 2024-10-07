@@ -13,7 +13,7 @@ tests:
 =============================================================================*/
 
 //============================================================================//
-//sim data
+//sim data- PH
 
 clear 
 set seed 725
@@ -30,19 +30,74 @@ egen agecat=cut(age), at(0,50,55,60,65,100) icodes
 gen t0 = runiform() * 2
 
 survsim stime died , dist(weib) lambda(0.1) gamma(1.2) 	///
-		cov(trt -0.5 age 0.01 bmi -0.05 x1 0.1 x2 -0.4 x3 0.5) ///
-		tde(trt 0.01) tdefunc(log({t}))	///
+		cov(trt -0.5 bmi -0.05 x1 0.1 x2 -0.4 x3 0.5) ///
+		/*tde(trt 0.01) tdefunc(log({t}))*/	///
 		maxt(10) 
 
 stset stime, f(died) 
 
+//============================================================================//
+//RP PH model- simple Weib
+
+//testing
+stpm2 trt bmi x1 x2 x3, scale(h) df(1)
+est store stpm2
+
+foreach v in trt bmi x1 x2 x3 {
+	local stpm2_b_`v' =_b[xb:`v']
+	local stpm2_se_`v' =_se[xb:`v']
+}
+
+
+merlin (_t	trt bmi x1 x2 x3 			///
+		, family(rp, df(1) failure(died))) 	///
+		,
+est store merlin
+		
+local j 1
+foreach v in trt bmi x1 x2 x3 {
+	local mer_b_`v' =_b[_cmp_1_`j'_1:_cons]
+	local mer_se_`v' =_se[_cmp_1_`j'_1:_cons]
+	local j `=`j'+1'
+}
+
+uhtred (_t	trt bmi x1 x2 x3 			///
+		, family(rp, df(1) failure(died))) 	///
+		,
+est store uhtred
+
+est table stpm2 merlin uhtred
+estimates drop stpm2 merlin uhtred
+
+
+//check estimates of b and se
+foreach v in trt bmi x1 x2 x3 {
+	assert abs(`stpm2_b_`v''- `=_b[xb1:`v']')< 1E-2
+	assert abs(`stpm2_se_`v''- `=_se[xb1:`v']')< 1E-5
+
+	assert abs(`mer_b_`v''- `=_b[xb1:`v']')< 1E-5
+	assert abs(`mer_se_`v''- `=_se[xb1:`v']')< 1E-5
+}
+			
+//mkassert
+uhtred (_t	trt bmi x1 x2 x3 			///
+		, family(rp, df(1) failure(died))) 	///
+		,
+
+mkassert eclass
+
+
+
 
 //============================================================================//
-//RP PH model- simple
+//RP PH model- simple 3df
 
 //testing
 stpm2 trt bmi x1 x2 x3, scale(h) df(3)
 est store stpm2
+matrix A = e(R_bh)
+matrix list A
+
 
 foreach v in trt bmi x1 x2 x3 {
 	local stpm2_b_`v' =_b[xb:`v']
@@ -66,6 +121,9 @@ uhtred (_t	trt bmi x1 x2 x3 			///
 		, family(rp, df(3) failure(died))) 	///
 		,
 est store uhtred
+matrix B = e(rcsrmat_1)
+matrix list B
+
 
 est table stpm2 merlin uhtred
 estimates drop stpm2 merlin uhtred
@@ -86,6 +144,46 @@ uhtred (_t	trt bmi x1 x2 x3 			///
 		,
 
 mkassert eclass
+
+assert colsof(A)==colsof(B)
+assert rowsof(A)==rowsof(B)
+assert mreldif( A , B ) < 1E-0
+
+matrix drop A B
+
+// make cscript by hand
+uhtred (_t 	trt bmi x1 x2 x3   			///
+		, family(rp, df(3) failure(died))) 	///
+		,
+
+mkassert eclass
+		
+qui {
+	mat A = J(4,4,0)
+	mat A[1,1] = .79717296
+	mat A[1,2] = -12.329397
+	mat A[1,3] = -5.0923271
+	mat A[1,4] = 0
+
+	mat A[2,1] = 0
+	mat A[2,2] = 2.6519554
+	mat A[2,3] = 1.1812266
+	mat A[2,4] = 0
+
+	mat A[3,1] = 0
+	mat A[3,2] = 0
+	mat A[3,3] = .09176479 
+	mat A[3,4] =  0
+
+	mat A[4,1] =  1.8714958
+	mat A[4,2] = -47.20906
+	mat A[4,3] =  -19.07834
+	mat A[4,4] =  1
+}
+assert mreldif( e(rcsrmat_1) , A ) < 1E-0
+matrix drop A
+
+
 
 //============================================================================//
 //RP PH model factor variables- note doesn't work in merlin
@@ -171,138 +269,9 @@ mkassert eclass
 
 
 //============================================================================//
-//non-PH model 
-
-//testing
-stpm2 trt bmi x1 x2 x3, df(3) dftvc(1) tvc(trt) scale(h) knscale(log) orthog
-est store stpm2
-
-foreach v in trt bmi x1 x2 x3 _rcs_trt1 {
-	local stpm2_b_`v' =_b[xb:`v']
-	local stpm2_se_`v' =_se[xb:`v']
-}
-
-
-merlin (_t 	trt bmi x1 x2 x3 			///
-		trt#rcs(_t, df(1) log orthog) 	///
-		, family(rp, df(3) failure(died))) 	///
-                , 
-est store merlin
-
-local j 1
-foreach v in trt bmi x1 x2 x3 trtrcs {
-	local mer_b_`v' =_b[_cmp_1_`j'_1:_cons]
-	local mer_se_`v' =_se[_cmp_1_`j'_1:_cons]
-	local j `=`j'+1'
-}
-
-
-uhtred (_t 	trt bmi x1 x2 x3 			///
-		c.trt#rcs(_t, df(1) log orthog) 	///
-		, family(rp, df(3) failure(died))) 	///
-                , 
-est store uhtred
-est table stpm2 merlin uhtred
-estimates drop stpm2 merlin uhtred
-
-
-//check estimates of b and se
-foreach v in trt bmi x1 x2 x3 {
-	assert abs(`stpm2_b_`v''- `=_b[xb1:`v']')< 1E-5
-	assert abs(`stpm2_se_`v''- `=_se[xb1:`v']')< 1E-5
-
-	assert abs(`mer_b_`v''- `=_b[xb1:`v']')< 1E-5
-	assert abs(`mer_se_`v''- `=_se[xb1:`v']')< 1E-5
-}
-	
-assert abs(`stpm2_b__rcs_trt1'- `=_b[tb1:c.trt#c._rcs1_6_2_1]')< 1E-5
-assert abs(`stpm2_se__rcs_trt1'- `=_se[tb1:c.trt#c._rcs1_6_2_1]')< 1E-5
-	
-assert abs(`mer_b_trtrcs'- `=_b[tb1:c.trt#c._rcs1_6_2_1]')< 1E-5
-assert abs(`mer_se_trtrcs'- `=_se[tb1:c.trt#c._rcs1_6_2_1]')< 1E-5
-
-	
-//mkassert
-uhtred (_t 	trt bmi x1 x2 x3 			///
-		c.trt#rcs(_t, df(1) log orthog) 	///
-		, family(rp, df(3) failure(died))) 	///
-		,
-		
-mkassert eclass
-
-
-
-//============================================================================//
-//non-PH model >1 df in tde
-		
-//testing
-stpm2 trt bmi x1 x2 x3, df(3) dftvc(2) tvc(trt) scale(h) knscale(log) orthog
-est store stpm2
-
-foreach v in trt bmi x1 x2 x3 _rcs_trt1 _rcs_trt2 {
-	local stpm2_b_`v' =_b[xb:`v']
-	local stpm2_se_`v' =_se[xb:`v']
-}
-
-
-merlin (_t 	trt bmi x1 x2 x3 			///
-		trt#rcs(_t, df(2) log orthog event) 	///
-		, family(rp, df(3) failure(died))) 	///
-                , 
-est store merlin
-
-local j 1
-foreach v in trt bmi x1 x2 x3 trtrcs {
-	local mer_b_`v' =_b[_cmp_1_`j'_1:_cons]
-	local mer_se_`v' =_se[_cmp_1_`j'_1:_cons]
-	local j `=`j'+1'
-}
-local mer_b_trtrcs2 =_b[_cmp_1_6_2:_cons]
-local mer_se_trtrcs2 =_se[_cmp_1_6_2:_cons]
-
-
-uhtred (_t 	trt bmi x1 x2 x3 			///
-		c.trt#rcs(_t, df(2) log orthog event) 	///
-		, family(rp, df(3) failure(died))) 	///
-                , 
-est store uhtred
-est table stpm2 merlin uhtred
-estimates drop stpm2 merlin uhtred
-
-
-//check estimates of b and se
-foreach v in trt bmi x1 x2 x3 {
-	assert abs(`stpm2_b_`v''- `=_b[xb1:`v']')< 1E-5
-	assert abs(`stpm2_se_`v''- `=_se[xb1:`v']')< 1E-5
-	
-	assert abs(`mer_b_`v''- `=_b[xb1:`v']')< 1E-5
-	assert abs(`mer_se_`v''- `=_se[xb1:`v']')< 1E-5
-}
-	
-assert abs(`stpm2_b__rcs_trt1'- `=_b[tb1:c.trt#c._rcs1_6_2_1]')< 1E-3
-assert abs(`stpm2_se__rcs_trt1'- `=_se[tb1:c.trt#c._rcs1_6_2_1]')< 1E-5
-assert abs(`stpm2_b__rcs_trt2'- `=_b[tb1:c.trt#c._rcs1_6_2_2]')< 1E-3
-assert abs(`stpm2_se__rcs_trt2'- `=_se[tb1:c.trt#c._rcs1_6_2_2]')< 1E-5
-	
-assert abs(`mer_b_trtrcs'- `=_b[tb1:c.trt#c._rcs1_6_2_1]')< 1E-5
-assert abs(`mer_se_trtrcs'- `=_se[tb1:c.trt#c._rcs1_6_2_1]')< 1E-5
-assert abs(`mer_b_trtrcs2'- `=_b[tb1:c.trt#c._rcs1_6_2_2]')< 1E-5
-assert abs(`mer_se_trtrcs2'- `=_se[tb1:c.trt#c._rcs1_6_2_2]')< 1E-5
-
-	
-//mkassert
-uhtred (_t 	trt bmi x1 x2 x3 			///
-		c.trt#rcs(_t, df(2) log orthog event) 	///
-		, family(rp, df(3) failure(died))) 	///
-		,
-		
-mkassert eclass
-
-
-//============================================================================//
 //user-defined knots PH model
 
-stpm2 trt bmi x1 x2 x3, knots(-4 1 1.5 2) knscale(log) scale(h) 
+stpm2 trt bmi x1 x2 x3, knots(-3.5 1 1.5 2) knscale(log) scale(h) 
 est store stpm2
 
 foreach v in trt bmi x1 x2 x3  {
@@ -312,7 +281,7 @@ foreach v in trt bmi x1 x2 x3  {
 
 
 merlin (_t 	trt bmi x1 x2 x3 			///
-		, family(rp, knots(-4 1 1.5 2) failure(died))) 	///
+		, family(rp, knots(-3.5 1 1.5 2) failure(died))) 	///
 ,
 est store merlin
 
@@ -325,7 +294,7 @@ foreach v in trt bmi x1 x2 x3  {
 
 
 uhtred (_t 	trt bmi x1 x2 x3 			///
-		, family(rp, knots(-4 1 1.5 2) failure(died))) 	///
+		, family(rp, knots(-3.5 1 1.5 2) failure(died))) 	///
 ,
 est store uhtred
 
@@ -345,7 +314,7 @@ foreach v in trt bmi x1 x2 x3 {
 
 //mkassert
 uhtred (_t 	trt bmi x1 x2 x3 			///
-		, family(rp, knots(-4 1 1.5 2) failure(died))) 	///
+		, family(rp, knots(-3.5 1 1.5 2) failure(died))) 	///
 ,
 mkassert eclass
 
@@ -353,7 +322,7 @@ mkassert eclass
 //============================================================================//
 //user-defined BOUNDARY knots PH model
 
-stpm2 trt bmi x1 x2 x3, df(3) bknots(-4  2) knscale(log) scale(h) 
+stpm2 trt bmi x1 x2 x3, df(3) bknots(-3.5  2) knscale(log) scale(h) 
 est store stpm2
 
 foreach v in trt bmi x1 x2 x3  {
@@ -363,7 +332,7 @@ foreach v in trt bmi x1 x2 x3  {
 
 
 merlin (_t 	trt bmi x1 x2 x3 			///
-		, family(rp, knots(-4 1 1.5 2)failure(died))) 	///
+		, family(rp, knots(-3.5 1 1.5 2) failure(died))) 	///
 ,
 est store merlin
 
@@ -376,7 +345,7 @@ foreach v in trt bmi x1 x2 x3  {
 
 
 uhtred (_t 	trt bmi x1 x2 x3 			///
-		, family(rp, knots(-4 1 1.5 2) failure(died))) 	///
+		, family(rp, knots(-3.5 1 1.5 2) failure(died))) 	///
 ,
 est store uhtred
 
@@ -395,71 +364,9 @@ foreach v in trt bmi x1 x2 x3 {
 
 //mkassert
 uhtred (_t 	trt bmi x1 x2 x3 			///
-		, family(rp, knots(-4 1 1.5 2) failure(died))) 	///
+		, family(rp, knots(-3.5 1 1.5 2) failure(died))) 	///
 ,
 mkassert eclass
-
-//============================================================================//
-//user-defined knots TDE
-
-stpm2 trt bmi x1 x2 x3, knots(1 1.5) bknots(-4 2) knotstvc(trt 1.5) bknotstvc(trt -4 2.3) tvc(trt) ///
-	scale(h) knscale(log) orthog
-est store stpm2
-
-foreach v in trt bmi x1 x2 x3 _rcs_trt1 _rcs_trt2 {
-	local stpm2_b_`v' =_b[xb:`v']
-	local stpm2_se_`v' =_se[xb:`v']
-}
-
-
-merlin (_t 	trt bmi x1 x2 x3 			///
-		trt#rcs(_t, knots(-4 1.5 2.3) log orthog) 	///
-		, family(rp, knots(-4 1 1.5 2) failure(died))) 	///
-		,
-est store merlin
-
-local j 1
-foreach v in trt bmi x1 x2 x3 rcs1 {
-	local mer_b_`v' =_b[_cmp_1_`j'_1:_cons]
-	local mer_se_`v' =_se[_cmp_1_`j'_1:_cons]
-	local j `=`j'+1'
-}
-local mer_b_rcs2 =_b[_cmp_1_6_2:_cons]
-local mer_se_rcs2 =_se[_cmp_1_6_2:_cons]
-
-
-uhtred (_t 	trt bmi x1 x2 x3 			///
-		c.trt#rcs(_t, knots(-4 1.5 2.3) log orthog ) 	///
-		, family(rp, knots(-4 1 1.5 2) failure(died))) 	///
-		,
-est store uhtred
-est table stpm2 merlin uhtred
-est drop stpm2 merlin uhtred
-
-//check b and se
-foreach v in trt bmi x1 x2 x3 {
-	assert abs(`stpm2_b_`v''- `=_b[xb1:`v']')< 1E-3
-	assert abs(`stpm2_se_`v''- `=_se[xb1:`v']')< 1E-5
-
-	assert abs(`mer_b_`v''- `=_b[xb1:`v']')< 1E-5
-	assert abs(`mer_se_`v''- `=_se[xb1:`v']')< 1E-5
-}
-
-forvalues v=1/2 {
-	assert abs(`stpm2_b__rcs_trt`v''- `=_b[tb1:c.trt#_rcs1_6_2_`v']')< 1E-3
-	assert abs(`stpm2_se__rcs_trt`v''- `=_se[tb1:c.trt#_rcs1_6_2_`v']')< 1E-5
-
-	assert abs(`mer_b_rcs`v''- `=_b[tb1:c.trt#_rcs1_6_2_`v']')< 1E-5
-	assert abs(`mer_se_rcs`v''- `=_se[tb1:c.trt#_rcs1_6_2_`v']')< 1E-5
-}
-
-uhtred (_t 	trt bmi x1 x2 x3 			///
-		c.trt#rcs(_t, knots(-4 1.5 2.3) log orthog ) 	///
-		, family(rp, knots(-4 1 1.5 2) failure(died))) 	///
-		,
-
-mkassert eclass
-
 
 
 //============================================================================//
@@ -549,61 +456,8 @@ uhtred (_t 	trt bmi c.x1#c.x2 x3 			///
 		,
 mkassert eclass
 
-
-
 //============================================================================//
-//check orthog matrix
-
-//testing
-stpm2 trt bmi x1 x2 x3, scale(h) df(3) 
-matrix A = e(R_bh)
-matrix list A
-
-
-uhtred (_t 	trt bmi x1 x2 x3   			///
-		, family(rp, df(3) failure(died))) 	///
-		,
-matrix B = e(rcsrmat_1)
-matrix list B
-
-assert colsof(A)==colsof(B)
-assert rowsof(A)==rowsof(B)
-assert mreldif( A , B ) < 1E-0
-
-
-
-
-matrix drop A B
-
-// make cscript by hand
-uhtred (_t 	trt bmi x1 x2 x3   			///
-		, family(rp, df(3) failure(died))) 	///
-		,
-
-qui {
-	mat A = J(4,4,0)
-	mat A[1,1] = .79717296
-	mat A[1,2] = -12.329397
-	mat A[1,3] = -5.0923271
-	mat A[1,4] = 0
-
-	mat A[2,1] = 0
-	mat A[2,2] = 2.6519554
-	mat A[2,3] = 1.1812266
-	mat A[2,4] = 0
-
-	mat A[3,1] = 0
-	mat A[3,2] = 0
-	mat A[3,3] = .09176479 
-	mat A[3,4] =  0
-
-	mat A[4,1] =  1.8714958
-	mat A[4,2] = -47.20906
-	mat A[4,3] =  -19.07834
-	mat A[4,4] =  1
-}
-assert mreldif( e(rcsrmat_1) , A ) < 1E-0
-matrix drop A
+//check orthog matrices
 
 
 //higher df
@@ -676,29 +530,166 @@ matrix drop A
 
 
 
-//tde
-stpm2 trt bmi x1 x2 x3, scale(h) df(3) tvc(trt) dftvc(2) orthog knscale(log)
+
+
+
+
+//============================================================================//
+//non-PH model 
+//simulate nonPH data and then check agains Weib first
+
+clear 
+set seed 725
+set obs 5000
+gen id1 = _n
+gen trt = runiform()>0.5
+gen age = rnormal(55,5)
+gen x1 = rnormal()
+gen x2 = rnormal()
+gen x3 = rnormal()
+gen bmi = rnormal(30,3)
+egen agecat=cut(age), at(0,50,55,60,65,100) icodes
+
+gen t0 = runiform() * 2
+
+survsim stime died , dist(weib) lambda(0.1) gamma(1.2) 	///
+		cov(trt -0.5 bmi -0.05 x1 0.1 x2 -0.4 x3 0.5) ///
+		tde(trt 0.01) tdefunc(log({t}))	///
+		maxt(10) 
+
+stset stime, f(died) 
+
+//testing
+stpm2 trt bmi x1 x2 x3, df(1) dftvc(1) tvc(trt) scale(h) knscale(log) orthog
+est store stpm2
+
+foreach v in trt bmi x1 x2 x3 _rcs_trt1 {
+	local stpm2_b_`v' =_b[xb:`v']
+	local stpm2_se_`v' =_se[xb:`v']
+}
+
+
+merlin (_t 	trt bmi x1 x2 x3 			///
+		trt#rcs(_t, df(1) log orthog) 	///
+		, family(rp, df(1) failure(died))) 	///
+                , 
+est store merlin
+
+local j 1
+foreach v in trt bmi x1 x2 x3 trtrcs {
+	local mer_b_`v' =_b[_cmp_1_`j'_1:_cons]
+	local mer_se_`v' =_se[_cmp_1_`j'_1:_cons]
+	local j `=`j'+1'
+}
+
+
+uhtred (_t 	trt bmi x1 x2 x3 			///
+		c.trt#rcs(_t, df(1) log orthog) 	///
+		, family(rp, df(1) failure(died))) 	///
+                , 
+est store uhtred
+est table stpm2 merlin uhtred
+estimates drop stpm2 merlin uhtred
+
+
+//check estimates of b and se
+foreach v in trt bmi x1 x2 x3 {
+	assert abs(`stpm2_b_`v''- `=_b[xb1:`v']')< 1E-5
+	assert abs(`stpm2_se_`v''- `=_se[xb1:`v']')< 1E-5
+
+	assert abs(`mer_b_`v''- `=_b[xb1:`v']')< 1E-5
+	assert abs(`mer_se_`v''- `=_se[xb1:`v']')< 1E-5
+}
+	
+assert abs(`stpm2_b__rcs_trt1'- `=_b[tb1:c.trt#c._rcs1_6_2_1]')< 1E-5
+assert abs(`stpm2_se__rcs_trt1'- `=_se[tb1:c.trt#c._rcs1_6_2_1]')< 1E-5
+	
+assert abs(`mer_b_trtrcs'- `=_b[tb1:c.trt#c._rcs1_6_2_1]')< 1E-5
+assert abs(`mer_se_trtrcs'- `=_se[tb1:c.trt#c._rcs1_6_2_1]')< 1E-5
+
+	
+//mkassert
+uhtred (_t 	trt bmi x1 x2 x3 			///
+		c.trt#rcs(_t, df(1) log orthog) 	///
+		, family(rp, df(1) failure(died))) 	///
+		,
+		
+mkassert eclass
+
+//============================================================================//
+//non-PH model  3 df RP
+
+
+//testing
+stpm2 trt bmi x1 x2 x3, df(3) dftvc(1) tvc(trt) scale(h) knscale(log) orthog
+est store stpm2
 matrix A1 = e(R_bh)
 matrix A2 = e(R_trt)
 matrix list A2
 
-uhtred (_t 	trt bmi x1 x2 x3   			///
-		c.trt#rcs(_t, df(2) log orthog event) ///
+
+foreach v in trt bmi x1 x2 x3 _rcs_trt1 {
+	local stpm2_b_`v' =_b[xb:`v']
+	local stpm2_se_`v' =_se[xb:`v']
+}
+
+
+merlin (_t 	trt bmi x1 x2 x3 			///
+		trt#rcs(_t, df(1) log orthog) 	///
 		, family(rp, df(3) failure(died))) 	///
-		,
+                , 
+est store merlin
+
+local j 1
+foreach v in trt bmi x1 x2 x3 trtrcs {
+	local mer_b_`v' =_b[_cmp_1_`j'_1:_cons]
+	local mer_se_`v' =_se[_cmp_1_`j'_1:_cons]
+	local j `=`j'+1'
+}
+
+
+uhtred (_t 	trt bmi x1 x2 x3 			///
+		c.trt#rcs(_t, df(1) log orthog) 	///
+		, family(rp, df(3) failure(died))) 	///
+                , 
+est store uhtred
 matrix B1 = e(rcsrmat_1)
 matrix B2 = e(rmat_1_6_2)
 matrix list B2
+
+est table stpm2 merlin uhtred
+estimates drop stpm2 merlin uhtred
 
 assert mreldif(A1 , B1) < 1E-0
 assert mreldif(A2 , B2) < 1E-0
 matrix drop A1 A2 B1 B2
 
-//make cscript by hand 
+
+
+//check estimates of b and se
+foreach v in trt bmi x1 x2 x3 {
+	assert abs(`stpm2_b_`v''- `=_b[xb1:`v']')< 1E-5
+	assert abs(`stpm2_se_`v''- `=_se[xb1:`v']')< 1E-5
+
+	assert abs(`mer_b_`v''- `=_b[xb1:`v']')< 1E-5
+	assert abs(`mer_se_`v''- `=_se[xb1:`v']')< 1E-5
+}
+	
+assert abs(`stpm2_b__rcs_trt1'- `=_b[tb1:c.trt#c._rcs1_6_2_1]')< 1E-5
+assert abs(`stpm2_se__rcs_trt1'- `=_se[tb1:c.trt#c._rcs1_6_2_1]')< 1E-5
+	
+assert abs(`mer_b_trtrcs'- `=_b[tb1:c.trt#c._rcs1_6_2_1]')< 1E-5
+assert abs(`mer_se_trtrcs'- `=_se[tb1:c.trt#c._rcs1_6_2_1]')< 1E-5
+
+	
+//mkassert
 uhtred (_t 	trt bmi x1 x2 x3 			///
 		c.trt#rcs(_t, df(1) log orthog) 	///
 		, family(rp, df(3) failure(died))) 	///
 		,
+		
+mkassert eclass
+
 
 qui {
 	mat A = J(4,4,0)
@@ -735,6 +726,145 @@ qui {
 assert mreldif( e(rmat_1_6_2) , B ) < 1E-0
 matrix drop A B
 
+
+
+
+
+
+//============================================================================//
+//non-PH model >1 df in tde
+		
+//testing
+stpm2 trt bmi x1 x2 x3, df(3) dftvc(2) tvc(trt) scale(h) knscale(log) orthog
+est store stpm2
+
+
+foreach v in trt bmi x1 x2 x3 _rcs_trt1 _rcs_trt2 {
+	local stpm2_b_`v' =_b[xb:`v']
+	local stpm2_se_`v' =_se[xb:`v']
+}
+
+
+merlin (_t 	trt bmi x1 x2 x3 			///
+		trt#rcs(_t, df(2) log orthog event) 	///
+		, family(rp, df(3) failure(died))) 	///
+                , 
+est store merlin
+
+local j 1
+foreach v in trt bmi x1 x2 x3 trtrcs {
+	local mer_b_`v' =_b[_cmp_1_`j'_1:_cons]
+	local mer_se_`v' =_se[_cmp_1_`j'_1:_cons]
+	local j `=`j'+1'
+}
+local mer_b_trtrcs2 =_b[_cmp_1_6_2:_cons]
+local mer_se_trtrcs2 =_se[_cmp_1_6_2:_cons]
+
+
+uhtred (_t 	trt bmi x1 x2 x3 			///
+		c.trt#rcs(_t, df(2) log orthog event) 	///
+		, family(rp, df(3) failure(died))) 	///
+                , 
+est store uhtred
+est table stpm2 merlin uhtred
+estimates drop stpm2 merlin uhtred
+
+
+//check estimates of b and se
+foreach v in trt bmi x1 x2 x3 {
+	assert abs(`stpm2_b_`v''- `=_b[xb1:`v']')< 1E-5
+	assert abs(`stpm2_se_`v''- `=_se[xb1:`v']')< 1E-5
+	
+	assert abs(`mer_b_`v''- `=_b[xb1:`v']')< 1E-5
+	assert abs(`mer_se_`v''- `=_se[xb1:`v']')< 1E-5
+}
+	
+assert abs(`stpm2_b__rcs_trt1'- `=_b[tb1:c.trt#c._rcs1_6_2_1]')< 1E-3
+assert abs(`stpm2_se__rcs_trt1'- `=_se[tb1:c.trt#c._rcs1_6_2_1]')< 1E-5
+assert abs(`stpm2_b__rcs_trt2'- `=_b[tb1:c.trt#c._rcs1_6_2_2]')< 1E-3
+assert abs(`stpm2_se__rcs_trt2'- `=_se[tb1:c.trt#c._rcs1_6_2_2]')< 1E-5
+	
+assert abs(`mer_b_trtrcs'- `=_b[tb1:c.trt#c._rcs1_6_2_1]')< 1E-5
+assert abs(`mer_se_trtrcs'- `=_se[tb1:c.trt#c._rcs1_6_2_1]')< 1E-5
+assert abs(`mer_b_trtrcs2'- `=_b[tb1:c.trt#c._rcs1_6_2_2]')< 1E-5
+assert abs(`mer_se_trtrcs2'- `=_se[tb1:c.trt#c._rcs1_6_2_2]')< 1E-5
+
+	
+//mkassert
+uhtred (_t 	trt bmi x1 x2 x3 			///
+		c.trt#rcs(_t, df(2) log orthog event) 	///
+		, family(rp, df(3) failure(died))) 	///
+		,
+		
+mkassert eclass
+
+
+
+
+
+
+
+
+//============================================================================//
+//user-defined knots TDE
+
+stpm2 trt bmi x1 x2 x3, knots(1 1.5) bknots(-4 2) knotstvc(trt 1.5) bknotstvc(trt -4 2.3) tvc(trt) ///
+	scale(h) knscale(log) orthog
+est store stpm2
+
+foreach v in trt bmi x1 x2 x3 _rcs_trt1 _rcs_trt2 {
+	local stpm2_b_`v' =_b[xb:`v']
+	local stpm2_se_`v' =_se[xb:`v']
+}
+
+
+merlin (_t 	trt bmi x1 x2 x3 			///
+		trt#rcs(_t, knots(-4 1.5 2.3) log orthog) 	///
+		, family(rp, knots(-4 1 1.5 2) failure(died))) 	///
+		,
+est store merlin
+
+local j 1
+foreach v in trt bmi x1 x2 x3 rcs1 {
+	local mer_b_`v' =_b[_cmp_1_`j'_1:_cons]
+	local mer_se_`v' =_se[_cmp_1_`j'_1:_cons]
+	local j `=`j'+1'
+}
+local mer_b_rcs2 =_b[_cmp_1_6_2:_cons]
+local mer_se_rcs2 =_se[_cmp_1_6_2:_cons]
+
+
+uhtred (_t 	trt bmi x1 x2 x3 			///
+		c.trt#rcs(_t, knots(-4 1.5 2.3) log orthog ) 	///
+		, family(rp, knots(-4 1 1.5 2) failure(died))) 	///
+		,
+est store uhtred
+est table stpm2 merlin uhtred
+est drop stpm2 merlin uhtred
+
+//check b and se
+foreach v in trt bmi x1 x2 x3 {
+	assert abs(`stpm2_b_`v''- `=_b[xb1:`v']')< 1E-3
+	assert abs(`stpm2_se_`v''- `=_se[xb1:`v']')< 1E-5
+
+	assert abs(`mer_b_`v''- `=_b[xb1:`v']')< 1E-5
+	assert abs(`mer_se_`v''- `=_se[xb1:`v']')< 1E-5
+}
+
+forvalues v=1/2 {
+	assert abs(`stpm2_b__rcs_trt`v''- `=_b[tb1:c.trt#_rcs1_6_2_`v']')< 1E-3
+	assert abs(`stpm2_se__rcs_trt`v''- `=_se[tb1:c.trt#_rcs1_6_2_`v']')< 1E-5
+
+	assert abs(`mer_b_rcs`v''- `=_b[tb1:c.trt#_rcs1_6_2_`v']')< 1E-5
+	assert abs(`mer_se_rcs`v''- `=_se[tb1:c.trt#_rcs1_6_2_`v']')< 1E-5
+}
+
+uhtred (_t 	trt bmi x1 x2 x3 			///
+		c.trt#rcs(_t, knots(-4 1.5 2.3) log orthog ) 	///
+		, family(rp, knots(-4 1 1.5 2) failure(died))) 	///
+		,
+
+mkassert eclass
 
 
 
