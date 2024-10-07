@@ -387,10 +387,13 @@ void uhtred_parse_vcv_eqns(`gml' gml, `RS' coef)
 	gml.E.reeqns 	= J(gml.Nlevels,1,"")
 	gml.E.reivscale = J(gml.Nlevels,1,"")
 	gml.E.relabel 	= J(gml.Nlevels,1,"")
-	
+
 	for (lev=1;lev<=gml.Nlevels;lev++) {
-		lats = asarray(gml.latlevs,lev)	
+		if (!gml.Nres[lev]) continue
+	
+		lats = asarray(gml.latlevs,lev)[,1]
 		strlev = strofreal(lev)
+	
 		//ind or unstr
 		if (gml.covariances[1,lev] | gml.covariances[3,lev]) {
 			for (r=1;r<=gml.Nres[lev];r++) {

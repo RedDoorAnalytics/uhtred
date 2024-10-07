@@ -27,15 +27,15 @@ stset stime, f(dead)
 
 timer clear
 timer on 1
-merlin (stime trt rcs(age, df(1))#M1[id1]@1 M2[id1]@1, ///
+merlin (stime trt trt#M1[id1]@1 M2[id1]@1, ///
 	family(rp, df(1) failure(dead))), 	///
 	intmethod(gh) 	///
 	cov(unstr) 
-timer off 1
+
 // predict refs1*, reffects
 
 timer on 2
-uhtred (stime trt rcs(age, df(1))#M1[id1]@1 M2[id1]@1, ///
+uhtred (stime trt c.trt#M1[id1]@1 M2[id1]@1, ///
 	family(rp, df(1) failure(dead))), 	///
 	intmethod(gh) 	///
 	cov(unstr) 

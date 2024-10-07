@@ -89,11 +89,11 @@ void uhtred_ereturn(`SS' GML)
 
 	//number of levels, including ob level
 	stata("ereturn scalar Nlevels = "+strofreal(gml.Nlevels))
-	
+
 	//random effect names, in sorted order (which matches eqns), at each level
 	for (i=1;i<=gml.Nrelevels;i++) {
 		index = strofreal(i)
-		stata("ereturn local latents"+index+" "+invtokens(asarray(gml.latlevs,i)[,1]))
+		stata("ereturn local latents"+index+" "+invtokens(asarray(gml.latlevs,i)[,1]'))
 		stata("ereturn local Nres"+index+" "+strofreal(gml.Nres[i]))
 		stata("ereturn local Nreparams"+index+" "+strofreal(gml.E.Nreparams[i]))
 		stata("ereturn local re_eqns"+index+" "+gml.E.reeqns[i])
@@ -101,7 +101,7 @@ void uhtred_ereturn(`SS' GML)
 		stata("ereturn local re_label"+index+" "+gml.E.relabel[i])
 		stata("ereturn local re_dist"+index+" normal")
 	}
-	
+
 	//integration
 	for (i=1;i<=gml.Nrelevels;i++) {
 		index = strofreal(i)

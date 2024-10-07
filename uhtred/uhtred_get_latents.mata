@@ -31,7 +31,7 @@ void uhtred_get_latents(`gml' gml)
 	gml.Nres 	= J(gml.Nlevels,1,0)
 	cmps		= uhtred_get_cmps(1)
 	Ncmps		= cols(cmps)
-	
+
 	for (i=1;i<=gml.Nlevels;i++) {
 		lats = J(0,1,"")
 		//go through everything for each level
@@ -103,7 +103,7 @@ void uhtred_get_latents(`gml' gml)
 			
 			uniqlats 	= uniqrows(latsup)
 			gml.Nres[i]	= rows(uniqlats)
-			
+
 			//now go through elements, storing level and random effect index 
 			for (c=1;c<=Ncmps;c++) {
 				dv 	= strtrim(cmps[1,c])
@@ -126,7 +126,7 @@ void uhtred_get_latents(`gml' gml)
 						asarray(ellatinfo,1,i)		//store level
 						reindex = J(0,1,.)
 						lat = substr(dv2,1,posid-1)
-						reindex = reindex\selectindex(lat:==uniqlats)
+						reindex = reindex\selectindex(lat:==uniqlats[,1])
 						asarray(ellatinfo,2,reindex)	//store re index(es)
 						asarray(gml.elinfo,(j,c,el),ellatinfo)
 					}
