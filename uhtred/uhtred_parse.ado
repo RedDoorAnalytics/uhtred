@@ -248,10 +248,15 @@ program uhtred_parse, rclass
                 NOGEN STANDARDISE REFFECTS RESES			 /// 
                 * ]
 
-        if "`covariance"!="" {
+        if "`covariance'"!="" {
                 foreach struct in `covariance' {
                         local 0 , `struct'
-                        syntax , [DIAGonal UNstructured IDENtity EXchangeable]
+                        cap syntax , [DIAGonal UNstructured IDENtity EXchangeable]
+						local rc = _rc
+						 if "`rc'" != "" {
+						 	di as error "invalid {bf:covariance()} option specified"
+							exit 198
+						 }
                         local covariance2 `covariance2' ///
                                 `diagonal'`unstructured'`identity'`exchangeable'
                 }
