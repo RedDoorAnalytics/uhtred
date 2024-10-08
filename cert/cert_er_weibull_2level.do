@@ -13,7 +13,6 @@ gen trtui = (-0.5+u2) * trt
 gen age = rnormal() + u2
 
 survsim stime dead , dist(weib) lambda(0.1) gamma(1.2) cov(age 0.01 trtui 1 u1 1) maxt(5) 
-stset stime, f(dead)
 
 
 //============================================================================//

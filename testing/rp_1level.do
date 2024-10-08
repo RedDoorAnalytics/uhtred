@@ -49,7 +49,7 @@ foreach v in trt bmi x1 x2 x3 {
 }
 
 
-merlin (_t	trt bmi x1 x2 x3 			///
+merlin (stime	trt bmi x1 x2 x3 			///
 		, family(rp, df(1) failure(died))) 	///
 		,
 est store merlin
@@ -61,7 +61,7 @@ foreach v in trt bmi x1 x2 x3 {
 	local j `=`j'+1'
 }
 
-uhtred (_t	trt bmi x1 x2 x3 			///
+uhtred (stime	trt bmi x1 x2 x3 			///
 		, family(rp, df(1) failure(died))) 	///
 		,
 est store uhtred
@@ -80,7 +80,7 @@ foreach v in trt bmi x1 x2 x3 {
 }
 			
 //mkassert
-uhtred (_t	trt bmi x1 x2 x3 			///
+uhtred (stime	trt bmi x1 x2 x3 			///
 		, family(rp, df(1) failure(died))) 	///
 		,
 
@@ -105,7 +105,7 @@ foreach v in trt bmi x1 x2 x3 {
 }
 
 
-merlin (_t	trt bmi x1 x2 x3 			///
+merlin (stime	trt bmi x1 x2 x3 			///
 		, family(rp, df(3) failure(died))) 	///
 		,
 est store merlin
@@ -117,7 +117,7 @@ foreach v in trt bmi x1 x2 x3 {
 	local j `=`j'+1'
 }
 
-uhtred (_t	trt bmi x1 x2 x3 			///
+uhtred (stime	trt bmi x1 x2 x3 			///
 		, family(rp, df(3) failure(died))) 	///
 		,
 est store uhtred
@@ -139,7 +139,7 @@ foreach v in trt bmi x1 x2 x3 {
 }
 			
 //mkassert
-uhtred (_t	trt bmi x1 x2 x3 			///
+uhtred (stime	trt bmi x1 x2 x3 			///
 		, family(rp, df(3) failure(died))) 	///
 		,
 
@@ -152,7 +152,7 @@ assert mreldif( A , B ) < 1E-0
 matrix drop A B
 
 // make cscript by hand
-uhtred (_t 	trt bmi x1 x2 x3   			///
+uhtred (stime 	trt bmi x1 x2 x3   			///
 		, family(rp, df(3) failure(died))) 	///
 		,
 
@@ -207,7 +207,7 @@ foreach v in trt bmi x1 x2 x3 agecat {
 //merlin no factor variables
 cap drop agecat?
 tab agecat, gen(agecat)
-merlin (_t	trt bmi x1 x2 x3 agecat2 agecat3 agecat4 agecat5			///
+merlin (stime	trt bmi x1 x2 x3 agecat2 agecat3 agecat4 agecat5			///
 		, family(rp, df(1) failure(died))) 	///
 		,
 est store merlin
@@ -226,13 +226,13 @@ forvalues i=1/4 {
 
 
 //test uhtred without factor variables too
-uhtred (_t	trt bmi x1 x2 x3 agecat2 agecat3 agecat4 agecat5	///
+uhtred (stime	trt bmi x1 x2 x3 agecat2 agecat3 agecat4 agecat5	///
 		, family(rp, df(1) failure(died))) 	///
 		,
 est store uhtred_nof
 
 //now with 
-uhtred (_t	trt bmi x1 x2 x3 i.agecat			///
+uhtred (stime	trt bmi x1 x2 x3 i.agecat			///
 		, family(rp, df(1) failure(died))) 	///
 		,
 est store uhtred
@@ -261,7 +261,7 @@ forvalues i=1/4 {
 
 			
 //mkassert
-uhtred (_t	trt bmi x1 x2 x3 i.agecat			///
+uhtred (stime	trt bmi x1 x2 x3 i.agecat			///
 		, family(rp, df(1) failure(died))) 	///
 		,
 
@@ -280,7 +280,7 @@ foreach v in trt bmi x1 x2 x3  {
 }
 
 
-merlin (_t 	trt bmi x1 x2 x3 			///
+merlin (stime 	trt bmi x1 x2 x3 			///
 		, family(rp, knots(-3.5 1 1.5 2) failure(died))) 	///
 ,
 est store merlin
@@ -293,7 +293,7 @@ foreach v in trt bmi x1 x2 x3  {
 }
 
 
-uhtred (_t 	trt bmi x1 x2 x3 			///
+uhtred (stime 	trt bmi x1 x2 x3 			///
 		, family(rp, knots(-3.5 1 1.5 2) failure(died))) 	///
 ,
 est store uhtred
@@ -313,7 +313,7 @@ foreach v in trt bmi x1 x2 x3 {
 
 
 //mkassert
-uhtred (_t 	trt bmi x1 x2 x3 			///
+uhtred (stime 	trt bmi x1 x2 x3 			///
 		, family(rp, knots(-3.5 1 1.5 2) failure(died))) 	///
 ,
 mkassert eclass
@@ -331,7 +331,7 @@ foreach v in trt bmi x1 x2 x3  {
 }
 
 
-merlin (_t 	trt bmi x1 x2 x3 			///
+merlin (stime 	trt bmi x1 x2 x3 			///
 		, family(rp, knots(-3.5 1 1.5 2) failure(died))) 	///
 ,
 est store merlin
@@ -344,7 +344,7 @@ foreach v in trt bmi x1 x2 x3  {
 }
 
 
-uhtred (_t 	trt bmi x1 x2 x3 			///
+uhtred (stime 	trt bmi x1 x2 x3 			///
 		, family(rp, knots(-3.5 1 1.5 2) failure(died))) 	///
 ,
 est store uhtred
@@ -363,7 +363,7 @@ foreach v in trt bmi x1 x2 x3 {
 
 
 //mkassert
-uhtred (_t 	trt bmi x1 x2 x3 			///
+uhtred (stime 	trt bmi x1 x2 x3 			///
 		, family(rp, knots(-3.5 1 1.5 2) failure(died))) 	///
 ,
 mkassert eclass
@@ -390,7 +390,7 @@ foreach v in 0b 1 {
 }
 
 
-uhtred (_t 	i.trt bmi x1 x2 x3 			///
+uhtred (stime 	i.trt bmi x1 x2 x3 			///
 		i.trt#i.agecat 	///
 		, family(rp, df(3) failure(died))) 	///
 		,
@@ -412,7 +412,7 @@ foreach v in 0b 1 {
 	}
 }
 
-uhtred (_t 	i.trt bmi x1 x2 x3 			///
+uhtred (stime 	i.trt bmi x1 x2 x3 			///
 		i.trt#i.agecat 	///
 		, family(rp, df(3) failure(died))) 	///
 		,
@@ -435,7 +435,7 @@ foreach v in bmi trt bmi x3 {
 }
 
 
-uhtred (_t 	trt bmi c.x1#c.x2 x3 			///
+uhtred (stime 	trt bmi c.x1#c.x2 x3 			///
 		, family(rp, df(3) failure(died))) 	///
 		,
 est store uhtred
@@ -451,7 +451,7 @@ foreach v in trt bmi x3 {
 }
 
 
-uhtred (_t 	trt bmi c.x1#c.x2 x3 			///
+uhtred (stime 	trt bmi c.x1#c.x2 x3 			///
 		, family(rp, df(3) failure(died))) 	///
 		,
 mkassert eclass
@@ -465,7 +465,7 @@ stpm2 trt bmi x1 x2 x3, scale(h) df(5)
 matrix A=e(R_bh)
 
 
-uhtred (_t 	trt bmi x1 x2 x3   			///
+uhtred (stime 	trt bmi x1 x2 x3   			///
 		, family(rp, df(5) failure(died))) 	///
 		,
 matrix B= e(rcsrmat_1)
@@ -477,7 +477,7 @@ matrix drop A B
 
 // make cscript by hand
 
-uhtred (_t 	trt bmi x1 x2 x3   			///
+uhtred (stime 	trt bmi x1 x2 x3   			///
 		, family(rp, df(5) failure(died))) 	///
 		,
 
@@ -569,8 +569,8 @@ foreach v in trt bmi x1 x2 x3 _rcs_trt1 {
 }
 
 
-merlin (_t 	trt bmi x1 x2 x3 			///
-		trt#rcs(_t, df(1) log orthog) 	///
+merlin (stime 	trt bmi x1 x2 x3 			///
+		trt#rcs(stime, df(1) log orthog) 	///
 		, family(rp, df(1) failure(died))) 	///
                 , 
 est store merlin
@@ -583,8 +583,8 @@ foreach v in trt bmi x1 x2 x3 trtrcs {
 }
 
 
-uhtred (_t 	trt bmi x1 x2 x3 			///
-		c.trt#rcs(_t, df(1) log orthog) 	///
+uhtred (stime 	trt bmi x1 x2 x3 			///
+		c.trt#rcs(stime, df(1) log orthog) 	///
 		, family(rp, df(1) failure(died))) 	///
                 , 
 est store uhtred
@@ -609,8 +609,8 @@ assert abs(`mer_se_trtrcs'- `=_se[tb1:c.trt#c._rcs1_6_2_1]')< 1E-5
 
 	
 //mkassert
-uhtred (_t 	trt bmi x1 x2 x3 			///
-		c.trt#rcs(_t, df(1) log orthog) 	///
+uhtred (stime 	trt bmi x1 x2 x3 			///
+		c.trt#rcs(stime, df(1) log orthog) 	///
 		, family(rp, df(1) failure(died))) 	///
 		,
 		
@@ -634,8 +634,8 @@ foreach v in trt bmi x1 x2 x3 _rcs_trt1 {
 }
 
 
-merlin (_t 	trt bmi x1 x2 x3 			///
-		trt#rcs(_t, df(1) log orthog) 	///
+merlin (stime 	trt bmi x1 x2 x3 			///
+		trt#rcs(stime, df(1) log orthog) 	///
 		, family(rp, df(3) failure(died))) 	///
                 , 
 est store merlin
@@ -648,8 +648,8 @@ foreach v in trt bmi x1 x2 x3 trtrcs {
 }
 
 
-uhtred (_t 	trt bmi x1 x2 x3 			///
-		c.trt#rcs(_t, df(1) log orthog) 	///
+uhtred (stime 	trt bmi x1 x2 x3 			///
+		c.trt#rcs(stime, df(1) log orthog) 	///
 		, family(rp, df(3) failure(died))) 	///
                 , 
 est store uhtred
@@ -683,8 +683,8 @@ assert abs(`mer_se_trtrcs'- `=_se[tb1:c.trt#c._rcs1_6_2_1]')< 1E-5
 
 	
 //mkassert
-uhtred (_t 	trt bmi x1 x2 x3 			///
-		c.trt#rcs(_t, df(1) log orthog) 	///
+uhtred (stime 	trt bmi x1 x2 x3 			///
+		c.trt#rcs(stime, df(1) log orthog) 	///
 		, family(rp, df(3) failure(died))) 	///
 		,
 		
@@ -745,8 +745,8 @@ foreach v in trt bmi x1 x2 x3 _rcs_trt1 _rcs_trt2 {
 }
 
 
-merlin (_t 	trt bmi x1 x2 x3 			///
-		trt#rcs(_t, df(2) log orthog event) 	///
+merlin (stime 	trt bmi x1 x2 x3 			///
+		trt#rcs(stime, df(2) log orthog event) 	///
 		, family(rp, df(3) failure(died))) 	///
                 , 
 est store merlin
@@ -761,8 +761,8 @@ local mer_b_trtrcs2 =_b[_cmp_1_6_2:_cons]
 local mer_se_trtrcs2 =_se[_cmp_1_6_2:_cons]
 
 
-uhtred (_t 	trt bmi x1 x2 x3 			///
-		c.trt#rcs(_t, df(2) log orthog event) 	///
+uhtred (stime 	trt bmi x1 x2 x3 			///
+		c.trt#rcs(stime, df(2) log orthog event) 	///
 		, family(rp, df(3) failure(died))) 	///
                 , 
 est store uhtred
@@ -791,8 +791,8 @@ assert abs(`mer_se_trtrcs2'- `=_se[tb1:c.trt#c._rcs1_6_2_2]')< 1E-5
 
 	
 //mkassert
-uhtred (_t 	trt bmi x1 x2 x3 			///
-		c.trt#rcs(_t, df(2) log orthog event) 	///
+uhtred (stime 	trt bmi x1 x2 x3 			///
+		c.trt#rcs(stime, df(2) log orthog event) 	///
 		, family(rp, df(3) failure(died))) 	///
 		,
 		
@@ -818,8 +818,8 @@ foreach v in trt bmi x1 x2 x3 _rcs_trt1 _rcs_trt2 {
 }
 
 
-merlin (_t 	trt bmi x1 x2 x3 			///
-		trt#rcs(_t, knots(-4 1.5 2.3) log orthog) 	///
+merlin (stime 	trt bmi x1 x2 x3 			///
+		trt#rcs(stime, knots(-4 1.5 2.3) log orthog) 	///
 		, family(rp, knots(-4 1 1.5 2) failure(died))) 	///
 		,
 est store merlin
@@ -834,8 +834,8 @@ local mer_b_rcs2 =_b[_cmp_1_6_2:_cons]
 local mer_se_rcs2 =_se[_cmp_1_6_2:_cons]
 
 
-uhtred (_t 	trt bmi x1 x2 x3 			///
-		c.trt#rcs(_t, knots(-4 1.5 2.3) log orthog ) 	///
+uhtred (stime 	trt bmi x1 x2 x3 			///
+		c.trt#rcs(stime, knots(-4 1.5 2.3) log orthog ) 	///
 		, family(rp, knots(-4 1 1.5 2) failure(died))) 	///
 		,
 est store uhtred
@@ -859,8 +859,8 @@ forvalues v=1/2 {
 	assert abs(`mer_se_rcs`v''- `=_se[tb1:c.trt#_rcs1_6_2_`v']')< 1E-5
 }
 
-uhtred (_t 	trt bmi x1 x2 x3 			///
-		c.trt#rcs(_t, knots(-4 1.5 2.3) log orthog ) 	///
+uhtred (stime 	trt bmi x1 x2 x3 			///
+		c.trt#rcs(stime, knots(-4 1.5 2.3) log orthog ) 	///
 		, family(rp, knots(-4 1 1.5 2) failure(died))) 	///
 		,
 
@@ -874,32 +874,32 @@ mkassert eclass
 
 
 //new var doesn't exist
-rcof "uhtred (_t newvar trt bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog) 	, family(rp, knots(3) failure(died)))" == 111
-rcof "uhtred (_t  trt i.bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog) , family(rp, df(3) failure(died)))" == 452
+rcof "uhtred (stime newvar trt bmi x1 x2 x3 trt#rcs(stime, df(1) log orthog) 	, family(rp, knots(3) failure(died)))" == 111
+rcof "uhtred (stime  trt i.bmi x1 x2 x3 trt#rcs(stime, df(1) log orthog) , family(rp, df(3) failure(died)))" == 452
 
 
 
 //tde misspecified
-rcof "uhtred (_t  trt bmi x1 x2 x3 trt#ecs(_t, df(1) log orthog) 	, family(rp, knots(3) failure(died)))" == 198
-rcof "uhtred (_t  trt bmi x1 x2 x3 trt#rcs(time, df(1) log orthog) 	, family(rp, knots(3) failure(died)))" == 111
-rcof "uhtred (_t  trt bmi x1 x2 x3 trt#rcs(_t, df(1) lrg orthog) 	, family(rp, knots(3) failure(died)))" == 3598
-rcof "uhtred (_t  trt bmi x1 x2 x3 trt#rcs(_t, df(1) log prthog) 	, family(rp, knots(3) failure(died)))" == 3598
-rcof "uhtred (_t  trt bmi x1 x2 x3 trt#rcs(_t, df(-1) log orthog) 	, family(rp, knots(3) failure(died)))" ==  1986
-rcof "uhtred (_t  trt bmi x1 x2 x3 trt#rcs(_t, df(1 5) log orthog) 	, family(rp, knots(3) failure(died)))" == 1986
-rcof "uhtred (_t trt bmi x1 x2 x3 trt#rcs(_t, df(1) knots(2 4) log orthog) 	, family(rp, knots(3) failure(died)))" == 1986
-rcof "uhtred (_t trt bmi x1 x2 x3 trt#rcs(_t,  knots(2 2) log orthog) 	, family(rp, knots(3) failure(died)))" == 3598
+rcof "uhtred (stime  trt bmi x1 x2 x3 trt#ecs(stime, df(1) log orthog) 	, family(rp, knots(3) failure(died)))" == 198
+rcof "uhtred (stime  trt bmi x1 x2 x3 trt#rcs(time, df(1) log orthog) 	, family(rp, knots(3) failure(died)))" == 111
+rcof "uhtred (stime  trt bmi x1 x2 x3 trt#rcs(stime, df(1) lrg orthog) 	, family(rp, knots(3) failure(died)))" == 3598
+rcof "uhtred (stime  trt bmi x1 x2 x3 trt#rcs(stime, df(1) log prthog) 	, family(rp, knots(3) failure(died)))" == 3598
+rcof "uhtred (stime  trt bmi x1 x2 x3 trt#rcs(stime, df(-1) log orthog) 	, family(rp, knots(3) failure(died)))" ==  1986
+rcof "uhtred (stime  trt bmi x1 x2 x3 trt#rcs(stime, df(1 5) log orthog) 	, family(rp, knots(3) failure(died)))" == 1986
+rcof "uhtred (stime trt bmi x1 x2 x3 trt#rcs(stime, df(1) knots(2 4) log orthog) 	, family(rp, knots(3) failure(died)))" == 1986
+rcof "uhtred (stime trt bmi x1 x2 x3 trt#rcs(stime,  knots(2 2) log orthog) 	, family(rp, knots(3) failure(died)))" == 3598
 
 //family options misspecifed
-rcof "uhtred (_t trt bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog) 	, family(fam, knots(3) failure(died)))" == 198
-rcof "uhtred (_t  trt bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog) 	, family(rp, knots(3) failure(newvar)))" == 111
-rcof "uhtred (_t  trt bmi x1 x2 x3 	, family(rp, knots(3)))" == 198
-*rcof "uhtred (_t trt bmi x1 x2 x3 , family(rp,    failure(died))" == 198
+rcof "uhtred (stime trt bmi x1 x2 x3 trt#rcs(stime, df(1) log orthog) 	, family(fam, knots(3) failure(died)))" == 198
+rcof "uhtred (stime  trt bmi x1 x2 x3 trt#rcs(stime, df(1) log orthog) 	, family(rp, knots(3) failure(newvar)))" == 111
+rcof "uhtred (stime  trt bmi x1 x2 x3 	, family(rp, knots(3)))" == 198
+*rcof "uhtred (stime trt bmi x1 x2 x3 , family(rp,    failure(died))" == 198
 
 //other incorrect syntax
-rcof "uhtred (_t trt bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog 	, family(rp, knots(3) failure(died)))" == 198
-rcof "uhtred (_t trt bmi x1 x2 x3 trt#rcs(_t, df(1) log orthog)	 family(rp, knots(3) failure(died)))" == 198
-rcof "uhtred _t trt bmi x1 x2 x3, family(rp, df(3) failure(died)))" == 198
-rcof "uhtred _t trt bmi x1 x2 x3, family(rp, df(3 failure(died)))" == 198
+rcof "uhtred (stime trt bmi x1 x2 x3 trt#rcs(stime, df(1) log orthog 	, family(rp, knots(3) failure(died)))" == 198
+rcof "uhtred (stime trt bmi x1 x2 x3 trt#rcs(stime, df(1) log orthog)	 family(rp, knots(3) failure(died)))" == 198
+rcof "uhtred stime trt bmi x1 x2 x3, family(rp, df(3) failure(died)))" == 198
+rcof "uhtred stime trt bmi x1 x2 x3, family(rp, df(3 failure(died)))" == 198
 
 				
 //============================================================================//

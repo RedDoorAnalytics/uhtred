@@ -19,9 +19,8 @@ survsim stime died , dist(weib) lambda(0.1) gamma(1.2) 	///
 		tde(trt 0.01) tdefunc(log({t}))	///
 		maxt(10)
 
-stset stime, f(died) 
 
-uhtred (_t trt bmi x1 x2 x3, family(rp, df(3) failure(died)))
+uhtred (stime trt bmi x1 x2 x3, family(rp, df(3) failure(died)))
 
 foreach v in hazard survival chazard logchazard density {
 	predict `v'n, `v' ci
@@ -31,7 +30,7 @@ foreach v in hazard survival chazard logchazard density {
 }
 
 
-uhtred (_t 	trt bmi x1 x2 x3 c.trt#rcs(_t, df(1) log orthog) , family(rp, df(3) failure(died))) 
+uhtred (stime 	trt bmi x1 x2 x3 c.trt#rcs(stime, df(1) log orthog) , family(rp, df(3) failure(died))) 
 foreach v in hazard survival chazard logchazard density {
 	predict `v'nnph, `v' ci
 	predict `v'nnph_at, `v' at(trt 1 bmi 20) ci
@@ -96,7 +95,6 @@ replace t0 = runiform() * 2 //if _n>200
 
 drop if stime<t0
 
-stset stime, enter(t0) f(died)
 
 uhtred (stime trt bmi age x1, family(rp, df(3) failure(died) ltruncated(t0)))
 

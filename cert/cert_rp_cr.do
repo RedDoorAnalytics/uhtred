@@ -22,7 +22,6 @@ gen other=(cause==2)
 
 keep id trt age time0 time1 cancer other cause state event
 
-stset time1, failure(event) 
 
 
 uhtred 	(time1  age	///

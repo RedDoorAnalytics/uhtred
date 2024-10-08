@@ -11,7 +11,6 @@ sort id1
 survsim stime dead , dist(weib) lambda(0.1) gamma(1.2) ///
 	cov(trt -0.5 age 0.1 u1 1) maxt(5) 
 
-stset stime, f(dead)	
 
 uhtred (stime trt age M1[id1]@1, ///
 	family(rp, df(1) failure(dead))) 	///

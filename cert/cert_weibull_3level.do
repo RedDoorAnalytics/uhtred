@@ -16,7 +16,6 @@ gen id3 = _n
 sort id1 id2 id3
 
 survsim stime1 dead1 , dist(weib) lambda(0.1) gamma(1.2) cov(trt -0.5 age 0.02 u1 1 u2 1) maxt(10)
-stset stime1, f(dead1)
 
 replace id2 = _n
 

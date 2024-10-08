@@ -18,7 +18,6 @@ replace t0 = runiform() * 2 //if _n>200
 drop if stime<t0
 
 
-stset stime, enter(t0) f(died)
 
 //PH model
 uhtred (stime trt bmi age x1 ///
@@ -237,7 +236,6 @@ replace t0 = runiform() * 2 //if _n>200
 drop if stime<t0
 
 
-stset stime, enter(t0) f(died)
 
 
 

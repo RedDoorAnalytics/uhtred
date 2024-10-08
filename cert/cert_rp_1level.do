@@ -17,32 +17,32 @@ survsim stime died , dist(weib) lambda(0.1) gamma(1.2) 	///
 		cov(trt -0.5 bmi -0.05 x1 0.1 x2 -0.4 x3 0.5) ///
 		maxt(10) 
 
-stset stime, f(died) 
 
 //============================================================================//
 //RP PH model- simple weibull
 
-uhtred (_t	trt bmi x1 x2 x3 			///
+uhtred (stime	trt bmi x1 x2 x3 			///
 		, family(rp, df(1) failure(died))) 	///
 		,
 
 
 
-_assert_streq `"`e(cmdline)'"' `"uhtred (_t      trt bmi x1 x2 x3                                        , family(rp, df(1) failure(died)))                      ,"'
+
+_assert_streq `"`e(cmdline)'"' `"uhtred (stime   trt bmi x1 x2 x3                                        , family(rp, df(1) failure(died)))                      ,"'
 assert `"`e(chintpoints)'"'       == `"30"'
 assert `"`e(nap1)'"'              == `"0"'
 assert `"`e(ndistap1)'"'          == `"0"'
 assert `"`e(constant1)'"'         == `"1"'
 assert `"`e(orthog1)'"'           == `"orthog"'
 assert `"`e(knots1)'"'            == `"-3.988795 2.302106"'
-assert `"`e(timevar1)'"'          == `"_t"'
+assert `"`e(timevar1)'"'          == `"stime"'
 assert `"`e(failure1)'"'          == `"died"'
-assert `"`e(response1)'"'         == `"_t died"'
+assert `"`e(response1)'"'         == `"stime died"'
 assert `"`e(family1)'"'           == `"rp"'
 assert `"`e(haszb)'"'             == `"0"'
 assert `"`e(hastb)'"'             == `"1"'
 assert `"`e(hasxb)'"'             == `"1"'
-assert `"`e(allvars)'"'           == `"_t bmi died trt x1 x2 x3"'
+assert `"`e(allvars)'"'           == `"bmi died stime trt x1 x2 x3"'
 assert `"`e(title)'"'             == `"Fixed effects regression model"'
 assert `"`e(cmd)'"'               == `"uhtred"'
 assert `"`e(hasopts)'"'           == `"0"'
@@ -176,23 +176,62 @@ _assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
 _assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_rcs1_1"'
 mat drop C_gradient T_gradient
 
-
 //============================================================================//
 //RP PH model-3 df
 
-uhtred (_t 	trt bmi x1 x2 x3   			///
+uhtred (stime 	trt bmi x1 x2 x3   			///
 		, family(rp, df(3) failure(died))) 	///
 		,
 
 
 
-_assert_streq `"`e(cmdline)'"' `"uhtred (_t      trt bmi x1 x2 x3                                        , family(rp, df(3) failure(died)))                      ,"'
+
+
+_assert_streq `"`e(cmdline)'"' `"uhtred (stime   trt bmi x1 x2 x3                                        , family(rp, df(3) failure(died)))                      ,"'
+assert `"`e(chintpoints)'"'       == `"30"'
+assert `"`e(nap1)'"'              == `"0"'
+assert `"`e(ndistap1)'"'          == `"0"'
+assert `"`e(constant1)'"'         == `"1"'
+assert `"`e(orthog1)'"'           == `"orthog"'
 assert `"`e(knots1)'"'            == `"-3.988795 1.180037 1.83553 2.302106"'
+assert `"`e(timevar1)'"'          == `"stime"'
+assert `"`e(failure1)'"'          == `"died"'
+assert `"`e(response1)'"'         == `"stime died"'
+assert `"`e(family1)'"'           == `"rp"'
+assert `"`e(haszb)'"'             == `"0"'
+assert `"`e(hastb)'"'             == `"1"'
+assert `"`e(hasxb)'"'             == `"1"'
+assert `"`e(allvars)'"'           == `"bmi died stime trt x1 x2 x3"'
+assert `"`e(title)'"'             == `"Fixed effects regression model"'
+assert `"`e(cmd)'"'               == `"uhtred"'
+assert `"`e(hasopts)'"'           == `"0"'
+assert `"`e(from)'"'              == `"0"'
+assert `"`e(predict)'"'           == `"uhtred_p"'
+assert `"`e(deriv_useminbound)'"' == `"off"'
+assert `"`e(opt)'"'               == `"moptimize"'
+assert `"`e(vce)'"'               == `"oim"'
+assert `"`e(user)'"'              == `"uhtred_gf()"'
+assert `"`e(crittype)'"'          == `"log likelihood"'
+assert `"`e(ml_method)'"'         == `"gf2"'
+assert `"`e(singularHmethod)'"'   == `"m-marquardt"'
+assert `"`e(technique)'"'         == `"nr"'
+assert `"`e(which)'"'             == `"max"'
+assert `"`e(properties)'"'        == `"b V"'
 
 assert         e(rank)       == 9
+assert         e(N)          == 5000
 assert         e(k)          == 9
 assert         e(k_eq)       == 2
+assert         e(noconstant) == 0
+assert         e(consonly)   == 0
+assert         e(k_dv)       == 0
+assert         e(converged)  == 1
+assert         e(rc)         == 0
+assert         e(k_autoCns)  == 0
 assert reldif( e(ll)          , -5771.510731746175) <  1E-8
+assert         e(k_eq_model) == 0
+assert         e(Nmodels)    == 1
+assert         e(Nlevels)    == 1
 
 qui {
 mat T_b = J(1,9,0)
@@ -369,18 +408,57 @@ matrix drop A
 //============================================================================//
 //RP PH model factor
 
-uhtred (_t	trt bmi x1 x2 x3 i.agecat			///
+uhtred (stime	trt bmi x1 x2 x3 i.agecat			///
 		, family(rp, df(1) failure(died))) 	///
 		,
 
 
-_assert_streq `"`e(cmdline)'"' `"uhtred (_t      trt bmi x1 x2 x3 i.agecat                                       , family(rp, df(1) failure(died)))                      ,"'
+
+_assert_streq `"`e(cmdline)'"' `"uhtred (stime   trt bmi x1 x2 x3 i.agecat                                       , family(rp, df(1) failure(died)))                      ,"'
+assert `"`e(chintpoints)'"'       == `"30"'
+assert `"`e(nap1)'"'              == `"0"'
+assert `"`e(ndistap1)'"'          == `"0"'
+assert `"`e(constant1)'"'         == `"1"'
+assert `"`e(orthog1)'"'           == `"orthog"'
+assert `"`e(knots1)'"'            == `"-3.988795 2.302106"'
+assert `"`e(timevar1)'"'          == `"stime"'
+assert `"`e(failure1)'"'          == `"died"'
+assert `"`e(response1)'"'         == `"stime died"'
+assert `"`e(family1)'"'           == `"rp"'
+assert `"`e(haszb)'"'             == `"0"'
+assert `"`e(hastb)'"'             == `"1"'
+assert `"`e(hasxb)'"'             == `"1"'
+assert `"`e(allvars)'"'           == `"bmi died i.agecat stime trt x1 x2 x3"'
+assert `"`e(title)'"'             == `"Fixed effects regression model"'
+assert `"`e(cmd)'"'               == `"uhtred"'
+assert `"`e(hasopts)'"'           == `"0"'
+assert `"`e(from)'"'              == `"0"'
+assert `"`e(predict)'"'           == `"uhtred_p"'
+assert `"`e(deriv_useminbound)'"' == `"off"'
+assert `"`e(opt)'"'               == `"moptimize"'
+assert `"`e(vce)'"'               == `"oim"'
+assert `"`e(user)'"'              == `"uhtred_gf()"'
+assert `"`e(crittype)'"'          == `"log likelihood"'
+assert `"`e(ml_method)'"'         == `"gf2"'
+assert `"`e(singularHmethod)'"'   == `"m-marquardt"'
+assert `"`e(technique)'"'         == `"nr"'
+assert `"`e(which)'"'             == `"max"'
 assert `"`e(properties)'"'        == `"b V"'
 
 assert         e(rank)       == 11
+assert         e(N)          == 5000
 assert         e(k)          == 12
+assert         e(k_eq)       == 2
+assert         e(noconstant) == 0
+assert         e(consonly)   == 0
+assert         e(k_dv)       == 0
+assert         e(converged)  == 1
+assert         e(rc)         == 0
 assert         e(k_autoCns)  == 1
 assert reldif( e(ll)          , -5772.343694828301) <  1E-8
+assert         e(k_eq_model) == 0
+assert         e(Nmodels)    == 1
+assert         e(Nlevels)    == 1
 
 qui {
 mat T_b = J(1,12,0)
@@ -566,19 +644,55 @@ mat drop C_gradient T_gradient
 
 
 
-
 //============================================================================//
 //user-defined knots PH model
-uhtred (_t 	trt bmi x1 x2 x3 			///
+uhtred (stime 	trt bmi x1 x2 x3 			///
 		, family(rp, knots(-3.5 1 1.5 2) failure(died))) 	///
 ,
 
 
 
-_assert_streq `"`e(cmdline)'"' `"uhtred (_t      trt bmi x1 x2 x3                                        , family(rp, knots(-3.5 1 1.5 2) failure(died)))        ,"'
+
+_assert_streq `"`e(cmdline)'"' `"uhtred (stime   trt bmi x1 x2 x3                                        , family(rp, knots(-3.5 1 1.5 2) failure(died)))        ,"'
+assert `"`e(chintpoints)'"'       == `"30"'
+assert `"`e(nap1)'"'              == `"0"'
+assert `"`e(ndistap1)'"'          == `"0"'
+assert `"`e(constant1)'"'         == `"1"'
+assert `"`e(orthog1)'"'           == `"orthog"'
+assert `"`e(knots1)'"'            == `"-3.5 1 1.5 2"'
+assert `"`e(timevar1)'"'          == `"stime"'
+assert `"`e(failure1)'"'          == `"died"'
+assert `"`e(response1)'"'         == `"stime died"'
+assert `"`e(family1)'"'           == `"rp"'
+assert `"`e(haszb)'"'             == `"0"'
+assert `"`e(hastb)'"'             == `"1"'
+assert `"`e(hasxb)'"'             == `"1"'
+assert `"`e(allvars)'"'           == `"bmi died stime trt x1 x2 x3"'
+assert `"`e(title)'"'             == `"Fixed effects regression model"'
+assert `"`e(cmd)'"'               == `"uhtred"'
+assert `"`e(hasopts)'"'           == `"0"'
+assert `"`e(from)'"'              == `"0"'
+assert `"`e(predict)'"'           == `"uhtred_p"'
+assert `"`e(deriv_useminbound)'"' == `"off"'
+assert `"`e(opt)'"'               == `"moptimize"'
+assert `"`e(vce)'"'               == `"oim"'
+assert `"`e(user)'"'              == `"uhtred_gf()"'
+assert `"`e(crittype)'"'          == `"log likelihood"'
+assert `"`e(ml_method)'"'         == `"gf2"'
+assert `"`e(singularHmethod)'"'   == `"m-marquardt"'
+assert `"`e(technique)'"'         == `"nr"'
+assert `"`e(which)'"'             == `"max"'
+assert `"`e(properties)'"'        == `"b V"'
+
 assert         e(rank)       == 9
+assert         e(N)          == 5000
 assert         e(k)          == 9
 assert         e(k_eq)       == 2
+assert         e(noconstant) == 0
+assert         e(consonly)   == 0
+assert         e(k_dv)       == 0
+assert         e(converged)  == 1
+assert         e(rc)         == 0
 assert         e(k_autoCns)  == 0
 assert reldif( e(ll)          , -5770.540651590882) <  1E-8
 assert         e(k_eq_model) == 0
@@ -729,21 +843,56 @@ assert mreldif( C_gradient , T_gradient ) < 1E-8
 _assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
 _assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
 mat drop C_gradient T_gradient
-
 
 //============================================================================//
 //user-defined BOUNDARY knots PH model
 
-uhtred (_t 	trt bmi x1 x2 x3 			///
+uhtred (stime 	trt bmi x1 x2 x3 			///
 		, family(rp, knots(-3.5 1 1.5 2) failure(died))) 	///
 ,
 
 
-_assert_streq `"`e(cmdline)'"' `"uhtred (_t      trt bmi x1 x2 x3                                        , family(rp, knots(-3.5 1 1.5 2) failure(died)))        ,"'
+
+_assert_streq `"`e(cmdline)'"' `"uhtred (stime   trt bmi x1 x2 x3                                        , family(rp, knots(-3.5 1 1.5 2) failure(died)))        ,"'
+assert `"`e(chintpoints)'"'       == `"30"'
+assert `"`e(nap1)'"'              == `"0"'
+assert `"`e(ndistap1)'"'          == `"0"'
+assert `"`e(constant1)'"'         == `"1"'
+assert `"`e(orthog1)'"'           == `"orthog"'
+assert `"`e(knots1)'"'            == `"-3.5 1 1.5 2"'
+assert `"`e(timevar1)'"'          == `"stime"'
+assert `"`e(failure1)'"'          == `"died"'
+assert `"`e(response1)'"'         == `"stime died"'
+assert `"`e(family1)'"'           == `"rp"'
+assert `"`e(haszb)'"'             == `"0"'
+assert `"`e(hastb)'"'             == `"1"'
+assert `"`e(hasxb)'"'             == `"1"'
+assert `"`e(allvars)'"'           == `"bmi died stime trt x1 x2 x3"'
+assert `"`e(title)'"'             == `"Fixed effects regression model"'
+assert `"`e(cmd)'"'               == `"uhtred"'
+assert `"`e(hasopts)'"'           == `"0"'
+assert `"`e(from)'"'              == `"0"'
+assert `"`e(predict)'"'           == `"uhtred_p"'
+assert `"`e(deriv_useminbound)'"' == `"off"'
+assert `"`e(opt)'"'               == `"moptimize"'
+assert `"`e(vce)'"'               == `"oim"'
+assert `"`e(user)'"'              == `"uhtred_gf()"'
+assert `"`e(crittype)'"'          == `"log likelihood"'
+assert `"`e(ml_method)'"'         == `"gf2"'
+assert `"`e(singularHmethod)'"'   == `"m-marquardt"'
+assert `"`e(technique)'"'         == `"nr"'
+assert `"`e(which)'"'             == `"max"'
+assert `"`e(properties)'"'        == `"b V"'
 
 assert         e(rank)       == 9
+assert         e(N)          == 5000
 assert         e(k)          == 9
 assert         e(k_eq)       == 2
+assert         e(noconstant) == 0
+assert         e(consonly)   == 0
+assert         e(k_dv)       == 0
+assert         e(converged)  == 1
+assert         e(rc)         == 0
 assert         e(k_autoCns)  == 0
 assert reldif( e(ll)          , -5770.540651590882) <  1E-8
 assert         e(k_eq_model) == 0
@@ -896,17 +1045,47 @@ _assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb
 mat drop C_gradient T_gradient
 
 
+
 //============================================================================//
 //interaction term in PH - cat#cat
-uhtred (_t 	i.trt bmi x1 x2 x3 			///
+uhtred (stime 	i.trt bmi x1 x2 x3 			///
 		i.trt#i.agecat 	///
 		, family(rp, df(3) failure(died))) 	///
 		,
 
 
 
+
+_assert_streq `"`e(cmdline)'"' `"uhtred (stime   i.trt bmi x1 x2 x3                                      i.trt#i.agecat                  , family(rp, df(3) failure(died)))                      ,"'
+assert `"`e(chintpoints)'"'       == `"30"'
+assert `"`e(nap1)'"'              == `"0"'
+assert `"`e(ndistap1)'"'          == `"0"'
+assert `"`e(constant1)'"'         == `"1"'
+assert `"`e(orthog1)'"'           == `"orthog"'
 assert `"`e(knots1)'"'            == `"-3.988795 1.180037 1.83553 2.302106"'
-assert `"`e(allvars)'"'           == `"_t bmi died i.agecat i.trt x1 x2 x3"'
+assert `"`e(timevar1)'"'          == `"stime"'
+assert `"`e(failure1)'"'          == `"died"'
+assert `"`e(response1)'"'         == `"stime died"'
+assert `"`e(family1)'"'           == `"rp"'
+assert `"`e(haszb)'"'             == `"0"'
+assert `"`e(hastb)'"'             == `"1"'
+assert `"`e(hasxb)'"'             == `"1"'
+assert `"`e(allvars)'"'           == `"bmi died i.agecat i.trt stime x1 x2 x3"'
+assert `"`e(title)'"'             == `"Fixed effects regression model"'
+assert `"`e(cmd)'"'               == `"uhtred"'
+assert `"`e(hasopts)'"'           == `"0"'
+assert `"`e(from)'"'              == `"0"'
+assert `"`e(predict)'"'           == `"uhtred_p"'
+assert `"`e(deriv_useminbound)'"' == `"off"'
+assert `"`e(opt)'"'               == `"moptimize"'
+assert `"`e(vce)'"'               == `"oim"'
+assert `"`e(user)'"'              == `"uhtred_gf()"'
+assert `"`e(crittype)'"'          == `"log likelihood"'
+assert `"`e(ml_method)'"'         == `"gf2"'
+assert `"`e(singularHmethod)'"'   == `"m-marquardt"'
+assert `"`e(technique)'"'         == `"nr"'
+assert `"`e(which)'"'             == `"max"'
+assert `"`e(properties)'"'        == `"b V"'
 
 assert         e(rank)       == 17
 assert         e(N)          == 5000
@@ -945,8 +1124,6 @@ mat T_b[1,20] =  .0138515964498071
 }
 matrix C_b = e(b)
 assert mreldif( C_b , T_b ) < 1E-8
-_assert_streq `"`: rowfullnames C_b'"' `"y1"'
-
 mat drop C_b T_b
 
 qui {
@@ -1261,8 +1438,6 @@ mat T_rcsrmat_1[4,4] =                  1
 }
 matrix C_rcsrmat_1 = e(rcsrmat_1)
 assert mreldif( C_rcsrmat_1 , T_rcsrmat_1 ) < 1E-8
-_assert_streq `"`: rowfullnames C_rcsrmat_1'"' `"r1 r2 r3 r4"'
-_assert_streq `"`: colfullnames C_rcsrmat_1'"' `"c1 c2 c3 c4"'
 mat drop C_rcsrmat_1 T_rcsrmat_1
 
 qui {
@@ -1287,22 +1462,48 @@ mat T_gradient[1,20] = -3.59957102371e-08
 }
 matrix C_gradient = e(gradient)
 assert mreldif( C_gradient , T_gradient ) < 1E-8
-_assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
-
 mat drop C_gradient T_gradient
-
 
 //============================================================================//
 //interaction term in PH - cts cts
 
-uhtred (_t 	trt bmi c.x1#c.x2 x3 			///
+uhtred (stime 	trt bmi c.x1#c.x2 x3 			///
 		, family(rp, df(3) failure(died))) 	///
 		,
 
 		
 
+
+_assert_streq `"`e(cmdline)'"' `"uhtred (stime   trt bmi c.x1#c.x2 x3                                    , family(rp, df(3) failure(died)))                      ,"'
+assert `"`e(chintpoints)'"'       == `"30"'
+assert `"`e(nap1)'"'              == `"0"'
+assert `"`e(ndistap1)'"'          == `"0"'
+assert `"`e(constant1)'"'         == `"1"'
+assert `"`e(orthog1)'"'           == `"orthog"'
 assert `"`e(knots1)'"'            == `"-3.988795 1.180037 1.83553 2.302106"'
-assert `"`e(allvars)'"'           == `"_t bmi c.x1 c.x2 died trt x3"'
+assert `"`e(timevar1)'"'          == `"stime"'
+assert `"`e(failure1)'"'          == `"died"'
+assert `"`e(response1)'"'         == `"stime died"'
+assert `"`e(family1)'"'           == `"rp"'
+assert `"`e(haszb)'"'             == `"0"'
+assert `"`e(hastb)'"'             == `"1"'
+assert `"`e(hasxb)'"'             == `"1"'
+assert `"`e(allvars)'"'           == `"bmi c.x1 c.x2 died stime trt x3"'
+assert `"`e(title)'"'             == `"Fixed effects regression model"'
+assert `"`e(cmd)'"'               == `"uhtred"'
+assert `"`e(hasopts)'"'           == `"0"'
+assert `"`e(from)'"'              == `"0"'
+assert `"`e(predict)'"'           == `"uhtred_p"'
+assert `"`e(deriv_useminbound)'"' == `"off"'
+assert `"`e(opt)'"'               == `"moptimize"'
+assert `"`e(vce)'"'               == `"oim"'
+assert `"`e(user)'"'              == `"uhtred_gf()"'
+assert `"`e(crittype)'"'          == `"log likelihood"'
+assert `"`e(ml_method)'"'         == `"gf2"'
+assert `"`e(singularHmethod)'"'   == `"m-marquardt"'
+assert `"`e(technique)'"'         == `"nr"'
+assert `"`e(which)'"'             == `"max"'
+assert `"`e(properties)'"'        == `"b V"'
 
 assert         e(rank)       == 8
 assert         e(N)          == 5000
@@ -1469,17 +1670,17 @@ survsim stime died , dist(weib) lambda(0.1) gamma(1.2) 	///
 		tde(trt 0.01) tdefunc(log({t}))	///
 		maxt(10) 
 
-stset stime, f(died) 
 
 //model
-uhtred (_t 	trt bmi x1 x2 x3 			///
-		c.trt#rcs(_t, df(1) log orthog) 	///
+uhtred (stime 	trt bmi x1 x2 x3 			///
+		c.trt#rcs(stime, df(1) log orthog) 	///
 		, family(rp, df(1) failure(died))) 	///
 		,
 
 		
 
-_assert_streq `"`e(cmdline)'"' `"uhtred (_t      trt bmi x1 x2 x3                                        c.trt#rcs(_t, df(1) log orthog)                         , family(rp, df(1) failure(died)))                      ,"'
+
+_assert_streq `"`e(cmdline)'"' `"uhtred (stime   trt bmi x1 x2 x3                                        c.trt#rcs(stime, df(1) log orthog)                      , family(rp, df(1) failure(died)))                      ,"'
 assert `"`e(chintpoints)'"'       == `"30"'
 assert `"`e(nap1)'"'              == `"0"'
 assert `"`e(ndistap1)'"'          == `"0"'
@@ -1487,14 +1688,14 @@ assert `"`e(constant1)'"'         == `"1"'
 assert `"`e(knots_1_6_2)'"'       == `"-3.948971 2.302585"'
 assert `"`e(orthog1)'"'           == `"orthog"'
 assert `"`e(knots1)'"'            == `"-3.948971 2.301309"'
-assert `"`e(timevar1)'"'          == `"_t"'
+assert `"`e(timevar1)'"'          == `"stime"'
 assert `"`e(failure1)'"'          == `"died"'
-assert `"`e(response1)'"'         == `"_t died"'
+assert `"`e(response1)'"'         == `"stime died"'
 assert `"`e(family1)'"'           == `"rp"'
 assert `"`e(haszb)'"'             == `"0"'
 assert `"`e(hastb)'"'             == `"1"'
 assert `"`e(hasxb)'"'             == `"1"'
-assert `"`e(allvars)'"'           == `"_t bmi c.trt died trt x1 x2 x3"'
+assert `"`e(allvars)'"'           == `"bmi c.trt died stime trt x1 x2 x3"'
 assert `"`e(title)'"'             == `"Fixed effects regression model"'
 assert `"`e(cmd)'"'               == `"uhtred"'
 assert `"`e(hasopts)'"'           == `"0"'
@@ -1662,15 +1863,16 @@ mat drop C_gradient T_gradient
 
 //============================================================================//
 //RP nonPH model - 3 df
-uhtred (_t 	trt bmi x1 x2 x3 			///
-		c.trt#rcs(_t, df(1) log orthog) 	///
+uhtred (stime 	trt bmi x1 x2 x3 			///
+		c.trt#rcs(stime, df(1) log orthog) 	///
 		, family(rp, df(3) failure(died))) 	///
 		,
 
 
 		
 
-_assert_streq `"`e(cmdline)'"' `"uhtred (_t      trt bmi x1 x2 x3                                        c.trt#rcs(_t, df(1) log orthog)                         , family(rp, df(3) failure(died)))                      ,"'
+
+_assert_streq `"`e(cmdline)'"' `"uhtred (stime   trt bmi x1 x2 x3                                        c.trt#rcs(stime, df(1) log orthog)                      , family(rp, df(3) failure(died)))                      ,"'
 assert `"`e(chintpoints)'"'       == `"30"'
 assert `"`e(nap1)'"'              == `"0"'
 assert `"`e(ndistap1)'"'          == `"0"'
@@ -1678,14 +1880,14 @@ assert `"`e(constant1)'"'         == `"1"'
 assert `"`e(knots_1_6_2)'"'       == `"-3.948971 2.302585"'
 assert `"`e(orthog1)'"'           == `"orthog"'
 assert `"`e(knots1)'"'            == `"-3.948971 1.184131 1.832773 2.301309"'
-assert `"`e(timevar1)'"'          == `"_t"'
+assert `"`e(timevar1)'"'          == `"stime"'
 assert `"`e(failure1)'"'          == `"died"'
-assert `"`e(response1)'"'         == `"_t died"'
+assert `"`e(response1)'"'         == `"stime died"'
 assert `"`e(family1)'"'           == `"rp"'
 assert `"`e(haszb)'"'             == `"0"'
 assert `"`e(hastb)'"'             == `"1"'
 assert `"`e(hasxb)'"'             == `"1"'
-assert `"`e(allvars)'"'           == `"_t bmi c.trt died trt x1 x2 x3"'
+assert `"`e(allvars)'"'           == `"bmi c.trt died stime trt x1 x2 x3"'
 assert `"`e(title)'"'             == `"Fixed effects regression model"'
 assert `"`e(cmd)'"'               == `"uhtred"'
 assert `"`e(hasopts)'"'           == `"0"'
@@ -1895,6 +2097,7 @@ _assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
 _assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
 mat drop C_gradient T_gradient
 
+
 // orthog matrix certs
 qui {
 	mat A = J(4,4,0)
@@ -1934,16 +2137,44 @@ matrix drop A B
 
 //============================================================================//
 //non-PH model >1 df in tde
-uhtred (_t 	trt bmi x1 x2 x3 			///
-		c.trt#rcs(_t, df(2) log orthog event) 	///
+uhtred (stime 	trt bmi x1 x2 x3 			///
+		c.trt#rcs(stime, df(2) log orthog event) 	///
 		, family(rp, df(3) failure(died))) 	///
 		,
 	
 
-_assert_streq `"`e(cmdline)'"' `"uhtred (_t      trt bmi x1 x2 x3                                        c.trt#rcs(_t, df(2) log orthog event)                   , family(rp, df(3) failure(died)))                      ,"'
+
+_assert_streq `"`e(cmdline)'"' `"uhtred (stime   trt bmi x1 x2 x3                                        c.trt#rcs(stime, df(2) log orthog event)                        , family(rp, df(3) failure(died)))                      ,"'
+assert `"`e(chintpoints)'"'       == `"30"'
+assert `"`e(nap1)'"'              == `"0"'
+assert `"`e(ndistap1)'"'          == `"0"'
+assert `"`e(constant1)'"'         == `"1"'
 assert `"`e(knots_1_6_2)'"'       == `"-3.948971 1.533659 2.301309"'
 assert `"`e(orthog1)'"'           == `"orthog"'
 assert `"`e(knots1)'"'            == `"-3.948971 1.184131 1.832773 2.301309"'
+assert `"`e(timevar1)'"'          == `"stime"'
+assert `"`e(failure1)'"'          == `"died"'
+assert `"`e(response1)'"'         == `"stime died"'
+assert `"`e(family1)'"'           == `"rp"'
+assert `"`e(haszb)'"'             == `"0"'
+assert `"`e(hastb)'"'             == `"1"'
+assert `"`e(hasxb)'"'             == `"1"'
+assert `"`e(allvars)'"'           == `"bmi c.trt died stime trt x1 x2 x3"'
+assert `"`e(title)'"'             == `"Fixed effects regression model"'
+assert `"`e(cmd)'"'               == `"uhtred"'
+assert `"`e(hasopts)'"'           == `"0"'
+assert `"`e(from)'"'              == `"0"'
+assert `"`e(predict)'"'           == `"uhtred_p"'
+assert `"`e(deriv_useminbound)'"' == `"off"'
+assert `"`e(opt)'"'               == `"moptimize"'
+assert `"`e(vce)'"'               == `"oim"'
+assert `"`e(user)'"'              == `"uhtred_gf()"'
+assert `"`e(crittype)'"'          == `"log likelihood"'
+assert `"`e(ml_method)'"'         == `"gf2"'
+assert `"`e(singularHmethod)'"'   == `"m-marquardt"'
+assert `"`e(technique)'"'         == `"nr"'
+assert `"`e(which)'"'             == `"max"'
+assert `"`e(properties)'"'        == `"b V"'
 
 assert         e(rank)       == 11
 assert         e(N)          == 5000
@@ -2170,8 +2401,8 @@ mat drop C_gradient T_gradient
 //user-defined knots (nonPH RP)
 
 
-uhtred (_t 	trt bmi x1 x2 x3 			///
-		c.trt#rcs(_t, knots(-4 1.5 2.3) log orthog ) 	///
+uhtred (stime 	trt bmi x1 x2 x3 			///
+		c.trt#rcs(stime, knots(-4 1.5 2.3) log orthog ) 	///
 		, family(rp, knots(-4 1 1.5 2) failure(died))) 	///
 		,
 		
@@ -2179,11 +2410,37 @@ uhtred (_t 	trt bmi x1 x2 x3 			///
 		
 
 
-_assert_streq `"`e(cmdline)'"' `"uhtred (_t      trt bmi x1 x2 x3                                        c.trt#rcs(_t, knots(-4 1.5 2.3) log orthog )                    , family(rp, knots(-4 1 1.5 2) failure(died)))                  ,"'
+
+assert `"`e(chintpoints)'"'       == `"30"'
+assert `"`e(nap1)'"'              == `"0"'
+assert `"`e(ndistap1)'"'          == `"0"'
+assert `"`e(constant1)'"'         == `"1"'
 assert `"`e(knots_1_6_2)'"'       == `"-4 1.5 2.3"'
 assert `"`e(orthog1)'"'           == `"orthog"'
 assert `"`e(knots1)'"'            == `"-4 1 1.5 2"'
-assert `"`e(allvars)'"'           == `"_t bmi c.trt died trt x1 x2 x3"'
+assert `"`e(timevar1)'"'          == `"stime"'
+assert `"`e(failure1)'"'          == `"died"'
+assert `"`e(response1)'"'         == `"stime died"'
+assert `"`e(family1)'"'           == `"rp"'
+assert `"`e(haszb)'"'             == `"0"'
+assert `"`e(hastb)'"'             == `"1"'
+assert `"`e(hasxb)'"'             == `"1"'
+assert `"`e(allvars)'"'           == `"bmi c.trt died stime trt x1 x2 x3"'
+assert `"`e(title)'"'             == `"Fixed effects regression model"'
+assert `"`e(cmd)'"'               == `"uhtred"'
+assert `"`e(hasopts)'"'           == `"0"'
+assert `"`e(from)'"'              == `"0"'
+assert `"`e(predict)'"'           == `"uhtred_p"'
+assert `"`e(deriv_useminbound)'"' == `"off"'
+assert `"`e(opt)'"'               == `"moptimize"'
+assert `"`e(vce)'"'               == `"oim"'
+assert `"`e(user)'"'              == `"uhtred_gf()"'
+assert `"`e(crittype)'"'          == `"log likelihood"'
+assert `"`e(ml_method)'"'         == `"gf2"'
+assert `"`e(singularHmethod)'"'   == `"m-marquardt"'
+assert `"`e(technique)'"'         == `"nr"'
+assert `"`e(which)'"'             == `"max"'
+assert `"`e(properties)'"'        == `"b V"'
 
 assert         e(rank)       == 11
 assert         e(N)          == 5000
@@ -2403,5 +2660,4 @@ assert mreldif( C_gradient , T_gradient ) < 1E-8
 _assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
 _assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:c.trt#c._rcs1_6_2_2 tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
 mat drop C_gradient T_gradient
-	
 
