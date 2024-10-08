@@ -25,21 +25,22 @@ void uhtred_setup_check_clp(`gml' gml)
 	for (i=1;i<=gml.Nmodels;i++) {
 		st_local("rest",st_local("indepvars"+strofreal(i)))
 		stata("gettoken lhs rest : rest, bind")
-		uhtred_cmp_errorchecks(gml,strtrim(st_local("lhs")))
+		uhtred_cmp_errorchecks(gml,strtrim(st_local("lhs")),i)
 		while (st_local("rest")!="") {
 			stata("gettoken lhs rest : rest, bind")
-			uhtred_cmp_errorchecks(gml,strtrim(st_local("lhs")))
+			uhtred_cmp_errorchecks(gml,strtrim(st_local("lhs")),i)
 		}
 	}
 }
 
-void uhtred_cmp_errorchecks(`gml' gml,`SS' dv)
+void uhtred_cmp_errorchecks(`gml' gml,`SS' dv, `RS' modn)
 {
 	//check each component
 	//-> note; not effected by @'s
 	pos 	= 1	
 	varind 	= 0
 	reind 	= 0
+	tsintind= 0
 	fvi 	= strpos(dv,"i.") | strpos(dv,"i(")
 	h2	= strpos(dv,"##")
 	hasrcs 	= strpos(dv,"rcs(")
@@ -58,6 +59,7 @@ void uhtred_cmp_errorchecks(`gml' gml,`SS' dv)
 			}
 			else dv2 = dv
 			uhtred_dvcheck(gml,dv2,varind,reind)
+			uhtred_tsintcheck(gml,dv2,modn,tsintind)
 		}
 	}
 	
@@ -80,6 +82,11 @@ void uhtred_cmp_errorchecks(`gml' gml,`SS' dv)
 		txt = "Only one random effect element is "
 		txt = txt + "allowed in each component\n"
 		errprintf(txt)
+		exit(1986)
+	}
+
+	if (tsintind>1) {
+		errprintf("timescale interactions not supported \n")
 		exit(1986)
 	}
 }
@@ -175,6 +182,21 @@ void uhtred_dvcheck(`gml' gml,`SS' dv2, `RS' varind, reind)
 	else {  //variable
 		uhtred_confirmvars(dv2)				
 		varind++
+	}
+}
+
+void uhtred_tsintcheck(`gml' gml,`SS' dv2, `RS' modn, tsintind)
+{
+	hasrcs	= substr(dv2,1,4)=="rcs(" 
+	//check for timescale interactions
+	if (hasrcs) {
+		resvar 	= st_local("response"+strofreal(modn))
+		resvar2 = substr(resvar,1,strpos(resvar," ")-1)
+		f = gml.familys[modn]
+		anything = st_local("anything")
+		if ((f=="rp") & (anything==resvar2)) {
+			tsintind++
+		}	
 	}
 }
 
