@@ -31,7 +31,7 @@ merlin (stime trt trt#M1[id1]@1 M2[id1]@1, ///
 	family(rp, df(1) failure(dead))), 	///
 	intmethod(gh) 	///
 	cov(unstr) 
-
+timer off 1
 // predict refs1*, reffects
 
 timer on 2

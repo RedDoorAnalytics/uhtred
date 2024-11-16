@@ -20,8 +20,8 @@ gen yearc = year - 2000
 survsim stime died, maxtime(5) cov(trt -0.5) 	///
 hazard(	0.1:*1.2:*{t}:^0.2 :*			///
         exp(					///
-                        0.1 :* (agec :+ {t}) 	///
-                        :- 0.1 :* (yearc :+ {t}) ///
+                        0.1 :* (agec :+ log({t})) 	///
+                        :- 0.1 :* (yearc :+ log({t})) ///
                 )				///
         )
 
@@ -29,15 +29,15 @@ hazard(	0.1:*1.2:*{t}:^0.2 :*			///
 timer clear
 timer on 1
 merlin (stime 	trt 						///
-        rcs(stime, df(1) offset(agec)) 				///
-        rcs(stime, df(1) offset(yearc)) 			///
-        , family(rp, df(3) failure(died)) timevar(stime)), 
+        rcs(stime, df(1) log offset(agec)) 				///
+        rcs(stime, df(1) log offset(yearc)) 			///
+        , family(rp, df(3) failure(died)) timevar(stime)),
 timer off 1
 
 timer on 2
 uhtred (stime 	trt 						///
-        rcs(stime, df(1) offset(agec)) 				///
-        rcs(stime, df(1) offset(yearc)) 			///
+        rcs(stime, df(1) log offset(agec)) 				///
+        rcs(stime, df(1) log offset(yearc)) 			///
         , family(rp, df(3) failure(died)))
 
 timer off 2
