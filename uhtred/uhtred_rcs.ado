@@ -6,7 +6,7 @@ program uhtred_rcs, rclass
 	
 	syntax varname, [				///
 				DF(string) 		///
-				KNOTS(numlist asc) 	///
+				KNOTS(numlist asc min=2) 	///
 				LOG 			///
 				ORTHog 			///
 				NOORTHog 		///
