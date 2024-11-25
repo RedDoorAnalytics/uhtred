@@ -30,6 +30,7 @@ do ./cert/cert_rp_1level_ltrunc
 // 2-level models
 
 do ./cert/cert_rp_2level
+do ./cert/cert_rp_2level_gf12
 
 
 //============================================================================//
