@@ -11,14 +11,12 @@ gen x1 = rnormal()
 gen x2 = rnormal()
 gen x3 = rnormal()
 gen bmi = rnormal(30,3)
-
 gen t0 = runiform() * 2
 
 survsim stime died , dist(weib) lambda(0.1) gamma(1.2) 	///
 		cov(trt -0.5 age 0.01 bmi -0.05 x1 0.1 x2 -0.4 x3 0.5) ///
 		tde(trt 0.01) tdefunc(log({t}))	///
 		maxt(10) 
-
 
 //============================================================================//
 //error checks

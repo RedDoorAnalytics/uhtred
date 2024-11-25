@@ -10,8 +10,6 @@ gen x2 = rnormal()
 gen x3 = rnormal()
 gen bmi = rnormal(30,3)
 egen agecat=cut(age), at(0,50,55,60,65,100) icodes
-
-
 gen t0 = runiform() * 2
 
 survsim stime died , dist(weib) lambda(0.1) gamma(1.2) 	///
@@ -19,14 +17,12 @@ survsim stime died , dist(weib) lambda(0.1) gamma(1.2) 	///
 		tde(trt 0.01) tdefunc(log({t}))	///
 		maxt(10)
 
-
-uhtred (stime trt bmi x1 x2 x3, family(rp, df(3) failure(died)))
+merlin (stime trt bmi x1 x2 x3, family(rp, df(3) failure(died)))
 
 foreach v in hazard survival chazard logchazard density {
 	predict `v'n, `v' ci
 	predict `v'n_at, `v' at(trt 1 bmi 20) ci
 	predict `v'n_z, `v' zeros ci
-	*predict `v'_tv, `v' timevar(timevar) ci	
 }
 
 
@@ -34,14 +30,9 @@ uhtred (stime 	trt bmi x1 x2 x3 c.trt#rcs(stime, df(1) log orthog) , family(rp, 
 foreach v in hazard survival chazard logchazard density {
 	predict `v'nnph, `v' ci
 	predict `v'nnph_at, `v' at(trt 1 bmi 20) ci
-	*predict `v'nnph_tv, `v' timevar(timevar) ci	
 }
 
-
-
-
 merge 1:1 id1 using ./cert/cert-data/rp_1level_pred, keep(match) nogen
-
 
 foreach i in hazard survival chazard logchazard density {
 	assert abs(`i'- `i'n)< 1E-5
@@ -68,12 +59,9 @@ foreach i in hazard survival chazard logchazard density {
 	}
 }
 
-
-
 foreach i in hazard survival chazard logchazard density {
 	cap drop `i'*
 }
-
 
 //left truncated data predictions
 set seed 72549
@@ -86,15 +74,12 @@ gen age = rnormal(55,5)
 gen x1 = rnormal()
 gen bmi = rnormal(30,3)
 
-
 survsim stime died, dist(weib) lambda(0.1) gamma(1.2) ///
 	cov(trt -0.5 age 0.01 bmi -0.05 x1 0.1) maxt(10)
 
 gen t0 = 0
-replace t0 = runiform() * 2 //if _n>200
-
+replace t0 = runiform() * 2
 drop if stime<t0
-
 
 uhtred (stime trt bmi age x1, family(rp, df(3) failure(died) ltruncated(t0)))
 
@@ -102,7 +87,6 @@ foreach v in hazard survival chazard logchazard density {
 	predict `v'n, `v' ci
 	predict `v'n_at, `v' at(trt 1 bmi 20) ci
 	predict `v'n_z, `v' zeros ci
-	*predict `v'_tv, `v' timevar(timevar) ci	
 }
 
 merge 1:1 id1 using ./cert/cert-data/rp_1level_lt_pred, keep(match) nogen
@@ -120,7 +104,6 @@ foreach i in hazard survival chazard logchazard density {
 
 	}
 }
-
 
 foreach i in hazard survival chazard logchazard density {
 	cap drop `i'*

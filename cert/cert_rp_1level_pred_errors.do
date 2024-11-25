@@ -19,10 +19,7 @@ survsim stime died , dist(weib) lambda(0.1) gamma(1.2) 	///
 		tde(trt 0.01) tdefunc(log({t}))	///
 		maxt(10) 
 
-
-
 uhtred (stime trt bmi x1 x2 x3, family(rp, df(3) failure(died)))
-
 
 //testing syntax errors
 cap drop h

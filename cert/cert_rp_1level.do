@@ -19,16 +19,11 @@ survsim stime died , dist(weib) lambda(0.1) gamma(1.2) 	///
 
 
 //============================================================================//
-//RP PH model- simple weibull
+// rp ph model - df1
 
-uhtred (stime	trt bmi x1 x2 x3 			///
-		, family(rp, df(1) failure(died))) 	///
-		,
+uhtred (stime trt bmi x1 x2 x3, family(rp, df(1) failure(died)))
 
-
-
-
-_assert_streq `"`e(cmdline)'"' `"uhtred (stime   trt bmi x1 x2 x3                                        , family(rp, df(1) failure(died)))                      ,"'
+_assert_streq `"`e(cmdline)'"' `"uhtred (stime trt bmi x1 x2 x3, family(rp, df(1) failure(died)))"'
 assert `"`e(chintpoints)'"'       == `"30"'
 assert `"`e(nap1)'"'              == `"0"'
 assert `"`e(ndistap1)'"'          == `"0"'
@@ -176,18 +171,13 @@ _assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
 _assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_rcs1_1"'
 mat drop C_gradient T_gradient
 
+
 //============================================================================//
-//RP PH model-3 df
+// rp ph model - 3 df
 
-uhtred (stime 	trt bmi x1 x2 x3   			///
-		, family(rp, df(3) failure(died))) 	///
-		,
-
-
-
-
-
-_assert_streq `"`e(cmdline)'"' `"uhtred (stime   trt bmi x1 x2 x3                                        , family(rp, df(3) failure(died)))                      ,"'
+uhtred (stime trt bmi x1 x2 x3, family(rp, df(3) failure(died)))
+		
+_assert_streq `"`e(cmdline)'"' `"uhtred (stime trt bmi x1 x2 x3, family(rp, df(3) failure(died)))"'
 assert `"`e(chintpoints)'"'       == `"30"'
 assert `"`e(nap1)'"'              == `"0"'
 assert `"`e(ndistap1)'"'          == `"0"'
@@ -405,15 +395,11 @@ matrix drop A
 
 
 //============================================================================//
-//RP PH model factor
+// rp ph model - factor variable
 
-uhtred (stime	trt bmi x1 x2 x3 i.agecat			///
-		, family(rp, df(1) failure(died))) 	///
-		,
+uhtred (stime trt bmi x1 x2 x3 i.agecat, family(rp, df(1) failure(died)))
 
-
-
-_assert_streq `"`e(cmdline)'"' `"uhtred (stime   trt bmi x1 x2 x3 i.agecat                                       , family(rp, df(1) failure(died)))                      ,"'
+_assert_streq `"`e(cmdline)'"' `"uhtred (stime trt bmi x1 x2 x3 i.agecat, family(rp, df(1) failure(died)))"'
 assert `"`e(chintpoints)'"'       == `"30"'
 assert `"`e(nap1)'"'              == `"0"'
 assert `"`e(ndistap1)'"'          == `"0"'
@@ -642,17 +628,11 @@ _assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb
 mat drop C_gradient T_gradient
 
 
-
 //============================================================================//
-//user-defined knots PH model
-uhtred (stime 	trt bmi x1 x2 x3 			///
-		, family(rp, knots(-3.5 1 1.5 2) failure(died))) 	///
-,
+// user-defined knots PH model
+uhtred (stime trt bmi x1 x2 x3, family(rp, knots(-3.5 1 1.5 2) failure(died)))
 
-
-
-
-_assert_streq `"`e(cmdline)'"' `"uhtred (stime   trt bmi x1 x2 x3                                        , family(rp, knots(-3.5 1 1.5 2) failure(died)))        ,"'
+_assert_streq `"`e(cmdline)'"' `"uhtred (stime trt bmi x1 x2 x3, family(rp, knots(-3.5 1 1.5 2) failure(died)))"'
 assert `"`e(chintpoints)'"'       == `"30"'
 assert `"`e(nap1)'"'              == `"0"'
 assert `"`e(ndistap1)'"'          == `"0"'
@@ -844,15 +824,11 @@ _assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb
 mat drop C_gradient T_gradient
 
 //============================================================================//
-//user-defined BOUNDARY knots PH model
+// user-defined BOUNDARY knots PH model
 
-uhtred (stime 	trt bmi x1 x2 x3 			///
-		, family(rp, knots(-3.5 1 1.5 2) failure(died))) 	///
-,
+uhtred (stime trt bmi x1 x2 x3, family(rp, knots(-3.5 1 1.5 2) failure(died)))
 
-
-
-_assert_streq `"`e(cmdline)'"' `"uhtred (stime   trt bmi x1 x2 x3                                        , family(rp, knots(-3.5 1 1.5 2) failure(died)))        ,"'
+_assert_streq `"`e(cmdline)'"' `"uhtred (stime trt bmi x1 x2 x3, family(rp, knots(-3.5 1 1.5 2) failure(died)))"'
 assert `"`e(chintpoints)'"'       == `"30"'
 assert `"`e(nap1)'"'              == `"0"'
 assert `"`e(ndistap1)'"'          == `"0"'
@@ -1047,15 +1023,9 @@ mat drop C_gradient T_gradient
 
 //============================================================================//
 //interaction term in PH - cat#cat
-uhtred (stime 	i.trt bmi x1 x2 x3 			///
-		i.trt#i.agecat 	///
-		, family(rp, df(3) failure(died))) 	///
-		,
+uhtred (stime i.trt bmi x1 x2 x3 i.trt#i.agecat, family(rp, df(3) failure(died)))
 
-
-
-
-_assert_streq `"`e(cmdline)'"' `"uhtred (stime   i.trt bmi x1 x2 x3                                      i.trt#i.agecat                  , family(rp, df(3) failure(died)))                      ,"'
+_assert_streq `"`e(cmdline)'"' `"uhtred (stime i.trt bmi x1 x2 x3 i.trt#i.agecat, family(rp, df(3) failure(died)))"'
 assert `"`e(chintpoints)'"'       == `"30"'
 assert `"`e(nap1)'"'              == `"0"'
 assert `"`e(ndistap1)'"'          == `"0"'
@@ -1464,16 +1434,11 @@ assert mreldif( C_gradient , T_gradient ) < 1E-8
 mat drop C_gradient T_gradient
 
 //============================================================================//
-//interaction term in PH - cts cts
+// interaction term in PH - cts cts
 
-uhtred (stime 	trt bmi c.x1#c.x2 x3 			///
-		, family(rp, df(3) failure(died))) 	///
-		,
+uhtred (stime trt bmi c.x1#c.x2 x3, family(rp, df(3) failure(died)))
 
-		
-
-
-_assert_streq `"`e(cmdline)'"' `"uhtred (stime   trt bmi c.x1#c.x2 x3                                    , family(rp, df(3) failure(died)))                      ,"'
+_assert_streq `"`e(cmdline)'"' `"uhtred (stime trt bmi c.x1#c.x2 x3, family(rp, df(3) failure(died)))"'
 assert `"`e(chintpoints)'"'       == `"30"'
 assert `"`e(nap1)'"'              == `"0"'
 assert `"`e(ndistap1)'"'          == `"0"'
@@ -1646,7 +1611,7 @@ mat drop C_gradient T_gradient
 		
 		
 //============================================================================//
-//RP nonPH model - weibull
+// rp nonPH model - df1
 
 //sim nonPH data
 clear 
@@ -1668,17 +1633,10 @@ survsim stime died , dist(weib) lambda(0.1) gamma(1.2) 	///
 		tde(trt 0.01) tdefunc(log({t}))	///
 		maxt(10) 
 
-
 //model
-uhtred (stime 	trt bmi x1 x2 x3 			///
-		c.trt#rcs(stime, df(1) log orthog) 	///
-		, family(rp, df(1) failure(died))) 	///
-		,
+uhtred (stime trt bmi x1 x2 x3 c.trt#rcs(stime, df(1) log orthog), family(rp, df(1) failure(died))) 	
 
-		
-
-
-_assert_streq `"`e(cmdline)'"' `"uhtred (stime   trt bmi x1 x2 x3                                        c.trt#rcs(stime, df(1) log orthog)                      , family(rp, df(1) failure(died)))                      ,"'
+_assert_streq `"`e(cmdline)'"' `"uhtred (stime trt bmi x1 x2 x3 c.trt#rcs(stime, df(1) log orthog), family(rp, df(1) failure(died)))"'
 assert `"`e(chintpoints)'"'       == `"30"'
 assert `"`e(nap1)'"'              == `"0"'
 assert `"`e(ndistap1)'"'          == `"0"'
@@ -1856,21 +1814,12 @@ _assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
 _assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:_rcs1_1"'
 mat drop C_gradient T_gradient
 
-		
-		
 
 //============================================================================//
 //RP nonPH model - 3 df
-uhtred (stime 	trt bmi x1 x2 x3 			///
-		c.trt#rcs(stime, df(1) log orthog) 	///
-		, family(rp, df(3) failure(died))) 	///
-		,
+uhtred (stime trt bmi x1 x2 x3 c.trt#rcs(stime, df(1) log orthog), family(rp, df(3) failure(died))) 
 
-
-		
-
-
-_assert_streq `"`e(cmdline)'"' `"uhtred (stime   trt bmi x1 x2 x3                                        c.trt#rcs(stime, df(1) log orthog)                      , family(rp, df(3) failure(died)))                      ,"'
+_assert_streq `"`e(cmdline)'"' `"uhtred (stime trt bmi x1 x2 x3 c.trt#rcs(stime, df(1) log orthog), family(rp, df(3) failure(died)))"'
 assert `"`e(chintpoints)'"'       == `"30"'
 assert `"`e(nap1)'"'              == `"0"'
 assert `"`e(ndistap1)'"'          == `"0"'
@@ -2134,15 +2083,11 @@ matrix drop A B
 
 
 //============================================================================//
-//non-PH model >1 df in tde
-uhtred (stime 	trt bmi x1 x2 x3 			///
-		c.trt#rcs(stime, df(2) log orthog event) 	///
-		, family(rp, df(3) failure(died))) 	///
-		,
-	
+// non-PH model >1 df in tde
 
+uhtred (stime trt bmi x1 x2 x3 c.trt#rcs(stime, df(2) log orthog event), family(rp, df(3) failure(died))) 	
 
-_assert_streq `"`e(cmdline)'"' `"uhtred (stime   trt bmi x1 x2 x3                                        c.trt#rcs(stime, df(2) log orthog event)                        , family(rp, df(3) failure(died)))                      ,"'
+_assert_streq `"`e(cmdline)'"' `"uhtred (stime trt bmi x1 x2 x3 c.trt#rcs(stime, df(2) log orthog event), family(rp, df(3) failure(died)))"'
 assert `"`e(chintpoints)'"'       == `"30"'
 assert `"`e(nap1)'"'              == `"0"'
 assert `"`e(ndistap1)'"'          == `"0"'
@@ -2396,18 +2341,9 @@ mat drop C_gradient T_gradient
 
 
 //============================================================================//
-//user-defined knots (nonPH RP)
+// user-defined knots (nonPH RP)
 
-
-uhtred (stime 	trt bmi x1 x2 x3 			///
-		c.trt#rcs(stime, knots(-4 1.5 2.3) log orthog ) 	///
-		, family(rp, knots(-4 1 1.5 2) failure(died))) 	///
-		,
-		
-		
-		
-
-
+uhtred (stime trt bmi x1 x2 x3 c.trt#rcs(stime, knots(-4 1.5 2.3) log orthog), family(rp, knots(-4 1 1.5 2) failure(died))) 
 
 assert `"`e(chintpoints)'"'       == `"30"'
 assert `"`e(nap1)'"'              == `"0"'
@@ -2658,4 +2594,3 @@ assert mreldif( C_gradient , T_gradient ) < 1E-8
 _assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
 _assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:c.trt#c._rcs1_6_2_2 tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
 mat drop C_gradient T_gradient
-
