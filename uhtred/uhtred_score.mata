@@ -12,12 +12,9 @@ mata:
 
 /*
 scores for multilevel model (without any ?EV[], ?XB[]
-
-- one function for complex predictor
-- one function for each distributional ancillary parameter
 */
 
-void uhtred_score_panels(`TR' M, `RR' b, `RM' G, `RC' lnfi, `gml' gml)
+void uhtred_score(`TR' M, `RR' b, `RM' G, `RC' lnfi, `gml' gml)
 {
 
 	bind = 1
@@ -34,9 +31,10 @@ void uhtred_score_panels(`TR' M, `RR' b, `RM' G, `RC' lnfi, `gml' gml)
 			Nxbs 	= cols(sindex1)
 			for (bi=1;bi<=Nxbs;bi++) {
 				gml.survind 	= 0
+				gml.qind 	= 1,J(1,gml.Nrelevels,0)
 				gindex 		= sindex1[bi]
-				G[,gindex] 	= uhtred_panels(1,gml,
-							&_score_rp_xb(),bi)
+				G[,gindex] 	= uhtred_score_panels(1,gml,
+							&_score_rp_xb(),bind,bi)
 				bind++
 			}
 		}
@@ -48,8 +46,8 @@ void uhtred_score_panels(`TR' M, `RR' b, `RM' G, `RC' lnfi, `gml' gml)
 			for (bi=1;bi<=Nxbs;bi++) {
 				gml.survind 	= 0
 				gindex 		= sindex1[bi]
-				G[,gindex] 	= uhtred_panels(1,gml,
-							&_score_rp_tb(),bi)
+				G[,gindex] 	= uhtred_score_panels(1,gml,
+							&_score_rp_tb(),bind,bi)
 				bind++
 			}
 			
@@ -58,7 +56,7 @@ void uhtred_score_panels(`TR' M, `RR' b, `RM' G, `RC' lnfi, `gml' gml)
 		if (haszb) {
 			//levels loop
 			//!! needed for association structures later
-			bind++
+			for (i=1;i<=gml.Nrelevels;i++) bind++
 		}
 		
 		
@@ -69,129 +67,61 @@ void uhtred_score_panels(`TR' M, `RR' b, `RM' G, `RC' lnfi, `gml' gml)
 	covariances = gml.covariances
 	
 	for (i=1 ; i < gml.Nlevels ; i++) {
-
 		if (Nres[i]) {
-		
 			if (covariances[1,i]) {
 				for (j=1;j<=Nres[i];j++) {
 					gml.survind 	= 0
-					G[,bind] = uhtred_panels(1,gml,
-							&_score_rp_vcv(),bi)
+					G[,bind] = uhtred_score_panels(1,gml,
+							&_score_rp_vcv(),bind,i)
 					bind++
 				}
 			}
-			
-			
-			
 		}
-		
 	}
-	
 	
 	//final scores
 	G = G :/ exp(lnfi)
 	
-	
-	
-// 	}
-// 	else {
-//	
-// 		for (mod=1;mod<=gml.Nmodels;mod++) {
-//			
-// 			gml.model 	= gml.modtoind = mod
-// 			NHbs 		= asarray(gml.NHbs,mod)	
-//			
-// 			for (eqn=1;eqn<=gml.NHeqns[mod];eqn++) {
-// 				if (eqn==1) {
-// 					hasconstr = asarray(gml.hasconstraint,mod)
-// 					for (el=1;el<=NHbs[eqn];el++) {
-// 						if (!hasconstr[el]) G[,bindex] = uhtred_dscore_panels(gml,bindex)
-// 						bindex++
-// 					}
-// 				}
-// 				else {
-// 					for (el=1;el<=NHbs[eqn];el++) {
-// 						G[,bindex] = uhtred_dscore_panels(gml,bindex)
-// 						bindex++
-// 					}
-// 				}
-// 			}
-// 		}
-//		
-// 	}
-	
-// 	//vcv - derivatives found numerically
-// 	Nres 	= gml.Nres
-// 	covariances = gml.covariances
-//	
-// 	for (i=1 ; i < gml.Nlevels ; i++) {
-//
-// 		if (Nres[i]) {
-//
-// 			if (covariances[1,i]) {
-// 				for (j=1;j<=Nres[i];j++) {
-// 					G[,eqnind] = uhtred_deriv(gml,bind)
-// 					bind++
-// 				}
-// 			}
-// 			else if (covariances[2,i]) {
-// 				G[,eqnind] = uhtred_deriv(gml,bind)
-// 					bind++
-// 			}
-// 			else if (covariances[3,i]) {
-// 				for (j=1;j<=Nres[i];j++) {
-// 					G[,eqnind] = uhtred_deriv(gml,bind)
-// 					bind++
-// 				}
-// 				for (j=1;j<=Nres[i];j++) {
-// 					ind = 1
-// 					while (ind<j) {
-// 						G[,eqnind] = uhtred_deriv(gml,bind)
-// 						bind++
-// 						ind++
-// 					}
-// 				}
-// 			}
-// 			else {
-// 				G[,eqnind] = uhtred_deriv(gml,bind)
-// 				bind++
-// 			}			
-// 		}
-// 	}
-	
 }
 
-`RC' uhtred_panels(`RS' index,		/// -level-
-		   `gml' gml,		/// -uhtred object-
-		   `PS' func,		/// -function to call-
-		   | `RS' Xindex)	/// -design matrix element-
+`RC' uhtred_score_panels(`RS' index,		/// -level-
+			   `gml' gml,		/// -uhtred object-
+			   `PS' func,		/// -function to call-
+			   `RS' bind,		/// -parameter index-
+			   `RS' Xindex)		/// -design matrix element-
 {
 	`RS' index2
 	`RM' res, panelindex
-	
-	if (args()==3) Xindex = 1
-	
-	index2 = index+1
-	
+
+	index2 = index + 1
+
 	resq = J(gml.Nobs[index,1],gml.ndim[index],0)
 	
 	if (index<gml.Nrelevels) {
 		panelindex = asarray(gml.panelindexes,(index,1))
 		for (q=1;q<=gml.ndim[index];q++) {
 			gml.qind[1,index2] = q
-			resq[,q] = panelsum(uhtred_panels(index2,gml,func,Xindex),panelindex)
+			tempr = uhtred_score_panels(index2,gml,func,bind,Xindex)
+			resq[,q] = panelsum(tempr :/ 
+					(asarray(gml.Li_ip,gml.qind) * 
+					asarray(gml.baseGHweights,index)),
+					panelindex)
 		}
 	}
 	else {
 		for (j=1;j<=gml.Nmodels;j++) {
 			gml.model = gml.modtoind = j
+			gml.survind = 0
 			resq2 = (*func)(gml,Xindex)
-			resq = resq :+ panelsum(resq2,asarray(gml.panelindexes,(index,j)))
+			resp = panelsum(resq2,asarray(gml.panelindexes,(index,j)))
+			if (gml.todo==2) asarray(gml.Sb,bind,resp)
+			resq = resq :+ resp
 		}
 	}
 
+	if (index==1) gml.qind[index2] = 0
 	resq = resq :* asarray(gml.Li_ip,gml.qind) 
-
+	
 	if (gml.usegh[index]) {			//GHQ
 		return(resq * asarray(gml.baseGHweights,index))
 	}

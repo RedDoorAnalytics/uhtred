@@ -71,7 +71,7 @@ mata:
 					X[index4,2] :* expxtzb0
 		} 
 	}
-	return(res)	
+	return(res)
 }
 
 `RM' _hessian_rp_tb(`gml' gml, `RS' xindex1, `RS' xindex2)	//done

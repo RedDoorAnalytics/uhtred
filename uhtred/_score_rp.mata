@@ -183,7 +183,7 @@ mata:
 	else 	xtzb  = uhtred_util_p_xtzb(gml)
 	expxtzb	= exp(xtzb)
 	
-	zb = uhtred_util_p_zb(gml)
+	zb = uhtred_util_p_zb_lev(gml,xindex)
 
 	// log likelihood //
 		

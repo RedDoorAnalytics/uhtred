@@ -51,7 +51,7 @@ void uhtred_gf(	`TS' M,
 		if (todo==0) return
                         
 			gml.survind = 0
-			uhtred_score_panels(M,b,G,lnfi,gml)
+			uhtred_score(M,b,G,lnfi,gml)
 			if (todo==1) return
 			
 				gml.survind = 0
@@ -66,6 +66,7 @@ void uhtred_gf(	`TS' M,
 			H = J(nb,nb,0)
 		}
 	}
+
 	lnfi = uhtred_logl_ob(M,b,gml,G,H)
 }
 
@@ -112,7 +113,10 @@ void uhtred_gf(	`TS' M,
 	c=0
 	expres 	= exp(res :- c)
 
-	if (gml.adapt[index] | gml.todo) asarray(gml.Li_ip,gml.qind,expres) 
+	if (gml.adapt[index] | gml.todo) {
+		if (index==1) gml.qind[index2] = 0
+		asarray(gml.Li_ip,gml.qind,expres) 
+	}
 
 	if (gml.usegh[index]) {			//GHQ
 		return(c :+ log(expres * asarray(gml.baseGHweights,index)))

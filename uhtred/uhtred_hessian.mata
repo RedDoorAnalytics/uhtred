@@ -41,16 +41,18 @@ void uhtred_hessian_panels(`TR' M, `RR' b, `RM' G, `RM' H, `RC' lnfi, `gml' gml)
 			Nxbs 	= cols(sindex1)
 			for (bi=1;bi<=Nxbs;bi++) {
 				bi2 = 1
+				bind22 = bind2
 				while (bi2<=bi) {
 					gml.survind 	= 0
+					gml.qind 	= 1,J(1,gml.Nrelevels,0)
 					Hi1 		= sindex1[bi]
 					Hi2		= sindex1[bi2]
 					Sindex1 = Sindex1,Hi1
 					Sindex2 = Sindex2,Hi2
 					H2[,H2ind++] 	= uhtred_panels2(1,gml,
-							&_hessian_rp_xb(),bi,bi2)
+							&_hessian_rp_xb(),bind,bind22,bi,bi2)
 					bi2++
-					bind2++
+					bind22++
 				}
 				bind++
 			}
@@ -65,32 +67,33 @@ void uhtred_hessian_panels(`TR' M, `RR' b, `RM' G, `RM' H, `RC' lnfi, `gml' gml)
 				for (bi=1;bi<=Nxbs;bi++) {
 					for (bi2=1;bi2<=Ntbs;bi2++) {
 						gml.survind 	= 0
+						gml.qind 	= 1,J(1,gml.Nrelevels,0)
 						Hi1 		= sindex1[bi]
 						Hi2		= sindex2[bi2]
 						Sindex1 = Sindex1,Hi2
 						Sindex2 = Sindex2,Hi1
 						H2[,H2ind++] 	= uhtred_panels2(1,gml,
-									&_hessian_rp_xb_tb(),bi,bi2)
+									&_hessian_rp_xb_tb(),Hi1,Hi2,bi,bi2)
 					}
 				}
 			}
-			
+
 			for (bi=1;bi<=Ntbs;bi++) {
 				bi2 = 1
 				while (bi2<=bi) {
 					gml.survind 	= 0
+					gml.qind 	= 1,J(1,gml.Nrelevels,0)
 					Hi1 		= sindex2[bi]
 					Hi2		= sindex2[bi2]
 					Sindex1 = Sindex1,Hi1
 					Sindex2 = Sindex2,Hi2
 					H2[,H2ind++] 	= uhtred_panels2(1,gml,
-								&_hessian_rp_tb(),bi,bi2)
+								&_hessian_rp_tb(),Hi1,Hi2,bi,bi2)
 					bi2++
-					bind2++
 				}
 				bind++
 			}
-
+			bind2 = bind
 			
 		}
 		
@@ -134,7 +137,7 @@ void uhtred_hessian_panels(`TR' M, `RR' b, `RM' G, `RM' H, `RC' lnfi, `gml' gml)
 		}
 		
 	}
-	
+
 	//vcv
 	Nres 	= gml.Nres
 	covariances = gml.covariances
@@ -150,14 +153,22 @@ void uhtred_hessian_panels(`TR' M, `RR' b, `RM' G, `RM' H, `RC' lnfi, `gml' gml)
 						for (bi=1;bi<=Nxbs;bi++) {
 							Sindex1 = Sindex1,bind
 							Sindex2 = Sindex2,sindex1[bi]
-							H2ind++
+							Hi1 	= sindex1[bi]
+							gml.survind 	= 0
+							gml.qind 	= 1,J(1,gml.Nrelevels,0)
+							H2[,H2ind++] = uhtred_panels2(1,gml,
+								&_hessian_rp_xb_vcv(),Hi1,bind,bi,1)
 						}
 					}
 					if (hastb) {
 						for (bi=1;bi<=Ntbs;bi++) {
 							Sindex1 = Sindex1,bind
 							Sindex2 = Sindex2,sindex2[bi]
-							H2ind++
+							Hi1 	= sindex2[bi]
+							gml.survind 	= 0
+							gml.qind 	= 1,J(1,gml.Nrelevels,0)
+							H2[,H2ind++] = uhtred_panels2(1,gml,
+								&_hessian_rp_tb_vcv(),Hi1,bind,bi,1)
 						}
 					}
 					if (haszb) {
@@ -170,13 +181,13 @@ void uhtred_hessian_panels(`TR' M, `RR' b, `RM' G, `RM' H, `RC' lnfi, `gml' gml)
 					
 					Sindex1 = Sindex1,bind
 					Sindex2 = Sindex2,bind
-					bind++
-					bind2++
+					
 					
 					gml.survind 	= 0
-					
+					gml.qind 	= 1,J(1,gml.Nrelevels,0)
 					H2[,H2ind++] = uhtred_panels2(1,gml,
-							&_hessian_rp_vcv(),bi,bi2)
+							&_hessian_rp_vcv(),bind,bind,bi,bi2)
+					bind++
 				}
 			}
 			
@@ -186,15 +197,6 @@ void uhtred_hessian_panels(`TR' M, `RR' b, `RM' G, `RM' H, `RC' lnfi, `gml' gml)
 	
 	
 	//final hessian
-	
-// 	dlogl /dbeta = (d logl/ d beta) / L
-//	
-// 	1/L (dd2 - d1 * d2)
-//	
-// 	1/L * dd2 - d1 * d2 / (L)
-//	
-// 	G = G :/ exp(lnfi)
-
 	HH = quadcolsum((H2 :/ exp(lnfi) :- G[,Sindex1] :* G[,Sindex2]))
 	
 	bi = 1
@@ -206,20 +208,18 @@ void uhtred_hessian_panels(`TR' M, `RR' b, `RM' G, `RM' H, `RC' lnfi, `gml' gml)
 		}
 	}
 	
-	H
-	
 }
 
 `RC' uhtred_panels2(`RS' index,		/// -level-
 		   `gml' gml,		/// -uhtred object-
 		   `PS' func,		/// -function to call-
-		   `RS' Xindex, 	///
-		   `RS' Xindex2)	/// -design matrix element-
+		   `RS' bindex1,	///
+		   `RS' bindex2,	///
+		   `RS' xindex1, 	///
+		   `RS' xindex2)	/// -design matrix element-
 {
 	`RS' index2
 	`RM' res, panelindex
-	
-	if (args()==3) Xindex = 1
 	
 	index2 = index+1
 	
@@ -229,18 +229,26 @@ void uhtred_hessian_panels(`TR' M, `RR' b, `RM' G, `RM' H, `RC' lnfi, `gml' gml)
 		panelindex = asarray(gml.panelindexes,(index,1))
 		for (q=1;q<=gml.ndim[index];q++) {
 			gml.qind[1,index2] = q
-			resq[,q] = panelsum(uhtred_panels(index2,gml,func,Xindex,Xindex2),panelindex)
+			rest 	= uhtred_panels2(index2,gml,func,
+						bindex1,bindex2,
+						xindex1,xindex2)
+			resq[,q] = panelsum(rest,panelindex)
 		}
 	}
 	else {
 		for (j=1;j<=gml.Nmodels;j++) {
 			gml.model = gml.modtoind = j
-			resq2 = (*func)(gml,Xindex,Xindex2)
-			resq = resq :+ panelsum(resq2,asarray(gml.panelindexes,(index,j)))
+			gml.survind = 0
+			resq2 = (*func)(gml,xindex1,xindex2)
+			resq = resq :+ panelsum(resq2,
+						asarray(gml.panelindexes,
+							(index,j)))
 		}
 	}
 
-	resq = resq :* asarray(gml.Li_ip,gml.qind) 
+	if (index==1) gml.qind[index2] = 0
+	resq = (resq :+ asarray(gml.Sb,bindex1) :* asarray(gml.Sb,bindex2)) :* 
+			asarray(gml.Li_ip,gml.qind) 
 
 	if (gml.usegh[index]) {			//GHQ
 		return(resq * asarray(gml.baseGHweights,index))
