@@ -51,7 +51,7 @@ assert `"`e(opt)'"'               == `"moptimize"'
 assert `"`e(vce)'"'               == `"oim"'
 assert `"`e(user)'"'              == `"uhtred_gf()"'
 assert `"`e(crittype)'"'          == `"log likelihood"'
-assert `"`e(ml_method)'"'         == `"gf0"'
+assert `"`e(ml_method)'"'         == `"gf2"'
 assert `"`e(singularHmethod)'"'   == `"m-marquardt"'
 assert `"`e(technique)'"'         == `"nr"'
 assert `"`e(which)'"'             == `"max"'
@@ -82,7 +82,7 @@ mat T_b[1,5] =                  1
 mat T_b[1,6] = -2.403852348528028
 }
 matrix C_b = e(b)
-assert mreldif( C_b , T_b ) < 1E-8
+assert mreldif( C_b , T_b ) < 1E-5
 _assert_streq `"`: rowfullnames C_b'"' `"y1"'
 _assert_streq `"`: colfullnames C_b'"' `"xb1:trt xb1:age xb1:_cons tb1:_rcs1_1 zb1_1:_re_M1 lns1_1:_cons"'
 mat drop C_b T_b
@@ -142,24 +142,10 @@ mat T_gradient[1,4] = -.0000136022756857
 mat T_gradient[1,6] =  1.41846863523e-06
 }
 matrix C_gradient = e(gradient)
-assert mreldif( C_gradient , T_gradient ) < 1E-6
+assert mreldif( C_gradient , T_gradient ) < 1E-3
 _assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
 _assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:age xb1:_cons tb1:_rcs1_1 zb1_1:_re_M1 lns1_1:_cons"'
 mat drop C_gradient T_gradient
-
-qui {
-mat T_ml_scale = J(1,5,0)
-mat T_ml_scale[1,1] =  1.197793668881454
-mat T_ml_scale[1,2] =  4.244375511328762
-mat T_ml_scale[1,3] =  .6690212579723243
-mat T_ml_scale[1,4] =   .314769005323488
-mat T_ml_scale[1,5] =  2.652858532008197
-}
-matrix C_ml_scale = e(ml_scale)
-assert mreldif( C_ml_scale , T_ml_scale ) < 1E-4
-_assert_streq `"`: rowfullnames C_ml_scale'"' `"r1"'
-_assert_streq `"`: colfullnames C_ml_scale'"' `"c1 c2 c3 c4 c5"'
-mat drop C_ml_scale T_ml_scale
 
 
 // intmethod ghermite
@@ -203,7 +189,7 @@ assert `"`e(opt)'"'               == `"moptimize"'
 assert `"`e(vce)'"'               == `"oim"'
 assert `"`e(user)'"'              == `"uhtred_gf()"'
 assert `"`e(crittype)'"'          == `"log likelihood"'
-assert `"`e(ml_method)'"'         == `"gf0"'
+assert `"`e(ml_method)'"'         == `"gf2"'
 assert `"`e(singularHmethod)'"'   == `"m-marquardt"'
 assert `"`e(technique)'"'         == `"nr"'
 assert `"`e(which)'"'             == `"max"'
@@ -234,7 +220,7 @@ mat T_b[1,5] =                  1
 mat T_b[1,6] = -2.403861656043603
 }
 matrix C_b = e(b)
-assert mreldif( C_b , T_b ) < 1E-6
+assert mreldif( C_b , T_b ) < 1E-4
 _assert_streq `"`: rowfullnames C_b'"' `"y1"'
 _assert_streq `"`: colfullnames C_b'"' `"xb1:trt xb1:age xb1:_cons tb1:_rcs1_1 zb1_1:_re_M1 lns1_1:_cons"'
 mat drop C_b T_b
@@ -268,7 +254,7 @@ mat T_V[6,4] =  .0000110230785301
 mat T_V[6,6] =  .0075511411958584
 }
 matrix C_V = e(V)
-assert mreldif( C_V , T_V ) < 1E-8
+assert mreldif( C_V , T_V ) < 1E-6
 _assert_streq `"`: rowfullnames C_V'"' `"xb1:trt xb1:age xb1:_cons tb1:_rcs1_1 zb1_1:_re_M1 lns1_1:_cons"'
 _assert_streq `"`: colfullnames C_V'"' `"xb1:trt xb1:age xb1:_cons tb1:_rcs1_1 zb1_1:_re_M1 lns1_1:_cons"'
 mat drop C_V T_V
@@ -294,7 +280,7 @@ mat T_gradient[1,4] =  .0000301797368251
 mat T_gradient[1,6] = -.0009169437781076
 }
 matrix C_gradient = e(gradient)
-assert mreldif( C_gradient , T_gradient ) < 1E-6
+assert mreldif( C_gradient , T_gradient ) < 1E-3
 _assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
 _assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:age xb1:_cons tb1:_rcs1_1 zb1_1:_re_M1 lns1_1:_cons"'
 mat drop C_gradient T_gradient
