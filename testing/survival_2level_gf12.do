@@ -27,16 +27,16 @@ stset stime, f(died)
 
 timer clear
 timer on 1
-uhtred (stime trt age M1[id]@1, family(rp, df(1) failure(died))) ///
-	, evaltype(gf0)
+// uhtred (stime trt age M1[id]@1, family(rp, df(1) failure(died))) ///
+// 	, evaltype(gf0)
 timer off 1
 
 timer on 2
-uhtred (stime trt age M1[id]@1, family(rp, df(1) failure(died))) ///
-	, evaltype(gf1)
+uhtred (stime trt age M1[id]@1, family(rp, df(3) failure(died))) ///
+	, evaltype(gf2) //hessian gradient
 timer off 2
 
 timer on 3
-uhtred (stime trt age M1[id]@1, family(rp, df(1) failure(died)))
+// uhtred (stime trt age M1[id]@1, family(rp, df(1) failure(died)))
 timer off 3
 timer list

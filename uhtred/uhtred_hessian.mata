@@ -62,18 +62,18 @@ void uhtred_hessian_panels(`TR' M, `RR' b, `RM' G, `RM' H, `RC' lnfi, `gml' gml)
 			teqn 	= gml.teqn[model]
 			sindex2 = uhtred_util_score_indices(M,teqn)
 			Ntbs 	= cols(sindex2)
-			
+
 			if (hasxb) {
-				for (bi=1;bi<=Nxbs;bi++) {
-					for (bi2=1;bi2<=Ntbs;bi2++) {
+				for (bi=1;bi<=Ntbs;bi++) {
+					for (bi2=1;bi2<=Nxbs;bi2++) {
 						gml.survind 	= 0
 						gml.qind 	= 1,J(1,gml.Nrelevels,0)
-						Hi1 		= sindex1[bi]
-						Hi2		= sindex2[bi2]
-						Sindex1 = Sindex1,Hi2
-						Sindex2 = Sindex2,Hi1
+						Hi1 		= sindex2[bi]
+						Hi2		= sindex1[bi2]
+						Sindex1 = Sindex1,Hi1
+						Sindex2 = Sindex2,Hi2
 						H2[,H2ind++] 	= uhtred_panels2(1,gml,
-									&_hessian_rp_xb_tb(),Hi1,Hi2,bi,bi2)
+									&_hessian_rp_xb_tb(),Hi2,Hi1,bi2,bi)
 					}
 				}
 			}
@@ -196,17 +196,117 @@ void uhtred_hessian_panels(`TR' M, `RR' b, `RM' G, `RM' H, `RC' lnfi, `gml' gml)
 	}
 	
 	
-	//final hessian
+	//final hessian component
 	HH = quadcolsum((H2 :/ exp(lnfi) :- G[,Sindex1] :* G[,Sindex2]))
 	
+	//now put back together
 	bi = 1
-	for (i=1;i<=Nbs;i++) {
-		j=1
-		while (j<=i) {
-			H[i,j] = H[j,i] = HH[bi++]
-			j++
+	bind = 1
+// 	for (i=1;i<=Nbs;i++) {
+// 		j=1
+// 		while (j<=i) {
+// 			H[i,j] = H[j,i] = HH[bi++]
+// 			j++
+// 		}
+// 	}
+	
+	
+	
+	if (hasxb) {
+		for (i=1;i<=Nxbs;i++) {
+			j=1
+			while (j<=i) {
+				H[i,j] = H[j,i] = HH[bi++]
+				j++
+			}
+			bind++
 		}
 	}
+	
+	if (hastb) {
+		if (hasxb) {
+			for (i=1;i<=Ntbs;i++) {
+				for (j=1;j<=Nxbs;j++) {
+					i2 = sindex2[i]
+					j2 = sindex1[j]
+					H[i2,j2] = H[j2,i2] = HH[bi++]
+				}
+			}
+		}
+		
+		for (i=1;i<=Ntbs;i++) {
+			j=1 
+			while (j<=i) {
+				i2 = sindex2[i]
+				j2 = sindex2[j]
+				H[i2,j2] = H[j2,i2] = HH[bi++]
+				j++
+			}
+			bind++
+		}
+	}
+	
+	if (haszb) {
+		
+		if (hasxb) {
+			for (i=1;i<=Nzbs;i++) {
+				for (j=1;j<=Nxbs;j++) {
+					bi++
+				}
+			}
+		}
+		
+		if (hastb) {
+			for (i=1;i<=Nzbs;i++) {
+				for (j=1;j<=Ntbs;j++) {
+					bi++
+				}
+			}
+		}
+		
+		
+		//levels loop
+		//!! needed for association structures later
+		
+		for (i=1;i<=Nzbs;i++) {
+			bi++
+			bind++
+		}
+	}
+
+	for (l=1;l<gml.Nlevels;l++) {
+
+		if (Nres[l]) {
+		
+			if (covariances[1,l]) {
+				for (j=1;j<=Nres[l];j++) {
+					
+					if (hasxb) {
+						for (ii=1;ii<=Nxbs;ii++) {
+							H[bind,sindex1[ii]] = H[sindex1[ii],bind] = HH[bi++]
+						}
+					}
+					if (hastb) {
+						for (ii=1;ii<=Ntbs;ii++) {
+							H[bind,sindex2[ii]] = H[sindex2[ii],bind] = HH[bi++]
+						}
+					}
+					if (haszb) {
+						for (ii=1;ii<=Nzbs;ii++) {
+							H[bind,sindex3[ii]] = H[sindex3[ii],bind] = HH[bi++]
+						}
+					}
+					
+					H[bind,bind] = HH[bi++]
+					bind++
+				}
+			}
+			
+		}
+		
+	}
+	
+	
 	
 }
 
