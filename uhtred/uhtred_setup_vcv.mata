@@ -113,7 +113,7 @@ void uhtred_init_integration(`gml' gml)
 	
 	//core index that gets updated through the recursive function
 	
-	gml.qind = 1,J(1,gml.Nrelevels,0)	
+	gml.qind = 1,J(1,gml.Nrelevels,0)
 	
 	if (sum(gml.adapt) | gml.todo | gml.predict) {
 		gml.Li_ip = asarray_create("real",cols(gml.qind))

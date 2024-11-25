@@ -23,7 +23,7 @@ mata:
 void uhtred_setup_levelvars(`gml' gml)
 {
 	gml.Nobs	= J(gml.Nlevels,gml.Nmodels,.)
-	
+
 	//build new idvars
 	if (gml.Nlevels>1) {
 		if (!gml.predict) stata("qui sort "+invtokens(gml.levelvars[1,])+",stable")
@@ -54,7 +54,7 @@ void uhtred_setup_levelvars(`gml' gml)
 	}
 
 	gml.levelvars = gml.levelvars,(st_local("coreindex")\st_local("coreindex"))
-	
+
 	//id vars setup
 	gml.panelindexes = asarray_create("real",2)
 	if (gml.Nlevels>1) {

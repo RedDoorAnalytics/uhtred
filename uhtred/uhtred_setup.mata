@@ -171,6 +171,8 @@ struct uhtred_struct {
 	`TR' bindices		//model,equation coefficient indices
 	`TR' Hindices		//model,equation,equation coefficient indices
 	
+	`TR' Sb
+	
 	//===================================================================//
 	//development
 	
@@ -197,7 +199,7 @@ void uhtred_setup(`SS' GML,`SS' touse)
 	uhtred_setup_error_checks(gml)
 	uhtred_setup_touses(gml)
 	uhtred_setup_levelvars(gml)
-	uhtred_setup_evaltype(gml)
+	
 	uhtred_get_ys(gml)
        
 //         gml.indicatorvar = st_local("indicator")
@@ -209,6 +211,7 @@ void uhtred_setup(`SS' GML,`SS' touse)
 	uhtred_get_noconstants(gml)
         uhtred_get_timevars(gml)
 	uhtred_get_latents(gml)
+	uhtred_setup_evaltype(gml)
         uhtred_build_clp(gml,coef=.)
 
 	//survival extras
@@ -217,6 +220,7 @@ void uhtred_setup(`SS' GML,`SS' touse)
 
 	//latents
 	uhtred_setup_vcv(gml,coef)
+	
 
 	//pointers
 	uhtred_get_logl_p(gml)
@@ -534,9 +538,13 @@ void uhtred_setup_evaltype(`gml' gml)
 			}
 			gf = "gf"+strofreal(min(check))
 		}
+		else {
+			if (gml.Nrelevels==1 & sum(gml.Nres)==1) gf = "gf2"
+		}
 		st_local("evaltype",gf)
 	}
 	gml.todo = strtoreal(substr(st_local("evaltype"),3,1))
+	if (gml.Nrelevels & gml.todo==2) gml.Sb = asarray_create("real",1)
 }
 
 void uhtred_setup_mleqns(`gml' gml)

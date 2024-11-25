@@ -36,6 +36,29 @@ void uhtred_gf(	`TS' M,
 	gml.survind     = 0
 	
 	uhtred_xb(M,gml,b)
+	
+	if (gml.Nrelevels) {	
+		if (gml.todo) {
+			nb = cols(b)
+			G = J(gml.Nobs[1],nb,0)
+			if (gml.todo==2) {
+				H = J(nb,nb,0)
+			}
+		}
+		gml.Pgml->lnfi1 = 
+			lnfi = uhtred_logl_panels(1,M,b,gml)
+			
+		if (todo==0) return
+                        
+			gml.survind = 0
+			uhtred_score(M,b,G,lnfi,gml)
+			if (todo==1) return
+			
+				gml.survind = 0
+				uhtred_hessian_panels(M,b,G,H,lnfi,gml)
+				return
+	}
+	
 	if (gml.todo) {
 		nb = cols(b)
 		G = J(gml.N,nb,0)
@@ -43,11 +66,7 @@ void uhtred_gf(	`TS' M,
 			H = J(nb,nb,0)
 		}
 	}
-	if (gml.Nrelevels) {	
-		gml.Pgml->lnfi1 = 
-			lnfi = uhtred_logl_panels(1,M,b,gml)
-		return
-	}
+
 	lnfi = uhtred_logl_ob(M,b,gml,G,H)
 }
 
@@ -91,9 +110,13 @@ void uhtred_gf(	`TS' M,
 	if (gml.adapt[index]) 	res = res :+ asarray(gml.aghlogl,index)
 	if (gml.usegh[index]) 	c   = rowmax(res :+ log(asarray(gml.baseGHweights,index)'))
 	else			c   = rowmax(res)
+	c=0
 	expres 	= exp(res :- c)
 
-	if (gml.adapt[index] | gml.todo) asarray(gml.Li_ip,gml.qind,expres) 
+	if (gml.adapt[index] | gml.todo) {
+		if (index==1) gml.qind[index2] = 0
+		asarray(gml.Li_ip,gml.qind,expres) 
+	}
 
 	if (gml.usegh[index]) {			//GHQ
 		return(c :+ log(expres * asarray(gml.baseGHweights,index)))

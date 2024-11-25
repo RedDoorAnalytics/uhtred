@@ -146,13 +146,14 @@ mata:
 
 `RM' uhtred_util_zb(`TR' M, `RR' b, `gml' gml)
 {
+	
 	mod = gml.model
 	zb = 0
 	for (lev=1;lev<=gml.Nrelevels;lev++) {
 		bre 	= b[|moptimize_util_eq_indices(M,gml.zeqn[mod,lev])|]
 		reindex = asarray(gml.Zbindex,(mod,lev))
 		if (gml.adapt[1]) {
-			Zbeta 	= asarray(gml.Z,(mod,lev)) :* bre	
+			Zbeta 	= asarray(gml.Z,(mod,lev)) :* bre
 			indexr  = uhtred_get_adpanelindex(gml,lev)
 			indexc  = .
 			if (lev!=gml.Nrelevels) indexc = gml.qind[,lev+1]
@@ -217,6 +218,47 @@ mata:
 			}
 		}
 	}
+	return(zb)
+}
+
+`RM' uhtred_util_p_zb_lev(`gml' gml,`RS' lev)
+{
+	mod = gml.model
+	zb = 0
+	bre 	= gml.myb[|uhtred_util_bindices(gml,gml.zeqn[mod,lev])|]
+	reindex = asarray(gml.Zbindex,(mod,lev))
+	if (gml.adapt[1]) {
+		Zbeta 	= asarray(gml.Z,(mod,lev)) :* bre	
+		indexr  = uhtred_get_adpanelindex(gml,lev)
+		if (gml.fixedonly!=2) {
+			indexc  = .
+			if (lev!=gml.Nrelevels) indexc = gml.qind[,lev+1]
+
+			for (r=1;r<=gml.Nres[lev];r++)  {
+				zb = zb :+ Zbeta[,r] :* 
+					asarray(gml.aghip2,
+						(lev,reindex[r]))[indexr,indexc]
+			}
+		}
+		else {
+			for (r=1;r<=gml.Nres[lev];r++)  {
+				zb = zb :+ Zbeta[,r] :* 
+					asarray(gml.blups,lev)[indexr,reindex[r]]
+			}
+		}			
+	}
+	else {
+		if (lev==gml.Nrelevels) {
+			zb = zb :+ (asarray(gml.Z,(mod,lev)) :* bre) * 
+				asarray(gml.b,lev)[reindex,]
+		}
+		else {
+			zb = zb :+ (asarray(gml.Z,(mod,lev)) :* bre) * 
+				asarray(gml.b,lev)[reindex,
+					gml.qind[,lev+1]]
+		}
+	}
+
 	return(zb)
 }
 
