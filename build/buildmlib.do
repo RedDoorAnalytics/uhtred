@@ -24,6 +24,8 @@ qui {
 	do "./uhtred/uhtred_prolog.mata"
 	do "./uhtred/uhtred_utils.mata"
 	do "./uhtred/uhtred_functions.mata"
+	do "./uhtred/uhtred_score.mata"
+	do "./uhtred/uhtred_hessian.mata"
 	
 	do "./uhtred/uhtred_ereturn.mata"
 	
@@ -31,6 +33,12 @@ qui {
 	do "./uhtred/uhtred_logl_weibull.mata"
 	do "./uhtred/uhtred_logl_loghazard.mata"
 	do "./uhtred/uhtred_logl_rp.mata"
+	
+	//score
+	do "./uhtred/_score_rp.mata"
+	
+	//hessian
+	do "./uhtred/_hessian_rp.mata"
 	
 	//predictions
 	do "./uhtred/uhtred_predict.mata"

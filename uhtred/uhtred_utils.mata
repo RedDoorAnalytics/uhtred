@@ -146,13 +146,14 @@ mata:
 
 `RM' uhtred_util_zb(`TR' M, `RR' b, `gml' gml)
 {
+	
 	mod = gml.model
 	zb = 0
 	for (lev=1;lev<=gml.Nrelevels;lev++) {
 		bre 	= b[|moptimize_util_eq_indices(M,gml.zeqn[mod,lev])|]
 		reindex = asarray(gml.Zbindex,(mod,lev))
 		if (gml.adapt[1]) {
-			Zbeta 	= asarray(gml.Z,(mod,lev)) :* bre	
+			Zbeta 	= asarray(gml.Z,(mod,lev)) :* bre
 			indexr  = uhtred_get_adpanelindex(gml,lev)
 			indexc  = .
 			if (lev!=gml.Nrelevels) indexc = gml.qind[,lev+1]

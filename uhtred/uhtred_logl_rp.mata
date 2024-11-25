@@ -130,7 +130,7 @@ mata:
 			logl[index3,] = log(logl[index3,])
 		}
 
-	if (gml.todo==0) return(logl)
+	if (gml.todo==0 | Nrelevs) return(logl)
 
 	//===================================================================//
 	// score
