@@ -31,15 +31,15 @@ timer clear
 // gsem (stime1 <- age M2[id1>id2]@1 M1[id1]@1 , family(weib, failure(dead1))) , //intmethod(gh)
 
 timer on 99
-merlin 	(stime1 trt age M2[id1>id2]@1 M1[id1]@1 , ///
-		family(rp, df(1) failure(dead1))) ///
-		, evaltype(gf0) intmethod(mvagh) //
+// merlin 	(stime1 trt age M2[id1>id2]@1 M1[id1]@1 , ///
+// 		family(rp, df(1) failure(dead1))) ///
+// 		, evaltype(gf0) intmethod(mvagh) //
 timer off 99			
-timer on 1
+timer on 3
 uhtred 	(stime1 trt age M2[id1>id2]@1 M1[id1]@1 , ///
 		family(rp, df(1) failure(dead1))) ///
-		, evaltype(gf0) intmethod(mvagh) //
-timer off 1
+		, evaltype(gf1) intmethod(mvagh) //
+timer off 3
 timer on 2
 // uhtred 	(stime1 trt age M2[id1>id2]@1 M1[id1]@1 , ///
 // 		family(rp, df(1) failure(dead1))) ///

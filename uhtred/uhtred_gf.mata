@@ -110,12 +110,11 @@ void uhtred_gf(	`TS' M,
 	if (gml.adapt[index]) 	res = res :+ asarray(gml.aghlogl,index)
 	if (gml.usegh[index]) 	c   = rowmax(res :+ log(asarray(gml.baseGHweights,index)'))
 	else			c   = rowmax(res)
-	c=0
 	expres 	= exp(res :- c)
 
 	if (gml.adapt[index] | gml.todo) {
 		if (index==1) gml.qind[index2] = 0
-		asarray(gml.Li_ip,gml.qind,expres) 
+		asarray(gml.Li_ip,gml.qind,exp(res)) 
 	}
 
 	if (gml.usegh[index]) {			//GHQ

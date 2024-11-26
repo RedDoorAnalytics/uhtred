@@ -33,7 +33,7 @@ timer off 1
 
 timer on 2
 uhtred (stime trt age M1[id]@1, family(rp, df(3) failure(died))) ///
-	, evaltype(gf2) //hessian gradient
+	, evaltype(gf0)
 timer off 2
 
 timer on 3
