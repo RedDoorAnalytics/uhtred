@@ -1,5 +1,7 @@
 //source paths
-local drive /Users/michael/My Drive/software
+local drive /Users/michael/Library/CloudStorage
+local drive `drive'/OneDrive-RedDoorAnalyticsAB/software
+
 cd "`drive'/uhtred"
 adopath ++ "`drive'/uhtred"
 adopath ++ "`drive'/uhtred/uhtred"
@@ -38,7 +40,8 @@ timer off 99
 timer on 3
 uhtred 	(stime1 trt age M2[id1>id2]@1 M1[id1]@1 , ///
 		family(rp, df(1) failure(dead1))) ///
-		, evaltype(gf1) intmethod(mvagh) //
+		, evaltype(gf1) intmethod(mvagh) ///
+		restartvalues(M1 0.5 M2 0.5) trace
 timer off 3
 timer on 2
 // uhtred 	(stime1 trt age M2[id1>id2]@1 M1[id1]@1 , ///

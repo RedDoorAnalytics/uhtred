@@ -105,25 +105,17 @@ void uhtred_starting_values(`gml' gml)
 					}
 					newcmd = newcmd +" ("+invtokens(newclp)+" "+st_local("if")+st_local("in")+","+opts+" )"
 				} 
-
-				//devcodes
-				dc = " devcode1("+st_local("devcode1")+")"
-				dc = dc + " devcode2("+st_local("devcode2")+")"
-				dc = dc + " devcode3("+st_local("devcode3")+")"
-				dc = dc + " devcode4("+st_local("devcode4")+")"
-				dc = dc + " devcode5("+st_local("devcode5")+")"
-				dc = dc + " devcode6("+st_local("devcode6")+")"
-				dc = dc + " devcode7("+st_local("devcode7")+")"
 				
 				stata("di ")
 				stata(`"di as text "Fitting fixed effects model:""')
 
-				rc = _stata("qui uhtred "+ newcmd + st_local("GL_if")+ st_local("GL_in") + ", nogen "+dc)
+				rc = _stata("qui uhtred " + newcmd + 
+					st_local("GL_if") + st_local("GL_in") + 
+					", nogen")
 
 				if (rc) exit(rc)
 
 				//update with fixed effects
-
 				stata("tempname from")
 				stata("mat "+st_local("from")+" = e(b)")
 			}
@@ -141,10 +133,28 @@ void uhtred_starting_values(`gml' gml)
 		//pass in ap start values
 // 		if (st_local("apstartvalues")!="") binit[gml.initapindex[1,]] = gml.initapindex[2,]
 //
-// 		//pass in vcv inits, in case restartvalues was specified
-// 		if (st_local("restartvalues")!="") binit[gml.initvarindex[1,]] = gml.initvarindex[2,]
-
-		
+		//pass in vcv inits, in case restartvalues was specified
+		//!! works but main init() option overrides
+		if (st_local("restartvalues")!="") {
+			resvs = tokens(st_local("restartvalues"))
+			nre = cols(resvs)/2
+			c = 1
+			for (re=1;re<=nre;re++) {
+				re1 = c*re
+				re2 = re1+1
+				for (i=1;i<=gml.Nrelevels;i++) {
+					latlevs = asarray(gml.latlevs,1)
+					for (j=1;j<=gml.Nres[i];j++) {
+						if (latlevs[j,1]==resvs[re1]) {
+							svsn = st_tempname()
+							st_matrix(svsn,log(sqrt(strtoreal(resvs[re2]))))
+							st_matrixcolstripe(svsn,("lns"+strofreal(i)+"_"+strofreal(j),"_cons"))
+							stata("mat "+st_local("from")+"="+st_local("from")+","+svsn)
+						}
+					}
+				}
+			}
+		}
 		
 	}
 }

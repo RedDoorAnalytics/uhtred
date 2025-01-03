@@ -1,5 +1,5 @@
 //source paths
-local drive /Users/michael/My Drive/software
+local drive /Users/michael/Library/CloudStorage/OneDrive-RedDoorAnalyticsAB/software
 cd "`drive'/uhtred"
 adopath ++ "`drive'/uhtred"
 adopath ++ "`drive'/uhtred/uhtred"
@@ -32,26 +32,27 @@ predict s2, surv marginal
 // predict r1, reffects
 // merlin (stime trt age M1[id]@1, family(weib, failure(died)))	///
 // 	, 
-merlin (stime trt age  M1[id]@1, family(rp, df(1) failure(died)))
-timer off 1
-predict s01, surv fitted
-predict h01, haz fitted
+// merlin (stime trt age  M1[id]@1, family(rp, df(1) failure(died)))
+// timer off 1
+// predict s01, surv fitted
+// predict h01, haz fitted
 
-predict s012, surv marg
-predict h012, haz marg
+// predict s012, surv marg
+// predict h012, haz marg
 timer on 2
-uhtred (stime trt age M1[id]@1, family(rp, df(1) failure(died)))
+uhtred (stime trt age M1[id]@1, family(rp, df(1) failure(died))) , ///
+	restartvalues(M1 0.01)
 timer off 2
 
 timer on 3
-stuhtred trt age || id: , dist(rp) df(1)
+// stuhtred trt age || id: , dist(rp) df(1)
 timer off 3
 
-timer list
-predict s1, surv fitted
-predict h1, haz fitted
-
-predict s12, surv marg
-predict h12, haz marg
-
-// scatter s0 s1
+// timer list
+// predict s1, surv fitted
+// predict h1, haz fitted
+//
+// predict s12, surv marg
+// predict h12, haz marg
+//
+// // scatter s0 s1

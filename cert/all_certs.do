@@ -2,7 +2,8 @@
 // cert. script for uhtred
 
 //source paths
-local drive /users/michael/My Drive/software
+local drive /Users/michael/Library/CloudStorage
+local drive `drive'/OneDrive-RedDoorAnalyticsAB/software
 cd "`drive'/uhtred"
 adopath ++ "`drive'/uhtred"
 adopath ++ "`drive'/uhtred/uhtred"
