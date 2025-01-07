@@ -348,7 +348,7 @@ void uhtred_hessian_panels(`TR' M, `RR' b, `RM' G, `RM' H, `RC' lnfi, `gml' gml)
 
 	if (index==1) gml.qind[index2] = 0
 	resq = (resq :+ asarray(gml.Sb,bindex1) :* asarray(gml.Sb,bindex2)) :* 
-			asarray(gml.Li_ip,gml.qind) 
+			asarray(gml.Li_ip2,gml.qind) 
 
 	if (gml.usegh[index]) {			//GHQ
 		return(resq * asarray(gml.baseGHweights,index))

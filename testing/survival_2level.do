@@ -41,7 +41,8 @@ predict s2, surv marginal
 // predict h012, haz marg
 timer on 2
 uhtred (stime trt age M1[id]@1, family(rp, df(1) failure(died))) , ///
-	restartvalues(M1 0.01)
+adaptopts(log) evaltype(gf2)
+	//restartvalues(M1 0.01) trace
 timer off 2
 
 timer on 3

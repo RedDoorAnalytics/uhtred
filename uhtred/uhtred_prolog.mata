@@ -39,6 +39,7 @@ void uhtred_prolog(	`RR' b,		///
 		
 		// need to fill up linear predictors, first time through
 		uhtred_xb(M,gml,b)
+		gml.myb = b
 		oldlnl 	= quadsum(uhtred_logl_panels(1,M,b,gml),1)
 		
 		it = 0	
@@ -236,7 +237,7 @@ void uhtred_update_ip_newNip(`gml' gml, `RS' i)
 void uhtred_gh_update_ip_alllevs(`gml' gml)
 {
 	for (i=1; i<=1; i++) {
-		
+
 		ndim = gml.ndim[i]
 		ind1 = 1; ind2 = ndim
 		stackednodes 	= J(ndim*gml.Nobs[i,1],gml.Nres[i],.)
@@ -248,7 +249,9 @@ void uhtred_gh_update_ip_alllevs(`gml' gml)
 		baseweights2 	= baseweights'
 		for (j=1; j<=gml.Nobs[i,1]; j++) {
 			ipij 	 = asarray(gml.aghip,(i,j))
+
 			newblups = numer[j,] * (ipij :* baseweights2)'
+			
 			vcv_new  = (numer[j,] * 
 					(uhtred_outerprod_by_col(ipij') :* 
 					baseweights)) :- 

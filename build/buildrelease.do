@@ -1,14 +1,14 @@
 // build new version of uhtred
 
-local drive /Users/Michael
-cd "`drive'/My Drive/software/uhtred/"
+local drive /Users/michael/Library/CloudStorage
+local drive `drive'/OneDrive-RedDoorAnalyticsAB/software
+cd "`drive'/uhtred"
 
 local includemata       = 0
 
 //============================================================================//
 
-//build new release -> current version up is 1.2.0
-local newversion 1_3_0
+local newversion 1_3_1
 if `includemata' {
         local newversion `newversion'_mata
 }

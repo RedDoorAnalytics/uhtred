@@ -236,4 +236,9 @@ void uhtred_seblup_check(`RS' x)
 	else 		    return(index[merlin_get_surv_index(gml)])
 }
 
+`RC' rows_cols(`RM' x)
+{
+	return(rows(x)\cols(x))
+}
+
 end

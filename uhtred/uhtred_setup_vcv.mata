@@ -117,6 +117,7 @@ void uhtred_init_integration(`gml' gml)
 	
 	if (sum(gml.adapt) | gml.todo | gml.predict) {
 		gml.Li_ip = asarray_create("real",cols(gml.qind))
+		if (gml.todo) gml.Li_ip2 = asarray_create("real",cols(gml.qind))
 		gml.c 	  = asarray_create("real",cols(gml.qind))
 	}
 	

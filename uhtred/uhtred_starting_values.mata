@@ -162,6 +162,7 @@ void uhtred_starting_values(`gml' gml)
 void uhtred_vcv_gridsearch(`TR' M, `gml' gml, `RR' binit)
 {
 	if (gml.Nrelevels) {
+		gml.myb = binit
 		eqnind = 1
 		for (i=1;i<=1;i++) {
 			if (gml.hasxb[i]) eqnind++
@@ -184,6 +185,7 @@ void uhtred_vcv_gridsearch(`TR' M, `gml' gml, `RR' binit)
 				for (j=1;j<=gml.Nres[i];j++) {
 					copyb = binit
 					binit[eqnind] = log(sqrt(0.1))
+					gml.myb = binit
 					gml.survind = 0
 					uhtred_xb(M,gml,binit)
 					logl2		= sum(uhtred_logl_panels(1,M,binit,gml),1)
@@ -197,6 +199,7 @@ void uhtred_vcv_gridsearch(`TR' M, `gml' gml, `RR' binit)
 			else if (covariances[2,i]) {
 				copyb = binit
 				binit[eqnind] = log(sqrt(0.1))
+				gml.myb = binit
 				gml.survind = 0
 				uhtred_xb(M,gml,binit)
 				logl2		= sum(uhtred_logl_panels(1,M,binit,gml),1)
@@ -211,6 +214,7 @@ void uhtred_vcv_gridsearch(`TR' M, `gml' gml, `RR' binit)
 				for (j=1;j<=gml.Nres[i];j++) {
 					copyb = binit
 					binit[eqnind] = log(sqrt(0.1))
+					gml.myb = binit
 					gml.survind = 0
 					uhtred_xb(M,gml,binit)
 					logl2		= sum(uhtred_logl_panels(1,M,binit,gml),1)
@@ -231,6 +235,7 @@ void uhtred_vcv_gridsearch(`TR' M, `gml' gml, `RR' binit)
 			else {
 				copyb = binit
 				binit[eqnind] = log(sqrt(0.1))
+				gml.myb = binit
 				gml.survind = 0
 				uhtred_xb(M,gml,binit)
 				logl2		= sum(uhtred_logl_panels(1,M,binit,gml),1)

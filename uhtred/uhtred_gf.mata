@@ -114,7 +114,8 @@ void uhtred_gf(	`TS' M,
 
 	if (gml.adapt[index] | gml.todo) {
 		if (index==1) gml.qind[index2] = 0
-		asarray(gml.Li_ip,gml.qind,exp(res)) 
+		asarray(gml.Li_ip,gml.qind,expres) 
+		if (gml.todo) asarray(gml.Li_ip2,gml.qind,exp(res)) 
 	}
 
 	if (gml.usegh[index]) {			//GHQ

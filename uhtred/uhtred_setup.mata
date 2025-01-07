@@ -110,7 +110,7 @@ struct uhtred_struct {
 	`RS' showadapt
 	`RS' df
 	`TR' b, bdraws
-	`TR' Li_ip
+	`TR' Li_ip, Li_ip2
 	`TR' c
 	`TR' aghip
 	`TR' aghip2

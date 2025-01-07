@@ -103,7 +103,7 @@ void uhtred_score(`TR' M, `RR' b, `RM' G, `RC' lnfi, `gml' gml)
 			gml.qind[1,index2] = q
 			tempr = uhtred_score_panels(index2,gml,func,bind,Xindex)
 			resq[,q] = panelsum(tempr :/ 
-					(asarray(gml.Li_ip,gml.qind) * 
+					(asarray(gml.Li_ip2,gml.qind) * 
 					asarray(gml.baseGHweights,index)),
 					panelindex)
 		}
@@ -120,7 +120,7 @@ void uhtred_score(`TR' M, `RR' b, `RM' G, `RC' lnfi, `gml' gml)
 	}
 
 	if (index==1) gml.qind[index2] = 0
-	resq = resq :* asarray(gml.Li_ip,gml.qind) 
+	resq = resq :* asarray(gml.Li_ip2,gml.qind) 
 	
 	if (gml.usegh[index]) {			//GHQ
 		return(resq * asarray(gml.baseGHweights,index))
