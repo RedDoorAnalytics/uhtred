@@ -233,7 +233,7 @@ void uhtred_seblup_check(`RS' x)
 {
 	index = asarray(gml.adpanelindexes,(lev,1))
 	if (gml.survind==0) return(index)
-	else 		    return(index[merlin_get_surv_index(gml)])
+	else 		    return(index[uhtred_get_surv_index(gml)])
 }
 
 `RC' rows_cols(`RM' x)
