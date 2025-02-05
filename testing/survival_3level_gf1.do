@@ -40,8 +40,7 @@ timer off 99
 timer on 3
 uhtred 	(stime1 trt age M2[id1>id2]@1 M1[id1]@1 , ///
 		family(rp, df(1) failure(dead1))) ///
-		, evaltype(gf1) intmethod(mvagh) ///
-		adaptopts(log)
+		, 
 timer off 3
 timer on 2
 // uhtred 	(stime1 trt age M2[id1>id2]@1 M1[id1]@1 , ///

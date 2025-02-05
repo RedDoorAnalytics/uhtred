@@ -538,9 +538,9 @@ void uhtred_setup_evaltype(`gml' gml)
 			}
 			gf = "gf"+strofreal(min(check))
 		}
-		else {
-			if (gml.Nrelevels==1 & sum(gml.Nres)==1) gf = "gf2"
-		}
+// 		else {
+// 			if (gml.Nrelevels==1 & sum(gml.Nres)==1) gf = "gf2"
+// 		}
 		st_local("evaltype",gf)
 	}
 	gml.todo = strtoreal(substr(st_local("evaltype"),3,1))
