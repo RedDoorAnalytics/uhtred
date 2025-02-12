@@ -143,6 +143,7 @@ struct uhtred_struct {
 	`RS' predict				
 	`RS' fixedonly		//predictions based only on fixed effects - so skip res in utils
 	`TR' blups
+	`RC' fixedlevels
 	
 	//ereturn list
 	`Egml' E

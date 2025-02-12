@@ -184,19 +184,36 @@ mata:
 	mod = gml.model
 	zb = 0
 	for (lev=1;lev<=gml.Nrelevels;lev++) {
+		fixlev = 0
+		if (gml.fixedonly==0) { //getting blups
+			//list of levels to fix, i.e. set at blups when called within an reffects prediction
+			// fixedonly = 0
+			if (sum(lev:==gml.fixedlevels)) {
+				fixlev = 1
+			}
+		}
+		
 		bre 	= gml.myb[|uhtred_util_bindices(gml,gml.zeqn[mod,lev])|]
 		reindex = asarray(gml.Zbindex,(mod,lev))
 		if (gml.adapt[1]) {
 			Zbeta 	= asarray(gml.Z,(mod,lev)) :* bre	
 			indexr  = uhtred_get_adpanelindex(gml,lev)
 			if (gml.fixedonly!=2) {
-				indexc  = .
-				if (lev!=gml.Nrelevels) indexc = gml.qind[,lev+1]
-
-				for (r=1;r<=gml.Nres[lev];r++)  {
+				if (fixlev) {
+					for (r=1;r<=gml.Nres[lev];r++)  {
 					zb = zb :+ Zbeta[,r] :* 
-						asarray(gml.aghip2,
-							(lev,reindex[r]))[indexr,indexc]
+						asarray(gml.blups,lev)[indexr,reindex[r]]
+					}
+				}
+				else {
+					indexc  = .
+					if (lev!=gml.Nrelevels) indexc = gml.qind[,lev+1]
+
+					for (r=1;r<=gml.Nres[lev];r++)  {
+						zb = zb :+ Zbeta[,r] :* 
+							asarray(gml.aghip2,
+								(lev,reindex[r]))[indexr,indexc]
+					}
 				}
 			}
 			else {

@@ -385,10 +385,18 @@ void uhtred_predict_error_check(`gml' gml, `SS' stat)
 `RM' uhtred_predict_blups(`gml' gml, | `RS' getses)
 {
 	if (args()==2) 	uhtred_predict_getblups(gml,getses)
-	else 		uhtred_predict_getblups(gml)
+	else 		uhtred_p_ebmeans(gml)
 	gml.survind = 0
 	gml.model = gml.modtoind = strtoreal(st_local("outcome"))	//getblups changes it
-	return(asarray(gml.blups,1)[uhtred_get_adpanelindex(gml,1),])
+	
+	res = asarray(gml.blups,1)[uhtred_get_adpanelindex(gml,1),]
+	if (gml.Nrelevels>1) {
+		for (i=2;i<=gml.Nrelevels;i++) { 
+			res = res,asarray(gml.blups,i)[uhtred_get_adpanelindex(gml,i),]
+		}
+	}
+	
+	return(res)
 }
 
 void uhtred_predict_getblups(`gml' gml, | `RS' getses)
@@ -428,7 +436,11 @@ void uhtred_predict_getblups(`gml' gml, | `RS' getses)
 		}
 	}
 	else {
-		for (i=1; i<=1; i++) {
+		for (i=1; i<=gml.Nrelevels; i++) {
+			if ((i-1)>0) {
+				//fix the previous levels posterior means
+				gml.fixedlevels = 1::(i-1)
+			}
 			blups 		= J(gml.Nobs[i,1],gml.Nres[i],.)
 			baseweights 	= asarray(gml.baseGHweights,i)
 			L_i 		= asarray(gml.Li_ip,gml.qind) * baseweights

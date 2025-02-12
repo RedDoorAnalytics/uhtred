@@ -30,7 +30,7 @@ void uhtred_prolog(	`RR' b,		///
 
 	if ((*p).gridsearch) uhtred_vcv_gridsearch(M,*p,b)
 
-	if (sum((*p).adapt) & (*p).iter<1001 & (*p).iter<=(*p).adaptit) {
+	if (sum((*p).adapt) & (*p).iter<501 & (*p).iter<=(*p).adaptit) {
 
 		`gml' 	gml
 		`RS' 	oldlnl, newlnl , it
@@ -236,7 +236,7 @@ void uhtred_update_ip_newNip(`gml' gml, `RS' i)
 // Update adaptive quadrature locations and scales
 void uhtred_gh_update_ip_alllevs(`gml' gml)
 {
-	for (i=1; i<=1; i++) {
+	for (i=1; i<=gml.Nrelevels; i++) {
 
 		ndim = gml.ndim[i]
 		ind1 = 1; ind2 = ndim
@@ -245,13 +245,19 @@ void uhtred_gh_update_ip_alllevs(`gml' gml)
 		basenodes 	= asarray(gml.baseGHnodes,i)
 		baseweights 	= asarray(gml.baseGHweights,i)
 		L_i 		= asarray(gml.Li_ip,gml.qind) * baseweights
-		numer 		= asarray(gml.Li_ip,gml.qind) :/ L_i
+		numer 		= exp(log(asarray(gml.Li_ip,gml.qind)) :- log(L_i))	//c cancels out
 		baseweights2 	= baseweights'
+//gml.qind
+// st_view(res1=.,.,"res1","flag")
+		
+		
 		for (j=1; j<=gml.Nobs[i,1]; j++) {
 			ipij 	 = asarray(gml.aghip,(i,j))
 
 			newblups = numer[j,] * (ipij :* baseweights2)'
-			
+			res1[j,] = newblups
+			res1[j,] = newblups
+// 			if (missing(newblups)) -999
 			vcv_new  = (numer[j,] * 
 					(uhtred_outerprod_by_col(ipij') :* 
 					baseweights)) :- 
@@ -265,6 +271,7 @@ void uhtred_gh_update_ip_alllevs(`gml' gml)
 			ind2 = ind2 + ndim
 		}
 
+		
 		//update logl extra contribution
 		asarray(gml.aghlogl,
 			i,

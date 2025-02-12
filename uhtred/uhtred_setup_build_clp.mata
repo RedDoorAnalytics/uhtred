@@ -303,9 +303,11 @@ void uhtred_build_xz(`gml' gml, `RS' model, `RS' eqn, `RS' coef)
 	
 	//baseline time splines if needed
 	if (gml.familys[model]=="rp") {
+		rcsopts = st_local("rcsopts"+strmod)
 		opts = st_local("rcsopts"+strmod) + 
-			" log orthog event" +
+			" log event" +
 			" eventvar("+dvar+")"
+		if (!strpos(rcsopts,"noorthog")) opts = opts + " orthog"
 		timexbsyn = timexbsyn,
 				uhtred_stata_setup_rcs(touse,yvar,opts,
 					knots="",rmat=J(0,0,.,),

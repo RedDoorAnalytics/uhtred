@@ -136,14 +136,15 @@ void uhtred_starting_values(`gml' gml)
 		//pass in vcv inits, in case restartvalues was specified
 		//!! works but main init() option overrides
 		if (st_local("restartvalues")!="") {
+
 			resvs = tokens(st_local("restartvalues"))
 			nre = cols(resvs)/2
-			c = 1
+
 			for (re=1;re<=nre;re++) {
-				re1 = c*re
-				re2 = re1+1
+				re2 = 2*re
+				re1 = re2-1
 				for (i=1;i<=gml.Nrelevels;i++) {
-					latlevs = asarray(gml.latlevs,1)
+					latlevs = asarray(gml.latlevs,i)
 					for (j=1;j<=gml.Nres[i];j++) {
 						if (latlevs[j,1]==resvs[re1]) {
 							svsn = st_tempname()

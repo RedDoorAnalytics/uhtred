@@ -42,6 +42,7 @@ qui {
 	
 	//predictions
 	do "./uhtred/uhtred_predict.mata"
+	do "./uhtred/uhtred_predict_ebmeans.mata"
 	do "./uhtred/uhtred_p_rp.mata"
 	
 	mata: mata mlib create luhtred, dir(.)

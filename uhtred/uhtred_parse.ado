@@ -336,7 +336,7 @@ program ParseDist, sclass
                 MATCHby(string)		///
                 REFFAILure(string)      /// notdoc
 		FIRTH			///
-                *			/// rp aft opts
+                *			/// rp opts
         ]
         sreturn local failure `failure'
         sreturn local linterval `linterval'

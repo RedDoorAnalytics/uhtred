@@ -241,7 +241,11 @@ program Predict
                         exit 198
                 }
                 //handle stub
-                _stubstar2names `newvar', nvars(`e(Nres1)')
+		local Nres = 0
+		forvalues i=1/`=`e(Nlevels)'-1' {
+			local Nres = `Nres' + `e(Nres`i')'
+		}
+		_stubstar2names `newvar', nvars(`Nres')
                 local newvar `s(varlist)'	
         }
         else {
