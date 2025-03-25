@@ -29,17 +29,24 @@ survsim stime1 dead1 , dist(weib) lambda(`=exp(-2.4)') gamma(`=exp(-0.188)') cov
 stset stime1, f(dead1)
 
 gsem (_t <- M1[id1]@1 M2[id1>id2]@1, family(weib,fail(_d))), 
-// mestreg trt age || id1: || id2: , dist(weib) nohr //intmethod(mcagh)
-predict refs*, latent ebmeans 
-// predict crefs*, reffects ebmodes
-
-gen res1 = .
-bys id1 : gen flag = _n==1
+// // // // mestreg trt age || id1: || id2: , dist(weib) nohr //intmethod(mcagh)
+predict refs*, latent ebmeans se(serefs*)
+predict s1, surv cond(ebmeans)
+// // predict crefs*, reffects ebmodes
+//
+// gen res1 = .
+// bys id1 : gen flag = _n==1
 
 uhtred 	(stime1 M2[id1>id2]@1 M1[id1]@1 , ///
 		family(rp, df(1) noorthog failure(dead1))) ///
-		, restartvalues(M1 0.5 M2 0.25) 
+		, restartvalues(M1 0.25 M2 0.5) 
 
-predict urefs*, reffects
-//
-// su refs* urefs*
+predict urefs*, reffects debug
+predict seurefs*, reses debug
+
+su refs* urefs*
+su serefs* seurefs*
+
+predict s2, surv fitted
+
+su s1 s2

@@ -204,17 +204,9 @@ program Predict
         }
 
         
-        if "`fitted'"!="" {
-                if `e(Nlevels)'>2 {
-                        di as error "fitted not supported when the model has >2 levels"
-                        exit 198
-                }
-        }
-        else {
-                if "`panel'"!="" {
-                        di as error "panel() only valid with fitted"
-                        exit 198
-                }
+        if "`fitted'"=="" & "`panel'"!="" {
+		di as error "panel() only valid with fitted"
+		exit 198
         }
 		
         // parse options

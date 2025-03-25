@@ -28,7 +28,7 @@ void uhtred_prolog(	`RR' b,		///
 	`pgml' p
 	p = &moptimize_util_userinfo(M,1)
 
-	if ((*p).gridsearch) uhtred_vcv_gridsearch(M,*p,b)
+// 	if ((*p).gridsearch) uhtred_vcv_gridsearch(M,*p,b)
 
 	if (sum((*p).adapt) & (*p).iter<501 & (*p).iter<=(*p).adaptit) {
 
@@ -90,6 +90,7 @@ void uhtred_mc_update(	`gml' gml, 	///
 void uhtred_gh_update_ip(`gml' gml)
 {
 	for (i=1; i<=1; i++) {
+		i
 		ndim = gml.ndim[i]
 		ind1 = 1; ind2 = ndim
 		stackednodes 	= J(ndim*gml.Nobs[i,1],gml.Nres[i],.)
@@ -133,7 +134,7 @@ void uhtred_gh_update_ip(`gml' gml)
 
 void uhtred_gh_post_ip(`gml' gml)
 {
-	for (i=1; i<=1; i++) {
+	for (i=1; i<=gml.Nrelevels; i++) {
 		asarray(gml.Pgml->stackednodes,i,asarray(gml.stackednodes,i))
 		for (j=1; j<=gml.Nobs[i,1]; j++) {
 			asarray(gml.Pgml->aghip,(i,j),asarray(gml.aghip,(i,j)))
@@ -236,7 +237,7 @@ void uhtred_update_ip_newNip(`gml' gml, `RS' i)
 // Update adaptive quadrature locations and scales
 void uhtred_gh_update_ip_alllevs(`gml' gml)
 {
-	for (i=1; i<=gml.Nrelevels; i++) {
+	for (i=1; i<=1; i++) {
 
 		ndim = gml.ndim[i]
 		ind1 = 1; ind2 = ndim
@@ -248,7 +249,7 @@ void uhtred_gh_update_ip_alllevs(`gml' gml)
 		numer 		= exp(log(asarray(gml.Li_ip,gml.qind)) :- log(L_i))	//c cancels out
 		baseweights2 	= baseweights'
 //gml.qind
-// st_view(res1=.,.,"res1","flag")
+st_view(res1=.,.,"res1","flag")
 		
 		
 		for (j=1; j<=gml.Nobs[i,1]; j++) {

@@ -21,7 +21,7 @@ qui {
 	//functions
 	do "./uhtred/uhtred_xb.mata"
 	do "./uhtred/uhtred_gf.mata"
-	do "./uhtred/uhtred_prolog.mata"
+	do "./uhtred/uhtred_prolog2.mata"
 	do "./uhtred/uhtred_utils.mata"
 	do "./uhtred/uhtred_functions.mata"
 	do "./uhtred/uhtred_score.mata"

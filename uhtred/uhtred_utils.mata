@@ -152,17 +152,24 @@ mata:
 	for (lev=1;lev<=gml.Nrelevels;lev++) {
 		bre 	= b[|moptimize_util_eq_indices(M,gml.zeqn[mod,lev])|]
 		reindex = asarray(gml.Zbindex,(mod,lev))
-		if (gml.adapt[1]) {
+		if (gml.adapt[lev]) {
 			Zbeta 	= asarray(gml.Z,(mod,lev)) :* bre
 			indexr  = uhtred_get_adpanelindex(gml,lev)
-			indexc  = .
-			if (lev!=gml.Nrelevels) indexc = gml.qind[,lev+1]
-
-			for (r=1;r<=gml.Nres[lev];r++)  {
-				zb = zb :+ Zbeta[,r] :* 
-					asarray(gml.aghip2,
-						(lev,reindex[r]))[indexr,indexc]
-			}			
+			indexc  = .			
+			if (gml.tofix & sum(lev:==gml.fxls)) {
+				for (r=1;r<=gml.Nres[lev];r++)  {
+					zb = zb :+ Zbeta[,r] :* 
+						asarray(gml.blups,lev)[indexr,r]
+				}
+			}
+			else {
+				if (lev!=gml.Nrelevels) indexc = gml.qind[,lev+1]
+				for (r=1;r<=gml.Nres[lev];r++)  {
+					zb = zb :+ Zbeta[,r] :* 
+						asarray(gml.aghip2,
+							(lev,reindex[r]))[indexr,indexc]
+				}
+			}
 		}
 		else {
 			if (lev==gml.Nrelevels) {
@@ -184,29 +191,20 @@ mata:
 	mod = gml.model
 	zb = 0
 	for (lev=1;lev<=gml.Nrelevels;lev++) {
-		fixlev = 0
-		if (gml.fixedonly==0) { //getting blups
-			//list of levels to fix, i.e. set at blups when called within an reffects prediction
-			// fixedonly = 0
-			if (sum(lev:==gml.fixedlevels)) {
-				fixlev = 1
-			}
-		}
-		
 		bre 	= gml.myb[|uhtred_util_bindices(gml,gml.zeqn[mod,lev])|]
 		reindex = asarray(gml.Zbindex,(mod,lev))
-		if (gml.adapt[1]) {
+		if (gml.adapt[lev]) {
 			Zbeta 	= asarray(gml.Z,(mod,lev)) :* bre	
 			indexr  = uhtred_get_adpanelindex(gml,lev)
-			if (gml.fixedonly!=2) {
-				if (fixlev) {
-					for (r=1;r<=gml.Nres[lev];r++)  {
+			indexc  = .			
+			if (gml.tofix & sum(lev:==gml.fxls)) {
+				for (r=1;r<=gml.Nres[lev];r++)  {
 					zb = zb :+ Zbeta[,r] :* 
 						asarray(gml.blups,lev)[indexr,reindex[r]]
-					}
 				}
-				else {
-					indexc  = .
+			}
+			else {
+				if (gml.fixedonly!=2) {
 					if (lev!=gml.Nrelevels) indexc = gml.qind[,lev+1]
 
 					for (r=1;r<=gml.Nres[lev];r++)  {
@@ -215,13 +213,15 @@ mata:
 								(lev,reindex[r]))[indexr,indexc]
 					}
 				}
-			}
-			else {
-				for (r=1;r<=gml.Nres[lev];r++)  {
-					zb = zb :+ Zbeta[,r] :* 
-						asarray(gml.blups,lev)[indexr,reindex[r]]
+				else {
+					for (r=1;r<=gml.Nres[lev];r++)  {
+						zb = zb :+ Zbeta[,r] :* 
+							asarray(gml.blups,lev)[indexr,reindex[r]]
+					}
 				}
-			}			
+			}
+			
+						
 		}
 		else {
 			if (lev==gml.Nrelevels) {
@@ -244,7 +244,7 @@ mata:
 	zb = 0
 	bre 	= gml.myb[|uhtred_util_bindices(gml,gml.zeqn[mod,lev])|]
 	reindex = asarray(gml.Zbindex,(mod,lev))
-	if (gml.adapt[1]) {
+	if (gml.adapt[lev]) {
 		Zbeta 	= asarray(gml.Z,(mod,lev)) :* bre	
 		indexr  = uhtred_get_adpanelindex(gml,lev)
 		if (gml.fixedonly!=2) {

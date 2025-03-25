@@ -24,12 +24,13 @@ void uhtred_predict(`SS' object, `SS' newvar, `SS' touse, `SS' stat, `SS' predty
 {
 	`gml' gml
 	swap(gml,*findexternal(object))
-	
+	gml.Pgml = &gml
 	uhtred_predict_setup(gml,stat,touse)
 	stand	= st_local("standardise")!=""
 
-	if 	(stat=="reffects") 	pred = uhtred_predict_blups(gml)
-	else if (stat=="reses") 	pred = uhtred_predict_blups(gml,1)
+	if 	(stat=="reffects" | stat=="reses") {
+		pred = uhtred_predict_blups(gml,stat=="reses")
+	}
 	else {
 		pf 	= uhtred_p_getpf(gml,stat)
 		pred 	= uhtred_predict_core(gml,pf,predtype,stand)
@@ -131,7 +132,7 @@ void uhtred_predict_error_check(`gml' gml, `SS' stat)
 			gml.fixedonly = 3
 		}
 		else {
-			uhtred_predict_getblups(gml)	//fills up all blups 
+			(void) uhtred_predict_blups(gml,0)	//fills up all blups 
 			gml.fixedonly = 2
 		}
 		//reset
@@ -382,13 +383,14 @@ void uhtred_predict_error_check(`gml' gml, `SS' stat)
 - calculate blups for all panels and store within gml.blups array
 */
 
-`RM' uhtred_predict_blups(`gml' gml, | `RS' getses)
+`RM' uhtred_predict_blups(`gml' gml, `RS' getses)
 {
-	if (args()==2) 	uhtred_predict_getblups(gml,getses)
-	else 		uhtred_p_ebmeans(gml)
+	uhtred_p_ebmeans(gml,getses)
+	
 	gml.survind = 0
 	gml.model = gml.modtoind = strtoreal(st_local("outcome"))	//getblups changes it
 	
+	//gml.blups will contain blups or seblups
 	res = asarray(gml.blups,1)[uhtred_get_adpanelindex(gml,1),]
 	if (gml.Nrelevels>1) {
 		for (i=2;i<=gml.Nrelevels;i++) { 
@@ -397,64 +399,6 @@ void uhtred_predict_error_check(`gml' gml, `SS' stat)
 	}
 	
 	return(res)
-}
-
-void uhtred_predict_getblups(`gml' gml, | `RS' getses)
-{
-	getses 		= args()==2
-	gml.blups 	= asarray_create("real",1)
-
-	//adaptive updates to calculate blups
-	gml.fixedonly = 0
-	oldlnl 	= quadsum(uhtred_logl_panels(1,M=.,gml.myb,gml),1)
-
-	(*gml.Pupdateip)(gml)
-	newlnl = quadsum(uhtred_logl_panels(1,M=.,gml.myb,gml),1)
-
-	while (reldif(oldlnl,newlnl)>gml.atol) {
-		swap(oldlnl,newlnl)
-		(*gml.Pupdateip)(gml)
-		newlnl = quadsum(uhtred_logl_panels(1,M=.,gml.myb,gml),1)
-	}	
-	
-	//now store them -> unnecessary extra step, but o/w would have to change updateip function
-	if (getses) {
-		for (i=1; i<=1; i++) {
-			seblups 	= J(gml.Nobs[i,1],gml.Nres[i],.)
-			baseweights 	= asarray(gml.baseGHweights,i)
-			L_i 		= asarray(gml.Li_ip,gml.qind) * baseweights
-			numer 		= asarray(gml.Li_ip,gml.qind) :/ L_i
-			baseweights2 	= baseweights'	
-			cholV		= cholesky(asarray(gml.vcvs,i))
-			for (j=1; j<=gml.Nobs[i,1]; j++) {
-				ipij 		= cholV * asarray(gml.aghip,(i,j))
-				blups 		= numer[j,] * (ipij :* baseweights2)'
-				vcv_new 	= (numer[j,] * (uhtred_outerprod_by_col(ipij') :* baseweights)) :- blups # blups
-				seblups[j,] = sqrt(diagonal(rowshape(vcv_new,gml.Nres[i])))'
-			}
-			asarray(gml.blups,i,seblups)
-		}
-	}
-	else {
-		for (i=1; i<=gml.Nrelevels; i++) {
-			if ((i-1)>0) {
-				//fix the previous levels posterior means
-				gml.fixedlevels = 1::(i-1)
-			}
-			blups 		= J(gml.Nobs[i,1],gml.Nres[i],.)
-			baseweights 	= asarray(gml.baseGHweights,i)
-			L_i 		= asarray(gml.Li_ip,gml.qind) * baseweights
-			numer 		= asarray(gml.Li_ip,gml.qind) :/ L_i
-			baseweights2 	= baseweights'	
-			cholV		= cholesky(asarray(gml.vcvs,i))
-			for (j=1; j<=gml.Nobs[i,1]; j++) {
-				ipij 		= cholV * asarray(gml.aghip,(i,j))
-				blups[j,] 	= numer[j,] * (ipij :* baseweights2)'
-			}
-			asarray(gml.blups,i,blups)
-		}
-	}
-	
 }
 
 `RM' uhtred_predict_getspecblups(`gml' gml)

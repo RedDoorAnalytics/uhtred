@@ -100,6 +100,7 @@ void uhtred_ereturn(`SS' GML)
 		stata("ereturn local re_ivscale"+index+" "+gml.E.reivscale[i])
 		stata("ereturn local re_label"+index+" "+gml.E.relabel[i])
 		stata("ereturn local re_dist"+index+" normal")
+		st_matrix("e(VCV_"+index+")",asarray(gml.vcvs,i))
 	}
 
 	//integration
@@ -119,6 +120,10 @@ void uhtred_ereturn(`SS' GML)
         if (gml.indicatorvar!="") {
                 stata("ereturn local indicator "+gml.indicatorvar)
         }
+	
+	bsvs = st_tempname()
+	st_matrix(bsvs,gml.svs)
+	stata("ereturn matrix b_svs = "+bsvs)
         
 	stata("ereturn local chintpoints "+strofreal(gml.chip))
 		

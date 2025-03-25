@@ -44,7 +44,7 @@ void uhtred_init_integration(`gml' gml)
 		intmethod 	= tokens(st_local("intmethod"))'
 		if (rows(intmethod)!=gml.Nrelevels) intmethod = J(gml.Nrelevels,1,intmethod)
 		strlen 		= strlen(intmethod)
-		gml.usegh	= gml.adapt = J(gml.Nrelevels,1,.)
+		gml.usegh	= gml.adapt = J(gml.Nrelevels,1,0)
 		for (i=1;i<=gml.Nrelevels;i++) {
 			if (intmethod[i]==substr("ghermite",1,max((strlen[i],2)))) {
 				gml.usegh[i] = 1
@@ -114,8 +114,9 @@ void uhtred_init_integration(`gml' gml)
 	//core index that gets updated through the recursive function
 	
 	gml.qind = 1,J(1,gml.Nrelevels,0)
-	
+
 	if (sum(gml.adapt) | gml.todo | gml.predict) {
+		gml.blups = asarray_create("real",1)
 		gml.Li_ip = asarray_create("real",cols(gml.qind))
 		if (gml.todo) gml.Li_ip2 = asarray_create("real",cols(gml.qind))
 		gml.c 	  = asarray_create("real",cols(gml.qind))
@@ -124,7 +125,7 @@ void uhtred_init_integration(`gml' gml)
 	if (max(gml.usegh)==1) {
 		if (max(gml.adapt :* gml.usegh)==1) {
 			gml.atol = 1e-08
-			gml.Pupdateip = &uhtred_gh_update_ip_alllevs()
+			gml.Pupdateip = &uhtred_gh_update_ip()
 			gml.showadapt = st_local("showadapt")!=""
 			if (st_local("adaptiterations")=="") gml.adaptit = 1001
 			else gml.adaptit = strtoreal(st_local("adaptiterations"))
@@ -165,7 +166,8 @@ void uhtred_init_ip(`gml' gml)
 			}
 		}
 	}
-	else {
+	
+	if (min(gml.adapt)==0) {
 		gml.b = asarray_create("real",1)
 	}
 
@@ -198,10 +200,10 @@ void uhtred_init_ip(`gml' gml)
 						asarray(gml.aghip2,(i,r),rowshape(asarray(gml.stackednodes,i)[r,],gml.Nobs[i,1]))
 					}	
 					for (j=1; j<=gml.Nobs[i,1]; j++) {
-						asarray(gml.aghip,(i,j),asarray(gml.vcvs,i) * asarray(gml.baseGHnodes,i))
+						asarray(gml.aghip,(i,j),/*asarray(gml.vcvs,i)* */ asarray(gml.baseGHnodes,i))
 					}
 					asarray(gml.baseGHweights,i,((2:*pi()):^(gml.Nres[i]:/2):*exp(quadcolsum(asarray(gml.baseGHnodes,i):^2):/2) :* asarray(gml.baseGHweights,i)')')
-					asarray(gml.aghlogl,i,J(gml.Nobs[i,1],1,uhtred_lndmvnorm(asarray(gml.baseGHnodes,i)',I(gml.Nres[i]))') :+ log(sqrt(det(asarray(gml.vcvs,i)))))
+					asarray(gml.aghlogl,i,J(gml.Nobs[i,1],1,uhtred_lndmvnorm(asarray(gml.baseGHnodes,i)',I(gml.Nres[i]))') /*:+ log(det(asarray(gml.vcvs,i))):/2*/)
 
 				}
 				else {

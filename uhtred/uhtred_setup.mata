@@ -131,6 +131,9 @@ struct uhtred_struct {
 	`TR' latlevs		//unique REs at each level for eret list
 	`RS' adaptit		//number of iterations to allow adapting nodes
 	
+	`RS' tofix
+	`RR' fxls
+	
 	//delayed entry
 	`RS' ltflag
 	
@@ -143,7 +146,6 @@ struct uhtred_struct {
 	`RS' predict				
 	`RS' fixedonly		//predictions based only on fixed effects - so skip res in utils
 	`TR' blups
-	`RC' fixedlevels
 	
 	//ereturn list
 	`Egml' E
@@ -179,6 +181,8 @@ struct uhtred_struct {
 	
         `SS' indicatorvar       //indicator() varname from stexcess
         `RC' indicator          //indicator view for stexcess
+	
+	`RR' svs
 	
 }
 
@@ -230,7 +234,21 @@ void uhtred_setup(`SS' GML,`SS' touse)
 	uhtred_setup_mleqns(gml)
 	uhtred_setup_wrappers(gml)
 	uhtred_starting_values(gml)
-	
+
+
+// if (gml.predict) {
+// 	asarray(gml.vcvs,1)
+// 	asarray(gml.vcvs,2)
+// 	gml.myb = st_matrix(st_local("from"))
+// 	gml.myb
+// // 	uhtred_p_xb(gml,gml.myb)
+// // 	uhtred_p_init_ip(gml)
+// 	asarray(gml.vcvs,1)
+// 	asarray(gml.vcvs,2)
+// // 	uhtred_p_init_ip(gml)
+// }
+
+
  	//Done
 	swap(*pGML,gml)
 }
@@ -352,7 +370,16 @@ void uhtred_get_timevars(`gml' gml)
 void uhtred_init_vcvs(`gml' gml)
 {
 	gml.vcvs = asarray_create("real",1)
-	for (i=1;i<=gml.Nlevels;i++) asarray(gml.vcvs,i,I(gml.Nres[i]))
+// 	if (gml.predict) {
+// 		for (i=1;i<=gml.Nrelevels;i++) {
+// 			asarray(gml.vcvs,i,st_matrix("e(VCV_"+strofreal(i)+")"))
+// 		}
+// 	}
+// 	else {
+		for (i=1;i<=gml.Nrelevels;i++) {
+			asarray(gml.vcvs,i,I(gml.Nres[i]))
+		}
+// 	}
 }
 
 void uhtred_parse_covstructures(`gml' gml)

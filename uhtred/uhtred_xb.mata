@@ -133,6 +133,7 @@ void uhtred_fillvcv(`gml' gml,
 				for (j=1;j<=Nres[i];j++) vcv[j,j] = var_xb
 			}			
 			asarray(gml.vcvs,i,vcv)
+			if (!gml.predict) asarray(gml.Pgml->vcvs,i,vcv)
 			uhtred_update_ip(gml,i)
 		}
 	}
@@ -143,7 +144,7 @@ void uhtred_update_ip(`gml' gml, `RS' i)
 {
 	//update nodes
 	if (gml.adapt[i]) {
-		res = cholesky(asarray(gml.vcvs,i)) * asarray(gml.stackednodes,i)	
+		res = cholesky(asarray(gml.vcvs,i)) * asarray(gml.stackednodes,i)
 		for (r=1;r<=gml.Nres[i];r++) {
 			asarray(gml.aghip2,(i,r),rowshape(res[r,],gml.Nobs[i,1]))
 		}	
