@@ -370,16 +370,9 @@ void uhtred_get_timevars(`gml' gml)
 void uhtred_init_vcvs(`gml' gml)
 {
 	gml.vcvs = asarray_create("real",1)
-// 	if (gml.predict) {
-// 		for (i=1;i<=gml.Nrelevels;i++) {
-// 			asarray(gml.vcvs,i,st_matrix("e(VCV_"+strofreal(i)+")"))
-// 		}
-// 	}
-// 	else {
-		for (i=1;i<=gml.Nrelevels;i++) {
-			asarray(gml.vcvs,i,I(gml.Nres[i]))
-		}
-// 	}
+	for (i=1;i<=gml.Nrelevels;i++) {
+		asarray(gml.vcvs,i,I(gml.Nres[i]))
+	}
 }
 
 void uhtred_parse_covstructures(`gml' gml)
