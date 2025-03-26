@@ -53,8 +53,8 @@ mata:
 	hastb 	= gml.hastb[gml.model]
 	if (hastb) teqn = gml.teqn[gml.model]
 	brcs = gml.myb[|uhtred_util_bindices(gml,teqn)|]'
-	dxb = asarray(gml.dXT,gml.model) * brcs
-	return(uhtred_util_p_xtzb(gml,t) :+ log(dxb) :- log(t))
+	dx = _uhtred_util_dt_update(gml,t)
+	return(uhtred_util_p_xtzb(gml,t) :+ log(dx * brcs) :- log(t))
 }
 
 `RM' uhtred_p_rp_h(`gml' gml,| `RC' t)
@@ -77,6 +77,11 @@ mata:
 	not = args()==1
 	if (not) t = uhtred_util_timevar(gml)
 	return(exp(uhtred_p_rp_logh(gml,t):-uhtred_p_rp_ch(gml,t)))
+}
+
+`RM' uhtred_p_rp_root(`RC' t, `gml' gml, `RC' logu)
+{
+	return(logu :+ exp(uhtred_util_p_xtzb(gml,t)))
 }
 
 end

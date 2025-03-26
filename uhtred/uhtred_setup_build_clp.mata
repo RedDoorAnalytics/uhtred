@@ -290,9 +290,9 @@ void uhtred_build_xz(`gml' gml, `RS' model, `RS' eqn, `RS' coef)
 			}
 			else {
 				if (istimedep) {
-					ateqn = "[time" + strofreal(model) + "]"
+					ateqn = "[tb" + strofreal(model) + "]"
 				}
-				else 	ateqn = "["+yvar+"]"
+				else 	ateqn = "[xb" + strofreal(model) + "]"
 				_uhtred_build_at_on_re(at,model,ateqn,mainwork)
 			}
 		}
@@ -311,7 +311,7 @@ void uhtred_build_xz(`gml' gml, `RS' model, `RS' eqn, `RS' coef)
 		timexbsyn = timexbsyn,
 				uhtred_stata_setup_rcs(touse,yvar,opts,
 					knots="",rmat=J(0,0,.,),
-					"_rcs" + strmod)
+					"_brcs" + strmod)
 		//store for eret list
 		asarray(gml.distancb,(model,3),strtoreal(tokens(knots)))
 		if (rmat==J(0,0,.)) {
@@ -326,20 +326,20 @@ void uhtred_build_xz(`gml' gml, `RS' model, `RS' eqn, `RS' coef)
 		dtimexbsyn = dtimexbsyn,
 				uhtred_stata_rcs(touse,yvar,knots,
 						rmat,"log deriv(1)",
-						"_d_rcs" + strmod)
+						"_d_brcs" + strmod)
 		//ltruncation
 		if (haslt) {
 			time0xbsyn = time0xbsyn,
 					uhtred_stata_rcs(touse,y0var,knots,
 							rmat,"log",
-							"_s0_rcs" + strmod)
+							"_s0_brcs" + strmod)
 		}
 		//linterval
 		if (hasic) {
 			timelxbsyn = timelxbsyn,
 					uhtred_stata_rcs(touse,ylvar,knots,
 							rmat,"log",
-							"_l_rcs" + strmod)
+							"_l_brcs" + strmod)
 		}
 	}	
 

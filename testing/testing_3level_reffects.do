@@ -1,10 +1,11 @@
 //source paths
-local drive /Users/michael/My Drive/software
-cd "`drive'/merlin"
-adopath ++ "`drive'/merlin"
-adopath ++ "`drive'/merlin/merlin"
-adopath ++ "`drive'/stmerlin/stmerlin"
+local drive /Users/michael/Library/CloudStorage
+local drive `drive'/OneDrive-RedDoorAnalyticsAB/software
+cd "`drive'/uhtred"
+adopath ++ "`drive'/uhtred"
+adopath ++ "`drive'/uhtred/uhtred"
 
+//build mlib
 clear all
 tr:do ./build/buildmlib.do
 mata mata clear
@@ -16,17 +17,20 @@ sort birthyear id
 mestreg education njobs 		///
 	|| birthyear: || id:		///
 	, distribution(weibull) nohr //intmethod(gh) intpoints(25)
-predict refs*, reffects
+
+predict m1, median cond(ebmeans)
 
 // stmixed education njobs 		///
 // 	|| birthyear: || id:		///
 // 	, distribution(weibull)	showmerlin
 //	
 	
-merlin 	(_t education njobs 		///
+uhtred 	(_t education njobs 		///
 	M2[birthyear>id]@1 		///
 	M1[birthyear]@1 		///
-	, family(weib, failure(_d))) 	///
+	, family(rp, df(1) failure(_d))) 	///
 	, intmethod(mvagh) intpoints(7) 
 
-predict rfs*, reffects debug
+// predict rfs*, reffects
+
+predict m2, median fitted

@@ -388,6 +388,33 @@ mata:
 		}
 	}	
 
+	//now check for baseline splines for rp models
+	if (gml.familys[mod]=="rp") {
+		hasrmat = asarray(gml.distancb,(mod,4))
+		knots = asarray(gml.distancb,(mod,3))
+		if (hasrmat) {
+			rmat = asarray(gml.distancb,(mod,5))
+			elvars = uhtred_rcs(log(t),knots,0,rmat)
+		}
+		else {
+			elvars = uhtred_rcs(log(t),knots,0)
+		}
+
+		//now post to Stata
+		Nvars = cols(elvars)
+		names = J(1,0,"")
+		stub  = "_temp_"+strofreal(mod)
+		oldstub = "_brcs" + strofreal(mod)
+		for (k=1;k<=Nvars;k++) {
+			names = names,(stub+"_"+strofreal(k))
+			newtvarlist = subinstr(newtvarlist,oldstub+"_"+strofreal(k),stub+"_"+strofreal(k),1)
+		}
+		stata("cap drop "+invtokens(names))
+		id = st_addvar("double",names)
+		st_store(.,id,gml.touse,elvars)
+		anytdep = anytdep + 1
+	}
+		
 	if (anytdep) {
 		T = st_data(.,newtvarlist,gml.modeltouses[gml.modtoind])
 		stata("cap drop "+invtokens(names))
@@ -395,6 +422,93 @@ mata:
 	}
 	else return(asarray(gml.XT,mod))
 }
+
+`RM' _uhtred_util_dt_update(`gml' gml, `RC' t)
+{
+	/*
+	- loop over each component in the t equation
+	  -> loop over each element
+	     -> if time then replace
+	- read in new T design matrix with st_data
+	*/
+	
+	mod 	= gml.model
+	Ncmps 	= gml.Ncmps[mod]		        //# of components
+	Nels 	= asarray(gml.Nels,mod)			//# els per component
+	Nobs	= uhtred_util_nobs(gml)
+	newtvarlist = gml.tvarlist[mod]
+
+	anytdep = 0
+	//now rebuild
+	for (i=1;i<=Ncmps;i++) {
+		istdep 	= sum(asarray(gml.eltvar,(mod,i))[,1])
+		anytdep = anytdep + istdep
+		if (istdep) {
+			eltypes = asarray(gml.elindex,(mod,i))
+			
+			//need comp varlist entry for st_data/view
+			for (j=1;j<=Nels[i];j++) {
+				if (eltypes[j]==8) {
+					elvars = uhtred_xz_rcs(gml,i,j,1,t)
+					//now post to Stata
+					Nvars = cols(elvars)
+					names = J(1,0,"")
+					stub  = "_temp_"+strofreal(mod)+
+						"_"+strofreal(i)+
+						"_"+strofreal(j)
+					for (k=1;k<=Nvars;k++) {
+						names = names,(stub+"_"+strofreal(k))
+					}
+
+					stata("cap drop "+invtokens(names))
+					id = st_addvar("double",names)
+					st_store(.,id,gml.touse,elvars)
+					oldstub = "_d_rcs" + strofreal(mod) + 
+							"_"+strofreal(i) + 
+							"_" + strofreal(j) + 
+							"_*"
+					newtvarlist = subinstr(newtvarlist,oldstub,stub+"*",1)
+				}
+			}
+
+		}
+	}	
+
+	//now check for baseline splines for rp models
+	if (gml.familys[mod]=="rp") {
+		hasrmat = asarray(gml.distancb,(mod,4))
+		knots = asarray(gml.distancb,(mod,3))
+		if (hasrmat) {
+			rmat = asarray(gml.distancb,(mod,5))
+			elvars = uhtred_rcs(log(t),knots,1,rmat)
+		}
+		else {
+			elvars = uhtred_rcs(log(t),knots,1)
+		}
+
+		//now post to Stata
+		Nvars = cols(elvars)
+		names = J(1,0,"")
+		stub  = "_temp_"+strofreal(mod)
+		oldstub = "_brcs" + strofreal(mod)
+		for (k=1;k<=Nvars;k++) {
+			names = names,(stub+"_"+strofreal(k))
+			newtvarlist = subinstr(newtvarlist,oldstub+"_"+strofreal(k),stub+"_"+strofreal(k),1)
+		}
+		stata("cap drop "+invtokens(names))
+		id = st_addvar("double",names)
+		st_store(.,id,gml.touse,elvars)
+		anytdep = anytdep + 1
+	}
+		
+	if (anytdep) {
+		T = st_data(.,newtvarlist,gml.modeltouses[gml.modtoind])
+		stata("cap drop "+invtokens(names))
+		return(T)
+	}
+	else return(asarray(gml.dXT,mod))
+}
+
 
 `RM' uhtred_util_tb_qs(`TR' M, `RR' b, `gml' gml,`RS' Nobs2)
 {

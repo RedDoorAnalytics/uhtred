@@ -123,7 +123,7 @@ void uhtred_starting_values(`gml' gml)
 				for (mod=1;mod<=gml.Nmodels;mod++) {
 					if (gml.familys[mod]=="rp") {
 						st_local("initextra",st_local("initextra") + " " +
-							"tb"+strofreal(mod)+":_rcs"+strofreal(mod)+"_1=1")
+							"tb"+strofreal(mod)+":_brcs"+strofreal(mod)+"_1=1")
 					}
 				}
 			}

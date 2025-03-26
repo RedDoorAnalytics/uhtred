@@ -34,6 +34,7 @@ program Predict
 				CAUSES(string)		                ///
 				USERFunction(string)	                ///
 				USER			                ///
+				MEDian					///
                                                                         ///
                                 FIXEDonly                               ///
                                 MARGinal                                ///
@@ -127,6 +128,7 @@ program Predict
                         `tprob'			///
                         `tlos'			///
                         `basehazard'		///
+			`median'		///
                         `reffects'		///
                         `reses'			//
 						
@@ -217,8 +219,8 @@ program Predict
                 local xbtype "fixedonly"
         }
 
-        if ("`fitted'"!="" & "`ci'"!="") {
-                di as error "fitted and ci not supported"
+        if ("`marginal'"!="" & "`median'"!="") {
+                di as error "median with marginal not supported"
                 exit 198
         }
         

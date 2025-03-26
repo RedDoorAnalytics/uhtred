@@ -23,8 +23,10 @@ mata:
 void uhtred_predict(`SS' object, `SS' newvar, `SS' touse, `SS' stat, `SS' predtype)
 {
 	`gml' gml
+	
 	swap(gml,*findexternal(object))
 	gml.Pgml = &gml
+
 	uhtred_predict_setup(gml,stat,touse)
 	stand	= st_local("standardise")!=""
 
@@ -94,6 +96,7 @@ void uhtred_predict_error_check(`gml' gml, `SS' stat)
 	else if (stat=="totaltimelost")	return(&uhtred_p_totaltimelost())
 	else if (stat=="tprob")		return(&uhtred_p_transprob())
 	else if (stat=="tlos")		return(&uhtred_p_los())
+	else if (stat=="median")	return(&uhtred_p_med())
 	else {
 		f = gml.familys[gml.model]
 		/*
@@ -416,6 +419,5 @@ void uhtred_predict_error_check(`gml' gml, `SS' stat)
 	specblups = st_data(.,st_local("specb")+"*",st_local("spectouse"))
 	asarray(gml.blups,1,specblups[1,])
 }
-
 
 end
