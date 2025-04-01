@@ -12,25 +12,24 @@ mata mata clear
 
 webuse jobhistory
 stset tend, origin(tstart) fail(failure)
-sort birthyear id
-
-mestreg education njobs 		///
-	|| birthyear: || id:		///
-	, distribution(weibull) nohr //intmethod(gh) intpoints(25)
-
-predict m1, median cond(ebmeans)
+//
+// mestreg education njobs 		///
+// 	|| birthyear: || id:		///
+// 	, distribution(weibull) nohr intpoints(25)
+//
+// predict refs*, reffects
 
 // stmixed education njobs 		///
 // 	|| birthyear: || id:		///
 // 	, distribution(weibull)	showmerlin
 //	
+// sort birthyear id
 	
 uhtred 	(_t education njobs 		///
 	M2[birthyear>id]@1 		///
 	M1[birthyear]@1 		///
-	, family(rp, df(1) failure(_d))) 	///
-	, intmethod(mvagh) intpoints(7) 
+	, family(rp, noorthog df(1) failure(_d))) 	///
+	, 
 
-// predict rfs*, reffects
-
-predict m2, median fitted
+predict rfs*, reffects 
+su rfs*

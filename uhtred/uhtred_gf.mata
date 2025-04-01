@@ -106,7 +106,7 @@ void uhtred_gf(	`TS' M,
 		res2 = (*gml.Plnl[j])(M,b,gml)
 		res = res :+ panelsum(res2,asarray(gml.panelindexes,(index,j)))
 	}
-
+	
 	if (gml.adapt[index]) 	res = res :+ asarray(gml.aghlogl,index)
 	if (gml.usegh[index]) 	c   = rowmax(res :+ log(asarray(gml.baseGHweights,index)'))
 	else			c   = rowmax(res)

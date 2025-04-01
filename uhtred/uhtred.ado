@@ -1,7 +1,8 @@
-*! version 1.4.0  25mar2025
+*! version 1.5.0  28mar2025
 
 /*
 History
+v1.5.0: 28mar2025
 v1.4.0: 25mar2025
 - fully adaptive quadrature
 v1.0.0: 02sep2024 

@@ -43,8 +43,8 @@ void uhtred_prolog(	`RR' b,		///
 		gml = moptimize_util_userinfo(M,1)
 		
 		// need to fill up linear predictors, first time through
-		uhtred_xb(M,gml,b)
 		gml.myb = b
+		uhtred_xb(M,gml,b)
 		
 		gml.tofix = 0
 		gml.fxls  = J(1,0,.)

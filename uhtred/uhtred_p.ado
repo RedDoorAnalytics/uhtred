@@ -78,7 +78,7 @@ program Predict
                         ]					        //
 
         local newvar `vlist'
-		
+			
         if "`intpoints'" == "1" {
                 di as err "invalid intpoints() option;"
                 di as err "intpoints(1) is not allowed by predict"
@@ -300,22 +300,16 @@ program Predict
                 }
                 local intmethods intmethod(`ims')
                 local intpoints intpoints(`imp')
+		
+		if ("`fitted'"!="" | "`reffects'"!="" | "`reses'"!="") {
+			sort `e(levelvars)'
+		}
         }
         
         if "`chintpoints'"!="" {
                 local pchintpoints pchintpoints(`chintpoints')
         }
         
-        if "`e(transmatrix)'"!="" | "`transmatrix'"!="" {
-                if "`e(transmatrix)'"!="" {
-                        tempname tmat
-                        matrix `tmat' = e(transmatrix)
-                        local passtmat transmatrix(`tmat')
-                }
-                else {
-                        local passtmat transmatrix(`transmatrix')
-                } 
-        }
 		
         //====================================================================================================================//
 		
@@ -333,6 +327,7 @@ program Predict
 			
         //====================================================================================================================//
         //Preserve data for out of sample prediction etc.
+	
         tempfile newvars 
         preserve
 

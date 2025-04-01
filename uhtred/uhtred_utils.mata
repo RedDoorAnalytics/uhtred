@@ -63,7 +63,7 @@ mata:
 	hast = args()==4
 	mod  = gml.model
 	xb   = 0
-	
+
 	if (gml.hasxb[mod]) {
 		xb = moptimize_util_xb(M,b,gml.xeqn[mod])
 		if (gml.Nmodels>1) {
@@ -112,7 +112,7 @@ mata:
 	
 	mod  = gml.model
 	xb   = 0
-	
+
 	if (gml.hasxb[mod]) {
 		xb = moptimize_util_xb(M,b,gml.xeqn[mod])
 		if (gml.Nmodels>1) {
