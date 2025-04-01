@@ -34,7 +34,8 @@ void uhtred_p_ebmeans(`gml' gml, `RS' getses)
 	gml.myb = st_matrix("e(b_svs)")
 	uhtred_p_xb(gml,gml.myb)
 	gml.Pgml = &gml
-		
+	miflag = 0
+	
 	for (i=1; i<=gml.Nrelevels; i++) {
 
 		if (i>1) {
@@ -48,6 +49,10 @@ void uhtred_p_ebmeans(`gml' gml, `RS' getses)
 		_ebmeans_update(gml,i)
 		
 		newlnl = quadsum(uhtred_logl_panels(i,M=.,gml.myb,gml),1)
+		if (missing(newlnl)) {
+			printf("note: adaptive iterations failed; missing values in stage 1\n")
+			miflag = 1
+		}
 		
 		while (reldif(oldlnl,newlnl)>gml.atol) {
 			swap(oldlnl,newlnl)
@@ -70,9 +75,12 @@ void uhtred_p_ebmeans(`gml' gml, `RS' getses)
 	}
 	
 	//now move on to estimated coefficients
-	
 	gml.myb = st_matrix("e(b)")
 	uhtred_p_xb(gml,gml.myb)
+	if (miflag) {
+		uhtred_p_init_ip(gml)
+	}
+	
 	
 	gml.tofix = 0
 	gml.fxls  = J(1,0,.)
@@ -90,7 +98,10 @@ void uhtred_p_ebmeans(`gml' gml, `RS' getses)
 		_ebmeans_update(gml,i)
 
 		newlnl = quadsum(uhtred_logl_panels(i,M=.,gml.myb,gml),1)
-		
+		if (missing(newlnl)) {
+			errprintf("adaptive iterations failed; missing values in stage 2\n")
+			exit(198)
+		}
 		while (reldif(oldlnl,newlnl)>gml.atol) {
 			swap(oldlnl,newlnl)
 			_ebmeans_update(gml,i)
