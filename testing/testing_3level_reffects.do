@@ -13,11 +13,11 @@ mata mata clear
 webuse jobhistory
 stset tend, origin(tstart) fail(failure)
 //
-// mestreg education njobs 		///
-// 	|| birthyear: || id:		///
-// 	, distribution(weibull) nohr intpoints(25)
-//
-// predict refs*, reffects
+mestreg education njobs 		///
+	|| birthyear: || id:		///
+	, distribution(weibull) nohr intpoints(35) intmethod(gh)
+
+predict refs*, reffects
 
 // stmixed education njobs 		///
 // 	|| birthyear: || id:		///

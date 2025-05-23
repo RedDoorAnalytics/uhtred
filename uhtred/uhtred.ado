@@ -1,7 +1,9 @@
-*! version 1.5.0  28mar2025
+*! version 1.5.1  23may2025
 
 /*
 History
+v1.5.1: 23may2025 
+- bug fix in eta predictions
 v1.5.0: 28mar2025
 v1.4.0: 25mar2025
 - fully adaptive quadrature

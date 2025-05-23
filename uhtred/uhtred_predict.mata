@@ -193,9 +193,9 @@ void uhtred_predict_error_check(`gml' gml, `SS' stat)
 {
 	if (gml.hastb[gml.model]) {
 		t = uhtred_util_timevar(gml)
-		return(uhtred_util_xtzb(gml,t))
+		return(uhtred_util_p_xtzb(gml,t))
 	}
-	else return(uhtred_util_xtzb(gml))
+	else return(uhtred_util_p_xtzb(gml))
 }
 
 `RM' uhtred_p_cif(`gml' gml, | `RC' t)

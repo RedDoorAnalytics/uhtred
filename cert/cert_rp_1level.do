@@ -82,7 +82,7 @@ mat T_b[1,7] =  .7518285636230789
 matrix C_b = e(b)
 assert mreldif( C_b , T_b ) < 1E-8
 _assert_streq `"`: rowfullnames C_b'"' `"y1"'
-_assert_streq `"`: colfullnames C_b'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_rcs1_1"'
+_assert_streq `"`: colfullnames C_b'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_brcs1_1"'
 mat drop C_b T_b
 
 qui {
@@ -139,8 +139,8 @@ mat T_V[7,7] =  .0003598549070492
 }
 matrix C_V = e(V)
 assert mreldif( C_V , T_V ) < 1E-8
-_assert_streq `"`: rowfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_rcs1_1"'
-_assert_streq `"`: colfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_rcs1_1"'
+_assert_streq `"`: rowfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_brcs1_1"'
+_assert_streq `"`: colfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_brcs1_1"'
 mat drop C_V T_V
 
 qui {
@@ -168,7 +168,7 @@ mat T_gradient[1,7] = -3.65018775197e-08
 matrix C_gradient = e(gradient)
 assert mreldif( C_gradient , T_gradient ) < 1E-8
 _assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
-_assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_rcs1_1"'
+_assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_brcs1_1"'
 mat drop C_gradient T_gradient
 
 
@@ -237,7 +237,7 @@ mat T_b[1,9] =  .0138938827563727
 matrix C_b = e(b)
 assert mreldif( C_b , T_b ) < 1E-8
 _assert_streq `"`: rowfullnames C_b'"' `"y1"'
-_assert_streq `"`: colfullnames C_b'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+_assert_streq `"`: colfullnames C_b'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
 mat drop C_b T_b
 
 qui {
@@ -326,8 +326,8 @@ mat T_V[9,9] =  .0000437562124964
 }
 matrix C_V = e(V)
 assert mreldif( C_V , T_V ) < 1E-8
-_assert_streq `"`: rowfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
-_assert_streq `"`: colfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+_assert_streq `"`: rowfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
+_assert_streq `"`: colfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
 mat drop C_V T_V
 
 qui {
@@ -364,7 +364,7 @@ mat T_gradient[1,9] = -3.56981144723e-08
 matrix C_gradient = e(gradient)
 assert mreldif( C_gradient , T_gradient ) < 1E-8
 _assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
-_assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+_assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
 mat drop C_gradient T_gradient
 
 //orthog matrices check
@@ -462,7 +462,7 @@ mat T_b[1,12] =  .7518785689821531
 matrix C_b = e(b)
 assert mreldif( C_b , T_b ) < 1E-8
 _assert_streq `"`: rowfullnames C_b'"' `"y1"'
-_assert_streq `"`: colfullnames C_b'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:0b.agecat xb1:1.agecat xb1:2.agecat xb1:3.agecat xb1:4.agecat xb1:_cons tb1:_rcs1_1"'
+_assert_streq `"`: colfullnames C_b'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:0b.agecat xb1:1.agecat xb1:2.agecat xb1:3.agecat xb1:4.agecat xb1:_cons tb1:_brcs1_1"'
 mat drop C_b T_b
 
 qui {
@@ -591,8 +591,8 @@ mat T_V[12,12] =  .0003599014850002
 }
 matrix C_V = e(V)
 assert mreldif( C_V , T_V ) < 1E-8
-_assert_streq `"`: rowfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:0b.agecat xb1:1.agecat xb1:2.agecat xb1:3.agecat xb1:4.agecat xb1:_cons tb1:_rcs1_1"'
-_assert_streq `"`: colfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:0b.agecat xb1:1.agecat xb1:2.agecat xb1:3.agecat xb1:4.agecat xb1:_cons tb1:_rcs1_1"'
+_assert_streq `"`: rowfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:0b.agecat xb1:1.agecat xb1:2.agecat xb1:3.agecat xb1:4.agecat xb1:_cons tb1:_brcs1_1"'
+_assert_streq `"`: colfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:0b.agecat xb1:1.agecat xb1:2.agecat xb1:3.agecat xb1:4.agecat xb1:_cons tb1:_brcs1_1"'
 mat drop C_V T_V
 
 qui {
@@ -624,7 +624,7 @@ mat T_gradient[1,12] = -3.65599845563e-08
 matrix C_gradient = e(gradient)
 assert mreldif( C_gradient , T_gradient ) < 1E-8
 _assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
-_assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:0b.agecat xb1:1.agecat xb1:2.agecat xb1:3.agecat xb1:4.agecat xb1:_cons tb1:_rcs1_1"'
+_assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:0b.agecat xb1:1.agecat xb1:2.agecat xb1:3.agecat xb1:4.agecat xb1:_cons tb1:_brcs1_1"'
 mat drop C_gradient T_gradient
 
 
@@ -693,7 +693,7 @@ mat T_b[1,9] =  .0196690009653912
 matrix C_b = e(b)
 assert mreldif( C_b , T_b ) < 1E-8
 _assert_streq `"`: rowfullnames C_b'"' `"y1"'
-_assert_streq `"`: colfullnames C_b'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+_assert_streq `"`: colfullnames C_b'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
 mat drop C_b T_b
 
 qui {
@@ -782,8 +782,8 @@ mat T_V[9,9] =  .0000599670800285
 }
 matrix C_V = e(V)
 assert mreldif( C_V , T_V ) < 1E-8
-_assert_streq `"`: rowfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
-_assert_streq `"`: colfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+_assert_streq `"`: rowfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
+_assert_streq `"`: colfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
 mat drop C_V T_V
 
 qui {
@@ -820,7 +820,7 @@ mat T_gradient[1,9] = -.0004017122443233
 matrix C_gradient = e(gradient)
 assert mreldif( C_gradient , T_gradient ) < 1E-8
 _assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
-_assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+_assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
 mat drop C_gradient T_gradient
 
 //============================================================================//
@@ -889,7 +889,7 @@ mat T_b[1,9] =  .0196690009653912
 matrix C_b = e(b)
 assert mreldif( C_b , T_b ) < 1E-8
 _assert_streq `"`: rowfullnames C_b'"' `"y1"'
-_assert_streq `"`: colfullnames C_b'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+_assert_streq `"`: colfullnames C_b'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
 mat drop C_b T_b
 
 qui {
@@ -978,8 +978,8 @@ mat T_V[9,9] =  .0000599670800285
 }
 matrix C_V = e(V)
 assert mreldif( C_V , T_V ) < 1E-8
-_assert_streq `"`: rowfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
-_assert_streq `"`: colfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+_assert_streq `"`: rowfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
+_assert_streq `"`: colfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
 mat drop C_V T_V
 
 qui {
@@ -1016,7 +1016,7 @@ mat T_gradient[1,9] = -.0004017122443233
 matrix C_gradient = e(gradient)
 assert mreldif( C_gradient , T_gradient ) < 1E-8
 _assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
-_assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+_assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
 mat drop C_gradient T_gradient
 
 
@@ -1497,7 +1497,7 @@ mat T_b[1,8] =  .0148616038477548
 matrix C_b = e(b)
 assert mreldif( C_b , T_b ) < 1E-8
 _assert_streq `"`: rowfullnames C_b'"' `"y1"'
-_assert_streq `"`: colfullnames C_b'"' `"xb1:trt xb1:bmi xb1:c.x1#c.x2 xb1:x3 xb1:_cons tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+_assert_streq `"`: colfullnames C_b'"' `"xb1:trt xb1:bmi xb1:c.x1#c.x2 xb1:x3 xb1:_cons tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
 mat drop C_b T_b
 
 qui {
@@ -1569,8 +1569,8 @@ mat T_V[8,8] =  .0000422858857359
 }
 matrix C_V = e(V)
 assert mreldif( C_V , T_V ) < 1E-8
-_assert_streq `"`: rowfullnames C_V'"' `"xb1:trt xb1:bmi xb1:c.x1#c.x2 xb1:x3 xb1:_cons tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
-_assert_streq `"`: colfullnames C_V'"' `"xb1:trt xb1:bmi xb1:c.x1#c.x2 xb1:x3 xb1:_cons tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+_assert_streq `"`: rowfullnames C_V'"' `"xb1:trt xb1:bmi xb1:c.x1#c.x2 xb1:x3 xb1:_cons tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
+_assert_streq `"`: colfullnames C_V'"' `"xb1:trt xb1:bmi xb1:c.x1#c.x2 xb1:x3 xb1:_cons tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
 mat drop C_V T_V
 
 qui {
@@ -1606,7 +1606,7 @@ mat T_gradient[1,8] = -3.59491867975e-08
 matrix C_gradient = e(gradient)
 assert mreldif( C_gradient , T_gradient ) < 1E-8
 _assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
-_assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:c.x1#c.x2 xb1:x3 xb1:_cons tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+_assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:c.x1#c.x2 xb1:x3 xb1:_cons tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
 mat drop C_gradient T_gradient
 		
 		
@@ -1697,7 +1697,7 @@ mat T_b[1,8] =  .7473732667807018
 matrix C_b = e(b)
 assert mreldif( C_b , T_b ) < 1E-8
 _assert_streq `"`: rowfullnames C_b'"' `"y1"'
-_assert_streq `"`: colfullnames C_b'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:_rcs1_1"'
+_assert_streq `"`: colfullnames C_b'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:_brcs1_1"'
 mat drop C_b T_b
 
 qui {
@@ -1769,8 +1769,8 @@ mat T_V[8,8] =  .0005781086756115
 }
 matrix C_V = e(V)
 assert mreldif( C_V , T_V ) < 1E-8
-_assert_streq `"`: rowfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:_rcs1_1"'
-_assert_streq `"`: colfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:_rcs1_1"'
+_assert_streq `"`: rowfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:_brcs1_1"'
+_assert_streq `"`: colfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:_brcs1_1"'
 mat drop C_V T_V
 
 qui {
@@ -1811,7 +1811,7 @@ mat T_gradient[1,8] =  3.51212383950e-08
 matrix C_gradient = e(gradient)
 assert mreldif( C_gradient , T_gradient ) < 1E-8
 _assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
-_assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:_rcs1_1"'
+_assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:_brcs1_1"'
 mat drop C_gradient T_gradient
 
 
@@ -1882,7 +1882,7 @@ mat T_b[1,10] =   .014511808684217
 matrix C_b = e(b)
 assert mreldif( C_b , T_b ) < 1E-8
 _assert_streq `"`: rowfullnames C_b'"' `"y1"'
-_assert_streq `"`: colfullnames C_b'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+_assert_streq `"`: colfullnames C_b'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
 mat drop C_b T_b
 
 qui {
@@ -1990,8 +1990,8 @@ mat T_V[10,10] =  .0000438843829879
 }
 matrix C_V = e(V)
 assert mreldif( C_V , T_V ) < 1E-8
-_assert_streq `"`: rowfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
-_assert_streq `"`: colfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+_assert_streq `"`: rowfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
+_assert_streq `"`: colfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
 mat drop C_V T_V
 
 qui {
@@ -2041,7 +2041,7 @@ mat T_gradient[1,10] = -4.67634382736e-08
 matrix C_gradient = e(gradient)
 assert mreldif( C_gradient , T_gradient ) < 1E-8
 _assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
-_assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+_assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
 mat drop C_gradient T_gradient
 
 
@@ -2151,7 +2151,7 @@ mat T_b[1,11] =  .0147884328822219
 matrix C_b = e(b)
 assert mreldif( C_b , T_b ) < 1E-8
 _assert_streq `"`: rowfullnames C_b'"' `"y1"'
-_assert_streq `"`: colfullnames C_b'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:c.trt#c._rcs1_6_2_2 tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+_assert_streq `"`: colfullnames C_b'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:c.trt#c._rcs1_6_2_2 tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
 mat drop C_b T_b
 
 qui {
@@ -2280,8 +2280,8 @@ mat T_V[11,11] =   .000044040028345
 }
 matrix C_V = e(V)
 assert mreldif( C_V , T_V ) < 1E-8
-_assert_streq `"`: rowfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:c.trt#c._rcs1_6_2_2 tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
-_assert_streq `"`: colfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:c.trt#c._rcs1_6_2_2 tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+_assert_streq `"`: rowfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:c.trt#c._rcs1_6_2_2 tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
+_assert_streq `"`: colfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:c.trt#c._rcs1_6_2_2 tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
 mat drop C_V T_V
 
 qui {
@@ -2335,7 +2335,7 @@ mat T_gradient[1,11] = -1.45150248278e-07
 matrix C_gradient = e(gradient)
 assert mreldif( C_gradient , T_gradient ) < 1E-8
 _assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
-_assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:c.trt#c._rcs1_6_2_2 tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+_assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:c.trt#c._rcs1_6_2_2 tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
 mat drop C_gradient T_gradient
 	
 
@@ -2408,7 +2408,7 @@ mat T_b[1,11] =  .0205506025553737
 matrix C_b = e(b)
 assert mreldif( C_b , T_b ) < 1E-8
 _assert_streq `"`: rowfullnames C_b'"' `"y1"'
-_assert_streq `"`: colfullnames C_b'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:c.trt#c._rcs1_6_2_2 tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+_assert_streq `"`: colfullnames C_b'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:c.trt#c._rcs1_6_2_2 tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
 mat drop C_b T_b
 
 qui {
@@ -2537,8 +2537,8 @@ mat T_V[11,11] =   .000061855423384
 }
 matrix C_V = e(V)
 assert mreldif( C_V , T_V ) < 1E-8
-_assert_streq `"`: rowfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:c.trt#c._rcs1_6_2_2 tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
-_assert_streq `"`: colfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:c.trt#c._rcs1_6_2_2 tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+_assert_streq `"`: rowfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:c.trt#c._rcs1_6_2_2 tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
+_assert_streq `"`: colfullnames C_V'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:c.trt#c._rcs1_6_2_2 tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
 mat drop C_V T_V
 
 qui {
@@ -2592,5 +2592,5 @@ mat T_gradient[1,11] = -4.85144329558e-06
 matrix C_gradient = e(gradient)
 assert mreldif( C_gradient , T_gradient ) < 1E-8
 _assert_streq `"`: rowfullnames C_gradient'"' `"r1"'
-_assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:c.trt#c._rcs1_6_2_2 tb1:_rcs1_1 tb1:_rcs1_2 tb1:_rcs1_3"'
+_assert_streq `"`: colfullnames C_gradient'"' `"xb1:trt xb1:bmi xb1:x1 xb1:x2 xb1:x3 xb1:_cons tb1:c.trt#c._rcs1_6_2_1 tb1:c.trt#c._rcs1_6_2_2 tb1:_brcs1_1 tb1:_brcs1_2 tb1:_brcs1_3"'
 mat drop C_gradient T_gradient
