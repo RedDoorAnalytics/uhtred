@@ -279,6 +279,19 @@ mata:
 	return(zb)
 }
 
+
+`RM' uhtred_util_p_xb(`gml' gml)
+{
+	`RM' xb
+	xeqn = gml.xeqn[gml.model]
+	xb = asarray(gml.X,gml.model) * 
+			gml.myb[|uhtred_util_bindices(gml,xeqn)|]'
+		if (gml.Nmodels>1) {
+			xb = xb[uhtred_util_index(gml),]
+		}
+	return(xb)
+}
+
 `RM' uhtred_util_tb(`TR' M, `RR' b, `gml' gml, | `RC' t)
 {
 	`RM' xb
