@@ -1,7 +1,9 @@
-*! version 1.5.1  23may2025
+*! version 1.6.0  12feb2026
 
 /*
 History
+v1.6.0: 12feb2026
+- bug fix in predictions, timevar() was ignored when rebuilding splines
 v1.5.1: 23may2025 
 - bug fix in eta predictions
 v1.5.0: 28mar2025

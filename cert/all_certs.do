@@ -2,7 +2,7 @@
 // cert. script for uhtred
 
 //source paths
-local drive /Users/michael/Library/CloudStorage
+local drive /Users/michael.crowther/Library/CloudStorage
 local drive `drive'/OneDrive-RedDoorAnalyticsAB/software
 cd "`drive'/uhtred"
 adopath ++ "`drive'/uhtred"
@@ -32,7 +32,7 @@ do ./cert/cert_rp_1level_ltrunc
 
 do ./cert/cert_rp_2level
 do ./cert/cert_rp_2level_gf12
-
+do ./cert/cert_rp_2level_predict_timevar
 
 //============================================================================//
 // 3-level models
