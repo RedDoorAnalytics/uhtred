@@ -161,6 +161,7 @@ void uhtred_build_xz(`gml' gml, `RS' model, `RS' eqn, `RS' coef)
 				stub  = "_rcs" + strofreal(model) +
 					"_" + strofreal(i) + 
 					"_"+strofreal(j)
+					
 				uhtred_setup_el_rcs(gml,elsyn[j],stub,
 							model,i,j)
 				//now strsub in new stub 
@@ -185,7 +186,8 @@ void uhtred_build_xz(`gml' gml, `RS' model, `RS' eqn, `RS' coef)
 					}
 
 					//get deriv splines
-					stub  = "_d_rcs"+strofreal(i)+"_"+strofreal(j)
+					stub  = "_d_rcs"+ strofreal(model) +
+					"_"+strofreal(i)+"_"+strofreal(j)
 					svars = uhtred_stata_rcs(touse,yvar,knots,
 						rmat,opts+" deriv(1) timest",
 						stub)
@@ -196,7 +198,8 @@ void uhtred_build_xz(`gml' gml, `RS' model, `RS' eqn, `RS' coef)
 							"c."+stub+"_*",1)
 					//linterval
 					if (hasic) {
-						stub  = "_l_rcs"+strofreal(i)+"_"+strofreal(j)
+						stub  = "_l_rcs"+ strofreal(model) +
+					"_"+strofreal(i)+"_"+strofreal(j)
 						svars = uhtred_stata_rcs(touse,ylvar,knots,
 							rmat,opts,stub)
 						mainworkl = subinstr(mainworkl,
@@ -206,7 +209,8 @@ void uhtred_build_xz(`gml' gml, `RS' model, `RS' eqn, `RS' coef)
 					}
 					//ltruncation
 					if (haslt) {
-						stub  = "_s0_rcs"+strofreal(i)+"_"+strofreal(j)
+						stub  = "_s0_rcs"+ strofreal(model) +
+					"_"+strofreal(i)+"_"+strofreal(j)
 						svars = uhtred_stata_rcs(touse,y0var,knots,
 							rmat,opts,stub)
 						mainworkt0 = subinstr(
@@ -307,6 +311,11 @@ void uhtred_build_xz(`gml' gml, `RS' model, `RS' eqn, `RS' coef)
 		opts = st_local("rcsopts"+strmod) + 
 			" log event" +
 			" eventvar("+dvar+")"
+			
+		if (gml.predict) {
+			opts = opts + " predict baseline model("+strmod+")"
+		}
+		
 		if (!strpos(rcsopts,"noorthog")) opts = opts + " orthog"
 		timexbsyn = timexbsyn,
 				uhtred_stata_setup_rcs(touse,yvar,opts,

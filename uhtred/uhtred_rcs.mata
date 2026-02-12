@@ -33,6 +33,12 @@ mata:
 	stcall = "uhtred_rcs " + synt
 	stcall = stcall + " touse(" + touse + ")"
 	stcall = stcall + " stub(" + stub + ")"
+	if (gml.predict) {
+		stcall = stcall + " predict"
+		stcall = stcall + " model(" + strofreal(model) + ")"
+		stcall = stcall + " cmp(" + strofreal(cmp) + ")"
+		stcall = stcall + " el(" + strofreal(el) + ")"
+	}
 
 	if (gml.issurv[model]) {
 		stcall = stcall + " eventvar(" + resps[2] + ")"

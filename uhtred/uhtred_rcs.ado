@@ -2,25 +2,29 @@
 
 program uhtred_rcs, rclass
 	version 17
-	
-	
-	syntax varname, [				///
-				DF(string) 		///
+		
+	syntax varname, [					///
+				DF(string) 			///
 				KNOTS(numlist asc min=2) 	///
-				LOG 			///
-				ORTHog 			///
-				NOORTHog 		///
-				RMATRIX(string)		///
-				EVent 			///
-				EVENTVAR(varname)	///
-				OFFset(varname) 	///
-				MOFFset(varname)	///
-							///
-				TOUSE(varname)		///
-				MODEL(string)		///
-				STUB(string)		///
-				DERIV(real 0)		///
-				TIMEST			///
+				LOG 				///
+				ORTHog 				///
+				NOORTHog 			///
+				RMATRIX(string)			///
+				EVent 				///
+				EVENTVAR(varname)		///
+				OFFset(varname) 		///
+				MOFFset(varname)		///
+								///
+				TOUSE(varname)			///
+				STUB(string)			///
+				DERIV(real 0)			///
+				TIMEST				///
+								///
+				PREDICT				///
+				MODEL(string)			///
+				CMP(string)			///
+				EL(string)			///
+				BASELINE			///
 			]
 	
 	if "`df'"=="" & "`knots'"=="" {
@@ -33,7 +37,7 @@ program uhtred_rcs, rclass
 			"{bf:knots()} may be specified"
 		exit 198
 	}
-	
+
 	mata: _uhtred_rcs()
 	
 	return local yvar `varlist'
@@ -86,15 +90,21 @@ mata:
 	if (hasmoffset) moffset = -st_data(.,moffsetvar,touse)
 
 	//get element info
-	
-// 	if (gml.predict) { //called from predict
-// 		index 	= strofreal(mod)+"_"+strofreal(i)+"_"+strofreal(Nels)
-// 		knots 	= strtoreal(tokens(st_global("e(knots_"+index+")")))
-// 		if (orth) rmat 	= st_matrix("e(rmat_"+index+")")
-// 	}
-// 	else {
-		
-	
+
+	if (st_local("predict")!="") { //called from predict
+		if (st_local("baseline")!="") {
+			index 	= st_local("model")
+			knots 	= strtoreal(tokens(st_global("e(knots"+index+")")))
+			if (orth) rmat 	= st_matrix("e(rcsrmat_"+index+")")
+		}
+		else {
+			index 	= st_local("model") + "_" +st_local("cmp") +
+					"_" + st_local("el")
+			knots 	= strtoreal(tokens(st_global("e(knots_"+index+")")))
+			if (orth) rmat 	= st_matrix("e(rmat_"+index+")")
+		}
+	}
+	else {
 		if (st_local("df")!="") {
 			df = strtoreal(st_local("df"))	
 			tv = rcsvar
@@ -144,14 +154,14 @@ mata:
 			}
 		}
 	
-// 	}
+	}
 
         //check knots
         if (cols(knots)!=rows(uniqrows(knots'))) {
                 errprintf("Knot locations not unique\n")
                 exit(198)
         }
-        
+
 	if (timest & !islog)  rcsvar2 = rcsvar
 	
 	if (hasoffset) 	rcsvar = rcsvar :+ offset
@@ -166,7 +176,7 @@ mata:
 	}
 	
 	if (timest & !islog)  rcsvars = rcsvars :* rcsvar2
-	
+
 	//build stata vars
 	Nvars = cols(rcsvars)
 	names = J(1,0,"")
