@@ -65,8 +65,7 @@ mata:
 		if (haslt) {
 			gml.survind = 4
 			index4 = uhtred_get_surv_index(gml)
-			XT0    = asarray(gml.XT0,model)[index4,]
-			expxtzb0 = exp(xzb[index4,] :+ XT0 * brcs)
+			expxtzb0 = exp(xzb[index4,] :+ gml.XT0[index4,] * brcs)
 		}
 	}
 
@@ -74,18 +73,17 @@ mata:
 	// score
 
 	res = J(gml.Nobs[gml.Nlevels,1],gml.ndim[gml.Nrelevels],0)
-	X = asarray(gml.X,model)[,xindex]
 
 	//exactly observed events -> hazard function
 	if (Nobs1) {		
-		res[index1,] = res[index1,] :+ X[index1,]
+		res[index1,] = res[index1,] :+ gml.X[index1,xindex]
 	}  
 
 	//exactly observed events and/or right censoring -> survival function
 	if (Nobs2) {
-		res[index2,] = res[index2,] :- X[index2,] :* expxtzb[index2,]
+		res[index2,] = res[index2,] :- gml.X[index2,xindex] :* expxtzb[index2,]
 		if (haslt) {
-			res[index4,] = res[index4,] :+ X[index4,] :* expxtzb0
+			res[index4,] = res[index4,] :+ gml.X[index4,xindex] :* expxtzb0
 		} 
 	}
 	return(res)
@@ -118,7 +116,7 @@ mata:
 	Nobs1 = uhtred_util_nobs(gml)
 	if (Nobs1) {
 		index1 		= uhtred_get_surv_index(gml)
-		dXT		= asarray(gml.dXT,model)[index1,]
+		dXT		= gml.dXT[index1,]
 		dxb 		= dXT * brcs
 	}
 
@@ -130,7 +128,7 @@ mata:
 		if (haslt) {
 			gml.survind = 4
 			index4 = uhtred_get_surv_index(gml)
-			XT0    = asarray(gml.XT0,model)[index4,]
+			XT0    = gml.XT0[index4,]
 			expxtzb0 = exp(xzb[index4,] :+ XT0 * brcs)
 		}
 	}
@@ -139,7 +137,7 @@ mata:
 	// score
 
 	res 	= J(gml.Nobs[gml.Nlevels,1],gml.ndim[gml.Nrelevels],0)
-	XT 	= asarray(gml.XT,model)[,xindex]
+	XT 	= gml.XT[,xindex]
 	
 	//exactly observed events -> hazard function
 	if (Nobs1) {		
@@ -202,7 +200,7 @@ mata:
 		if (haslt) {
 			gml.survind = 4
 			index4 = uhtred_get_surv_index(gml)
-			XT0    = asarray(gml.XT0,model)[index4,]
+			XT0    = gml.XT0[index4,]
 			expxtzb0 = exp(xzb[index4,] :+ XT0 * brcs)
 		}
 	}
