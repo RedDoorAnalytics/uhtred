@@ -34,16 +34,16 @@ void uhtred_build_clp(`gml' gml, `RS' coef)
 	gml.Hindices = asarray_create("real",3)
 	gml.tvarlist = J(gml.Nmodels,1,"")
 
-	gml.X = gml.XT = asarray_create("real",1)
-	if (gml.hasanyltrunc) gml.XT0 = gml.X
-	if (gml.hasanylint) gml.XTL = gml.X
+// 	gml.X = gml.XT = asarray_create("real",1)
+// 	if (gml.hasanyltrunc) gml.XT0 = gml.X
+// 	if (gml.hasanylint) gml.XTL = gml.X
 	if (gml.Nrelevels) {
 		gml.Z = asarray_create("real",2)
 		gml.Zbindex = asarray_create("real",2)
 	}
-	if (sum(gml.familys:=="rp")) {
-		gml.dXT = gml.X
-	}
+// 	if (sum(gml.familys:=="rp")) {
+// 		gml.dXT = gml.X
+// 	}
 	
 	for (i=1;i<=gml.Nmodels;i++) {
 		uhtred_build_xz(gml,i,eqn,coef)
@@ -373,12 +373,12 @@ void uhtred_build_xz(`gml' gml, `RS' model, `RS' eqn, `RS' coef)
 		
 		//store design matrix for xb
 		if (hascons) newxbsyn = newxbsyn,_cons
-		X = st_data(.,newxbsyn,touse)
-		asarray(gml.X,model,X)
+		gml.X = st_data(.,newxbsyn,touse)
+// 		asarray(gml.X,model,X)
 		
 		//get coefficient indices
 		coefx1 = coef
-		coefx2 = coef + cols(X) - 1
+		coefx2 = coef + cols(gml.X) - 1
 		asarray(gml.bindices,(model,eqn),(1,coefx1\1,coefx2))
 
 		if (gml.todo==2) {
@@ -402,12 +402,12 @@ void uhtred_build_xz(`gml' gml, `RS' model, `RS' eqn, `RS' coef)
 		gml.teqn[model] = eqn
 		
 		//store design matrix for time xb 
-		XT = st_data(.,timexbsyn,touse)
-		asarray(gml.XT,model,XT)
+		gml.XT = st_data(.,timexbsyn,touse)
+// 		asarray(gml.XT,model,XT)
 		
 		//get coefficient indices
 		coeft1 = coef
-		coeft2 = coef + cols(XT) - 1
+		coeft2 = coef + cols(gml.XT) - 1
 		asarray(gml.bindices,(model,eqn),(1,coeft1\1,coeft2))
 		
 		if (gml.todo==2) {
@@ -425,14 +425,16 @@ void uhtred_build_xz(`gml' gml, `RS' model, `RS' eqn, `RS' coef)
 
 	if (getdt) {
 		//store deriv of XT
-		dXT = st_data(.,dtimexbsyn,touse)
-		asarray(gml.dXT,model,dXT)
+		gml.dXT = st_data(.,dtimexbsyn,touse)
+// 		asarray(gml.dXT,model,dXT)
 		
 		if (haslt) {
-			asarray(gml.XT0,model,st_data(.,time0xbsyn,touse))
+			//asarray(gml.XT0,model,st_data(.,time0xbsyn,touse))
+			gml.XT0 = st_data(.,time0xbsyn,touse)
 		}
 		if (hasic) {
-			asarray(gml.XTL,model,st_data(.,timelxbsyn,touse))
+// 			asarray(gml.XTL,model,st_data(.,timelxbsyn,touse))
+			gml.XTL = st_data(.,timelxbsyn,touse)
 		}
 	}
 	

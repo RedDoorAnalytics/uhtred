@@ -70,13 +70,13 @@ mata:
 	expxtzb	= exp(xtzb)
 
 	// log likelihood //
-		
+	
 	//exactly observed events -> hazard function
 	gml.survind = 1
 	Nobs1 = uhtred_util_nobs(gml)
 	if (Nobs1) {
 		index1 		= uhtred_get_surv_index(gml)
-		dXT		= asarray(gml.dXT,model)[index1,]
+		dXT		= gml.dXT[index1,]
 		dxb 		= dXT * brcs
 		logl[index1,] 	= xtzb[index1,] :+ log(dxb) :- log(y[index1,1])
 		if (hasbh[1]) {
@@ -103,7 +103,7 @@ mata:
 		if (haslt) {
 			gml.survind = 4
 			index4 = uhtred_get_surv_index(gml)
-			XT0    = asarray(gml.XT0,model)[index4,]
+			XT0    = gml.XT0[index4,]
 			expxtzb0 = exp(xzb[index4,] :+ 
 				XT0 * brcs)
 			if (hasbh[2]) {
@@ -137,11 +137,11 @@ mata:
 
 	if (hasxb) {
 		sindex1 = uhtred_util_score_indices(M,xeqn)
-		X = asarray(gml.X,model)
+// 		X = asarray(gml.X,model)
 	}
 	if (hastb) {
 		sindex2 = uhtred_util_score_indices(M,teqn)
-		XT = asarray(gml.XT,model)
+// 		XT = asarray(gml.XT,model)
 	}
 	
 	//exactly observed events -> hazard function
@@ -149,15 +149,15 @@ mata:
 		if (hasbh[1]) {
 			c1 = expxtzb[index1] :/ totalh1 :/ y[index1,1]
 			G[index1,sindex1] = G[index1,sindex1] :+ 
-						c1 :* X[index1,] :* dxb
+						c1 :* gml.X[index1,] :* dxb
 			G[index1,sindex2] = G[index1,sindex2] :+ 
 						c1 :* (dXT :+ 
-						XT[index1,] :* dxb)
+						gml.XT[index1,] :* dxb)
 		}
 		else {
-			G[index1,sindex1] = G[index1,sindex1] :+ X[index1,]
+			G[index1,sindex1] = G[index1,sindex1] :+ gml.X[index1,]
 			G[index1,sindex2] = G[index1,sindex2] :+ 
-						XT[index1,] :+ 
+						gml.XT[index1,] :+ 
 						dXT :/ dxb
 		}
 	}  
@@ -165,12 +165,12 @@ mata:
 	//exactly observed events and/or right censoring -> survival function
 	if (Nobs2) {
 		G[index2,sindex1] = G[index2,sindex1] :- 
-					X[index2,] :* expxtzb[index2]
+					gml.X[index2,] :* expxtzb[index2]
 		G[index2,sindex2] = G[index2,sindex2] :- 
-					XT[index2,] :* expxtzb[index2]
+					gml.XT[index2,] :* expxtzb[index2]
 		if (haslt) {
 			G[index4,sindex1] = G[index4,sindex1] :+ 
-						X[index4,] :* expxtzb0
+						gml.X[index4,] :* expxtzb0
 			G[index4,sindex2] = G[index4,sindex2] :+ 
 						XT0 :* expxtzb0
 		} 
@@ -181,12 +181,12 @@ mata:
 		//exit times
 		expexpxb3 		= exp(-expxb[index3]) :* expxb[index3]
 		G[index3,sindex1] 	= G[index3,sindex1] :+ 
-						expexpxb3 :* X[index3,]
+						expexpxb3 :* gml.X[index3,]
 		G[index3,sindex2] 	= expexpxb3 :* gml.XT[index3,]
 		//entry times
 		expexpxbl05 		= exp(-expxbl0) :* expxbl0
 		G[index5,sindex1] 	= G[index5,sindex1] :- 
-						expexpxbl05 :* X[index5,]
+						expexpxbl05 :* gml.X[index5,]
 		G[index5,sindex2] 	= G[index5,sindex2] :- expexpxbl05 :* gml.XTL[index5,]
 		//finish up
 		explogl3 		= exp(logl[index3,])
@@ -237,16 +237,16 @@ mata:
 			Hxb2[index1] = c1 :* dxb :* 
 				(1 :- (expxtzb[index1] :* dxb :/ 
 				y[index1,1]):/totalh1) 
-			Hxbrcs[index1,] = c1 :* X[index1,xindex3] :* 
-				(dXT[,xindex4] :+ dxb :* XT[index1,xindex4] :-
+			Hxbrcs[index1,] = c1 :* gml.X[index1,xindex3] :* 
+				(dXT[,xindex4] :+ dxb :* gml.XT[index1,xindex4] :-
 				dxb :/ totalh1 :* (expxtzb[index1] :* dxb :/ y[index1,1] :* 
-				(XT[index1,xindex4] + dXT[,xindex4]:/dxb)))
+				(gml.XT[index1,xindex4] + dXT[,xindex4]:/dxb)))
 			Hrcs2[index1,] = c1 :* 
-				((XT[index1,xindex5] :* dXT[,xindex6]) :+
-				(dXT[,xindex5] :+ XT[index1,xindex5] :* dxb) :* XT[index1,xindex6] :- 
-				(dXT[,xindex5] :+ XT[index1,xindex5] :* dxb) :/ totalh1 :* 
+				((gml.XT[index1,xindex5] :* dXT[,xindex6]) :+
+				(dXT[,xindex5] :+ gml.XT[index1,xindex5] :* dxb) :* gml.XT[index1,xindex6] :- 
+				(dXT[,xindex5] :+ gml.XT[index1,xindex5] :* dxb) :/ totalh1 :* 
 				(expxtzb[index1] :* dxb :/ y[index1,1] :* 
-				(XT[index1,xindex6] + dXT[index1,xindex6]:/dxb)))
+				(gml.XT[index1,xindex6] + dXT[,xindex6]:/dxb)))
 		}
 		else {
 			Hrcs2[index1,] = - dXT[,xindex5] :* 
@@ -259,24 +259,24 @@ mata:
 		//xb
 		Hxb2[index2,] 	= Hxb2[index2,] :- expxtzb[index2]
 		Hxbrcs[index2,] = Hxbrcs[index2,] :- 
-					X[index2,xindex3] :* 
-					XT[index2,xindex4] :* expxtzb[index2]
-		Hrcs2[index2,] 	= Hrcs2[index2,] :- XT[index2,xindex5] :* 
-					XT[index2,xindex6] :* expxtzb[index2]
+					gml.X[index2,xindex3] :* 
+					gml.XT[index2,xindex4] :* expxtzb[index2]
+		Hrcs2[index2,] 	= Hrcs2[index2,] :- gml.XT[index2,xindex5] :* 
+					gml.XT[index2,xindex6] :* expxtzb[index2]
 		if (haslt) {
 			Hxb2[index4,] 	= Hxb2[index4,] :+ expxtzb0
 			Hxbrcs[index4,] = Hxbrcs[index4,] :+ 
-				X[index4,xindex3] :* 
-				XT0[index4,xindex4] :* expxtzb0[index4]
+				gml.X[index4,xindex3] :* 
+				XT0[,xindex4] :* expxtzb0[index4]
 			Hrcs2[index4,] 	= Hrcs2[index4,] :+ 
-				XT0[index4,xindex5] :* 
-				XT0[index4,xindex6] :* expxtzb0
+				XT0[,xindex5] :* 
+				XT0[,xindex6] :* expxtzb0
 		}
 	}
 
 	if (hasxb) {
 		Hxbf = J(Nxb,Nxb,.)
-		Hxbsum = quadcolsum(Hxb2 :* X[,xindex1] :* X[,xindex2],1)
+		Hxbsum = quadcolsum(Hxb2 :* gml.X[,xindex1] :* gml.X[,xindex2],1)
 		el 	= 1
 		for (e1=1;e1<=Nxb;e1++) {
 			e2 = 1

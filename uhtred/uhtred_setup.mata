@@ -155,10 +155,10 @@ struct uhtred_struct {
 	`RS' morgana
 	
 	//design matrices
-	`TR' X			//design matrix for fixed non-timevar covariates
-	`TR' XT			//design matrix for fixed timevar covariates
-	`TR' dXT		//design matrix for d/dt of fixed timevar covariates
-	`TR' XT0		//design matrix for fixed timevar covariates at 
+	`RM' X			//design matrix for fixed non-timevar covariates
+	`RM' XT			//design matrix for fixed timevar covariates
+	`RM' dXT		//design matrix for d/dt of fixed timevar covariates
+	`RM' XT0		//design matrix for fixed timevar covariates at 
 				//  ltruncated() times
 	`TR' XTL		//design matrix for fixed timevar covariates at 
 				//  linterval() times

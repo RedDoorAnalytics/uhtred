@@ -88,7 +88,7 @@ mata:
 	xb   = 0
 
 	if (gml.hasxb[mod]) {
-		xb = asarray(gml.X,mod) * 
+		xb = gml.X * 
 			gml.myb[|uhtred_util_bindices(gml,gml.xeqn[mod])|]'
 		if (gml.Nmodels>1) {
 			xb = xb[uhtred_util_index(gml),]
@@ -132,7 +132,7 @@ mata:
 	xb   = 0
 	
 	if (gml.hasxb[mod]) {
-		xb = asarray(gml.X,mod) * 
+		xb = gml.X * 
 			gml.myb[|uhtred_util_bindices(gml,gml.xeqn[mod])|]'
 		if (gml.Nmodels>1) {
 			xb = xb[uhtred_util_index(gml),]
@@ -283,12 +283,12 @@ mata:
 `RM' uhtred_util_p_xb(`gml' gml)
 {
 	`RM' xb
-	xeqn = gml.xeqn[gml.model]
-	xb = asarray(gml.X,gml.model) * 
-			gml.myb[|uhtred_util_bindices(gml,xeqn)|]'
-		if (gml.Nmodels>1) {
-			xb = xb[uhtred_util_index(gml),]
-		}
+
+	xeqn 	= gml.xeqn[gml.model]
+	xb 	= gml.X * gml.myb[|uhtred_util_bindices(gml,xeqn)|]'
+	if (gml.Nmodels>1) {
+		xb = xb[uhtred_util_index(gml),]
+	}
 	return(xb)
 }
 
@@ -329,8 +329,7 @@ mata:
 		xb = _uhtred_util_tb_update(bt,gml,t)
 	}
 	else {
-		xb = asarray(gml.XT,gml.model) * 
-			gml.myb[|uhtred_util_bindices(gml,teqn)|]'
+		xb = gml.XT * gml.myb[|uhtred_util_bindices(gml,teqn)|]'
 		if (gml.Nmodels>1) {
 			xb = xb[uhtred_util_index(gml),]
 		}
@@ -347,7 +346,7 @@ mata:
 `RM' uhtred_util_t(`gml' gml, | `RC' t)
 {
 	if (args()==2) 	return(_uhtred_util_t_update(gml,t))
-	else 		return(asarray(gml.XT,gml.model))
+	else 		return(gml.XT)
 }
 
 `RM' _uhtred_util_t_update(`gml' gml, `RC' t)
@@ -433,7 +432,7 @@ mata:
 		stata("cap drop "+invtokens(names))
 		return(T)
 	}
-	else return(asarray(gml.XT,mod))
+	else return(gml.XT)
 }
 
 `RM' _uhtred_util_dt_update(`gml' gml, `RC' t)
@@ -519,7 +518,7 @@ mata:
 		stata("cap drop "+invtokens(names))
 		return(T)
 	}
-	else return(asarray(gml.dXT,mod))
+	else return(gml.dXT,mod)
 }
 
 

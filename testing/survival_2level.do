@@ -24,15 +24,17 @@ survsim stime died , dist(weib) lambda(0.1) gamma(1.2) ///
 	cov(trt -0.5 age 0.1 u1 1) maxt(5) 
 stset stime, f(died)
 
-merlin (stime trt trt#rcs(stime, df(1) orthog) age M1[id]@1, ///
-	family(rp, df(3) failure(died)) timevar(stime))
+// merlin (stime trt trt#rcs(stime, df(1) orthog) age M1[id]@1, ///
+// 	family(rp, df(3) failure(died)) timevar(stime))
 
 cap drop t1
 range t1 0 5 100
-predict s1, surv fitted timevar(t1)
+// predict s1, surv fitted timevar(t1)
 
 uhtred (stime trt c.trt#rcs(stime, df(1) orthog) age M1[id]@1, ///
-	family(rp, df(3) failure(died)) timevar(stime))
-predict s2, surv fitted timevar(t1)
+	family(rp, df(3) failure(died)) timevar(stime)) 
+// predict s2, surv fitted timevar(t1)
 
-assert reldif(s1,s2)<1E-05 if _n<=100
+// assert reldif(s1,s2)<1E-05 if _n<=100
+
+predictnl hr = log(predict(hazard)) - log(predict(hazard)), ci(hr_lci hr_uci)

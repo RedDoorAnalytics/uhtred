@@ -30,8 +30,8 @@ qui {
 	do "./uhtred/uhtred_ereturn.mata"
 	
 	//distributions
-	do "./uhtred/uhtred_logl_weibull.mata"
-	do "./uhtred/uhtred_logl_loghazard.mata"
+// 	do "./uhtred/uhtred_logl_weibull.mata"
+// 	do "./uhtred/uhtred_logl_loghazard.mata"
 	do "./uhtred/uhtred_logl_rp.mata"
 	
 	//score
