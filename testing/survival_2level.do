@@ -12,7 +12,7 @@ mata mata clear
 
 set seed 98798
 clear
-set obs 100
+set obs 1000
 gen id 	= _n
 gen trt = runiform()>0.5
 gen sd1 = exp(log(0.1))
@@ -30,11 +30,14 @@ stset stime, f(died)
 cap drop t1
 range t1 0 5 100
 // predict s1, surv fitted timevar(t1)
-
+timer clear
+timer on 1
 uhtred (stime trt c.trt#rcs(stime, df(1) orthog) age M1[id]@1, ///
 	family(rp, df(3) failure(died)) timevar(stime)) 
+timer off 1
+timer list
 // predict s2, surv fitted timevar(t1)
 
 // assert reldif(s1,s2)<1E-05 if _n<=100
 
-predictnl hr = log(predict(hazard)) - log(predict(hazard)), ci(hr_lci hr_uci)
+predictnl hr = log(predict(hazard at(trt 1))) - log(predict(hazard at(trt 0))), ci(hr_lci hr_uci)
