@@ -41,5 +41,5 @@ timer list
 memory
 // assert reldif(s1,s2)<1E-05 if _n<=100
 
-predictnl hr2 = log(predict(hazard at(trt 1))) - log(predict(hazard at(trt 0))), ci(hr2_lci hr2_uci)
+predictnl hr = log(predict(hazard at(trt 1))) - log(predict(hazard at(trt 0))), ci(hr_lci hr_uci)
 memory
