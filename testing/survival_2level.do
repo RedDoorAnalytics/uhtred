@@ -9,10 +9,11 @@ clear all
 tr:do ./build/buildmlib.do
 mata mata clear
 
+memory
 
 set seed 98798
 clear
-set obs 1000
+set obs 100
 gen id 	= _n
 gen trt = runiform()>0.5
 gen sd1 = exp(log(0.1))
@@ -37,7 +38,8 @@ uhtred (stime trt c.trt#rcs(stime, df(1) orthog) age M1[id]@1, ///
 timer off 1
 timer list
 // predict s2, surv fitted timevar(t1)
-
+memory
 // assert reldif(s1,s2)<1E-05 if _n<=100
 
-predictnl hr = log(predict(hazard at(trt 1))) - log(predict(hazard at(trt 0))), ci(hr_lci hr_uci)
+predictnl hr2 = log(predict(hazard at(trt 1))) - log(predict(hazard at(trt 0))), ci(hr2_lci hr2_uci)
+memory

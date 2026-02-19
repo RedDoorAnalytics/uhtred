@@ -35,7 +35,8 @@ struct uhtred_struct {
 
 // [op] - denotes an option which is not always completely filled in
 
-	`pgml' Pgml		//self-pointer
+// 	`pgml' Pgml		//self-pointer
+	`SS' GML
 	
 	//model definition
 	`TR' y			//response variables
@@ -193,7 +194,9 @@ void uhtred_setup(`SS' GML,`SS' touse)
 	`gml' 	gml
 	
 	//initialise
-	gml.Pgml = pGML = crexternal(GML)
+// 	gml.Pgml = 
+	pGML = crexternal(GML)
+	gml.GML = GML
 	
 	//core setup
 	uhtred_setup_core(gml,touse)
@@ -587,6 +590,13 @@ void uhtred_setup_mleqns(`gml' gml)
 
 void uhtred_cleanup(`SS' GML)
 {
+// 	`pgml' p
+//
+// 	p = findexternal(GML)
+// 	if (eltype(*p)=="struct") {
+// 		(*p).Pgml = NULL
+// 		p = NULL
+// 	}
 	rmexternal(GML)
 }
 

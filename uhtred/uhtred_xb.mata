@@ -133,7 +133,11 @@ void uhtred_fillvcv(`gml' gml,
 				for (j=1;j<=Nres[i];j++) vcv[j,j] = var_xb
 			}			
 			asarray(gml.vcvs,i,vcv)
-			if (!gml.predict) asarray(gml.Pgml->vcvs,i,vcv)
+			if (!gml.predict) {
+				`pgml' Pgml
+				Pgml = findexternal(gml.GML)
+				asarray(Pgml->vcvs,i,vcv)
+			}
 			uhtred_update_ip(gml,i)
 		}
 	}

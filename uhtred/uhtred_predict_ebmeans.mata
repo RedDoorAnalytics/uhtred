@@ -33,7 +33,7 @@ void uhtred_p_ebmeans(`gml' gml, `RS' getses)
 	
 	gml.myb = st_matrix("e(b_svs)")
 	uhtred_p_xb(gml,gml.myb)
-	gml.Pgml = &gml
+// 	gml.Pgml = &gml
 	miflag = 0
 	
 	for (i=1; i<=gml.Nrelevels; i++) {

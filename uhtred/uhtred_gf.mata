@@ -45,8 +45,9 @@ void uhtred_gf(	`TS' M,
 				H = J(nb,nb,0)
 			}
 		}
-		gml.Pgml->lnfi1 = 
-			lnfi = uhtred_logl_panels(1,M,b,gml)
+		`pgml' Pgml
+		Pgml = findexternal(gml.GML)
+		Pgml->lnfi1 = lnfi = uhtred_logl_panels(1,M,b,gml)
 			
 		if (todo==0) return
                         

@@ -25,7 +25,8 @@ void uhtred_predict(`SS' object, `SS' newvar, `SS' touse, `SS' stat, `SS' predty
 	`gml' gml
 	
 	swap(gml,*findexternal(object))
-	gml.Pgml = &gml
+// 	gml.Pgml = &gml
+	gml.GML = object
 
 	uhtred_predict_setup(gml,stat,touse)
 	stand	= st_local("standardise")!=""

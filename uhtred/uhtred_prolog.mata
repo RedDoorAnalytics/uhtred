@@ -82,8 +82,8 @@ void uhtred_mc_update(	`gml' gml, 	///
                         `RS' lnl) 
 {
 	//increase in steps of ?
-	gml.Pgml->ndim[lev] = gml.ndim[lev] = gml.ndim[lev] + 2			//must update external and passed struct
-	uhtred_update_Zs_bs(gml,lev)	//!!re-write to add 3 new draws to existing
+// 	gml.Pgml->ndim[lev] = gml.ndim[lev] = gml.ndim[lev] + 2			//must update external and passed struct
+// 	uhtred_update_Zs_bs(gml,lev)	//!!re-write to add 3 new draws to existing
 }
 
 // Update adaptive quadrature locations and scales
@@ -134,15 +134,19 @@ void uhtred_gh_update_ip(`gml' gml)
 
 void uhtred_gh_post_ip(`gml' gml)
 {
+	
+	`pgml' Pgml
+	Pgml = findexternal(gml.GML)
+				
 	for (i=1; i<=gml.Nrelevels; i++) {
-		asarray(gml.Pgml->stackednodes,i,asarray(gml.stackednodes,i))
+		asarray(Pgml->stackednodes,i,asarray(gml.stackednodes,i))
 		for (j=1; j<=gml.Nobs[i,1]; j++) {
-			asarray(gml.Pgml->aghip,(i,j),asarray(gml.aghip,(i,j)))
+			asarray(Pgml->aghip,(i,j),asarray(gml.aghip,(i,j)))
 		}
 		for (r=1; r<=gml.Nres[i]; r++) {
-			asarray(gml.Pgml->aghip2,(i,r),asarray(gml.aghip2,(i,r)))
+			asarray(Pgml->aghip2,(i,r),asarray(gml.aghip2,(i,r)))
 		}
-		asarray(gml.Pgml->aghlogl,i,asarray(gml.aghlogl,i))
+		asarray(Pgml->aghlogl,i,asarray(gml.aghlogl,i))
 	}
 }	
 

@@ -96,14 +96,17 @@ void uhtred_di_adaptiter(`RS' iter, `RS' val)
 
 void uhtred_gh_post_ip(`gml' gml, `RS' i)
 {
-	asarray(gml.Pgml->stackednodes,i,asarray(gml.stackednodes,i))
+	`pgml' Pgml
+	Pgml = findexternal(gml.GML)
+	
+	asarray(Pgml->stackednodes,i,asarray(gml.stackednodes,i))
 	for (j=1; j<=gml.Nobs[i,1]; j++) {
-		asarray(gml.Pgml->aghip,(i,j),asarray(gml.aghip,(i,j)))
+		asarray(Pgml->aghip,(i,j),asarray(gml.aghip,(i,j)))
 	}
 	for (r=1; r<=gml.Nres[i]; r++) {
-		asarray(gml.Pgml->aghip2,(i,r),asarray(gml.aghip2,(i,r)))
+		asarray(Pgml->aghip2,(i,r),asarray(gml.aghip2,(i,r)))
 	}
-	asarray(gml.Pgml->aghlogl,i,asarray(gml.aghlogl,i))
+	asarray(Pgml->aghlogl,i,asarray(gml.aghlogl,i))
 
 	//now store them so we can condition on them for lower levels
 	blups 		= J(gml.Nobs[i,1],gml.Nres[i],.)
