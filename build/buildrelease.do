@@ -8,7 +8,7 @@ local includemata       = 0
 
 //============================================================================//
 
-local newversion 1_6_1
+local newversion 1_7_0
 if `includemata' {
         local newversion `newversion'_mata
 }
