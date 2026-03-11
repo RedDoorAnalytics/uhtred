@@ -1,7 +1,9 @@
-*! version 1.6.0  12feb2026
+*! version 1.7.0  19feb2026
 
 /*
 History
+v1.7.0: 19feb2026
+- bug fix; memory leak
 v1.6.0: 12feb2026
 - bug fix in predictions, timevar() was ignored when rebuilding splines
 v1.5.1: 23may2025 
