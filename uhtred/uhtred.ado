@@ -35,7 +35,6 @@ program uhtred, eclass
         capture noisily Estimate `GML' `0'
         local rc = c(rc)
         if "`c(prefix)'"!="morgana" {
-		di "here"
                 capture n mata: uhtred_cleanup("`GML'")
                 capture drop `GML'*
                 capture mata: mata drop chazf hazf loglf
