@@ -1,7 +1,10 @@
-*! version 1.7.0  19feb2026
+*! version 1.7.1  04oct2026
 
 /*
 History
+v1.7.1: 04oct2026
+- bug fix: net install failed, uhtred.pkg listed a help file that is not in the
+  repository; a leftover debugging message ("here") removed
 v1.7.0: 19feb2026
 - bug fix; memory leak
 v1.6.0: 12feb2026

@@ -1,7 +1,7 @@
 v 3
 d uhtred: mixed effects regression for linear, non-linear and user-defined models
 d Author: Michael J. Crowther
-d Distribution-Date: 20260311
+d Distribution-Date: 20261004
 f uhtred/uhtred.ado
 f uhtred/stuhtred.ado
 f uhtred/uhtred_parse.ado
